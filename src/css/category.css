@@ -1,0 +1,14 @@
+.point {
+    width: auto;
+    height: 80px;
+    background-color: orange;
+    text-align: center;
+    font-weight: bold;
+    position: relative;
+    color: white;
+    border-radius: 25px;
+}
+
+.hidden {
+    display: none;
+}
