@@ -1,0 +1,54 @@
+.dropdown {
+    position: relative;
+    width: 600px;
+}
+
+.btn-select {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 15px;
+    box-sizing: border-box;
+    cursor: pointer;
+    background: url("../../assets/img/arrow-down.png") no-repeat center right 14px rgba(190, 190, 190, 0.692);
+    background-size: 18px 18px;
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.btn-select.on {
+    background: url("../../assets/img/arrow-up.png") no-repeat center right 14px rgba(190, 190, 190, 0.692);
+    background-size: 18px 18px;
+}
+.btn-select.on+.list-member {
+    display: block;
+}
+
+.list-member {
+    display: none;
+    position: absolute;
+    width: 100%;
+    top: 80%;
+    left: 0;
+    box-sizing: border-box;
+    box-shadow: 2px 2px 8px rgba(190, 190, 190, 0.692);
+    border-radius: 15px;
+    font-size: 15px;
+}
+
+.list-member li {
+    height: 40px;
+    padding: 5px 8px;
+    box-sizing: border-box;
+    list-style: none;
+}
+
+.list-member li button {
+    width: 100%;
+    padding: 7px 10px;
+    border: none;
+    background-color: white;
+    border-radius: 15px;
+    cursor: pointer;
+    text-align: left;
+}
