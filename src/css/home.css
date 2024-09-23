@@ -1,0 +1,59 @@
+body { /* 배경화면 */
+    font-family: Arial, sans-serif; /* 기본 폰트 설정 */
+    background-color: #ffffff; /* 배경색 */
+    margin: 0; /* 기본 마진 제거 */
+    padding: 0; /* 기본 패딩 제거 */
+    display: flex; /* Flexbox 사용 */
+    justify-content: center; /* 수평 중앙 정렬 */
+    height: auto; /* 전체 화면 높이 */
+}
+
+.logo{ /* 로고 크기 조절 */
+    width: 100px;
+    height: auto;
+}
+
+#map-img{ /* 맵 아이콘 크기 및 위치 조절 */
+    width: 30px;
+    height: auto;
+}
+
+.logo-container {
+    display: flex; /* Flexbox 사용 */
+    justify-content: space-between; /* 양쪽으로 공간을 가득 채움 */
+    align-items: center; /* 중앙 정렬 */
+    width: 100%; /* 너비 100% */
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* 중앙 정렬 */
+    align-items: left; /* 왼쪽 정렬 */
+    height: 100%;
+    max-width: 600px;
+    width: 100%;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    background-color: white;
+}
+
+.post {
+    display: flex; /* Flexbox 사용 */
+    flex-direction: column; /* 세로 방향으로 정렬 */
+    height: 50%; /* 부모 요소의 높이에 맞춤 */
+    width: 80%; /* 너비 100% */
+    padding: 45px; /* 내부 여백 */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
+    background-color: white; /* 배경색 */
+}
+
+.post2 {
+    display: flex; /* Flexbox 사용 */
+    flex-direction: column; /* 세로 방향으로 정렬 */
+    height: 50%; /* 부모 요소의 높이에 맞춤 */
+    width: 80%; /* 너비 100% */
+    padding: 45px; /* 내부 여백 */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
+    background-color: white; /* 배경색 */
+}
