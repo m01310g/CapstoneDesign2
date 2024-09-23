@@ -7,11 +7,12 @@
     <title>Document</title>
 </head>
 <body>
-    <div>
+    <div class="calculator">
+        <div class="mini-display" style="height: 20px;"></div>
         <div class="input" style="height: 50px;"></div>
         <button class="clear">C</button>
-        <button data-type="operator" class="operator">+/-</button>
-        <button data-type="operator" class="operator">%</button>
+        <button data-type="operator" class="plus-minus">+/-</button>
+        <button data-type="operator" class="percentage">%</button>
         <button data-type="operator" class="operator">/</button>
         <br/>
         <button class="numBtn">7</button>
@@ -31,8 +32,7 @@
         <br/>
         <button class="numBtn">0</button>
         <button class="numBtn">00</button>
-        <button data-type="operator" class="operator">.</button>
-        <button data-type="result" class="result">=</button>
+        <button data-type="result" class="result" style="width: 105px;">=</button>
     </div>
 </body>
 <script src="./calculator.js"></script>

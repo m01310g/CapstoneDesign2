@@ -4,3 +4,12 @@ button {
     border-radius: 50px;
     border: none;
 }
+
+button:hover {
+    filter: brightness(80%);
+}
+
+.mini-display {
+    font-size: 10px;
+    color: grey;
+}
