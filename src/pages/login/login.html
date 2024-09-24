@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CO/N</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="../../css/login.css">
+</head>
+<body>
+  <div class="body-container">
+    <div class="box-body">
+      <header class="page-header">
+        <button class="btn-close">&#215;</button>
+      </header>
+      <main class="page-main">
+        <div id="logo-container">
+          <img class="logo" src="../../../assets/img/logo.jpg" />
+        </div>
+        <form id="login-form" target="prevent-form" action="#" method="post">
+          <div id="login-id-container">
+            <input type="text" name="login-id" placeholder="아이디" required>
+          </div>
+          <div id="login-pw-container">
+            <input type="password" name="login-pw" placeholder="비밀번호" required>
+          </div>
+          <div id="forgot-anchor-container">
+            <a href="../forgot/forgot-id.html">아이디 찾기/</a><a href="../forgot/forgot-pw.html">비밀번호 찾기</a>
+          </div>
+          <div id="login-btn-container">
+            <input type="submit" value="로그인">
+          </div>
+          <div id="sign-up-anchor-container">
+            <a href="../sign-up/sign-up.html">회원가입</a>
+          </div>
+        </form>
+      </main>
+    </div>
+  </div>
+  <script src="./login.js"></script>
+</body>
+</html>

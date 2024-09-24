@@ -1,0 +1,30 @@
+.page-header {
+  justify-content: end;
+}
+
+.nav-forgot ul {
+  width: 100%;
+  list-style-type: none;
+  padding-left: 0;
+  display: flex;
+}
+
+.nav-forgot a {
+  text-decoration: none;
+}
+
+a:visited,
+a:focus,
+a:hover,
+a:active {
+  color: #000;
+}
+
+.page-main {
+  padding: 2rem;
+}
+
+#forgot-id-form label, #forgot-pw-form label {
+  font-size: 1rem;
+  font-weight: 600;
+}

@@ -1,0 +1,55 @@
+#forgot-pw-container {
+  padding-left: 20%;
+  padding-bottom: 1rem;
+  width: 50%;
+  font-size: 1.1rem;
+  font-weight: 700;
+  border-bottom: 2px solid rgba(0,0,0, 1);
+}
+
+#forgot-id-container {
+  padding-left: 20%;
+  width: 50%;
+  font-size: 1.1rem;
+  font-weight: normal;
+  border-bottom: 2px solid rgba(0, 0, 0, 0.3);
+}
+
+#forgot-pw-anchor {
+  color: rgba(0, 0, 0, 1); 
+}
+
+#forgot-id-anchor {
+  color: rgba(0, 0, 0, 0.3); 
+}
+
+#forgot-pw-form > div {
+  margin: 1rem 0;
+  position: relative;
+}
+
+#forgot-pw-form input {
+  width: 100%;
+  height: 2.5rem;
+  padding: 0 6px;
+  border: 1px solid rgb(62, 62, 62);
+  border-radius: 5px;
+}
+
+#forgot-pw-form select {
+  position: absolute;
+  right: 0;
+  width: 49%;
+  height: 2.5rem;
+  padding: 0 6px;
+  border: 1px solid rgb(62, 62, 62);
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#forgot-pw-form input[type="submit"] {
+  margin-top: 1.75rem;
+  font-size: 1.15rem;
+  font-weight: 600;
+  cursor: pointer;
+}

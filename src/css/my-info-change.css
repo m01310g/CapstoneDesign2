@@ -1,0 +1,66 @@
+.page-header {
+  justify-content:space-between;
+  margin-bottom: 2.5rem;
+}
+
+.page-header > a:nth-child(1) {
+  font-size: 1.3rem;
+}
+
+.page-header > a:nth-child(2) {
+  position: relative;
+  top: 0.1rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.page-main {
+  padding: 2rem;
+}
+
+a {
+  text-decoration: none;
+  color: #000;
+}
+
+a:visited,
+a:focus,
+a:hover,
+a:active {
+  color: #000;
+}
+
+#my-info-title {
+  display: flex;
+  justify-content: center;
+  font-size: 1.15rem;
+  font-weight: 700;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid rgba(0,0,0, 1);
+}
+
+#my-info-change-form > div {
+  margin: 1rem 0;
+  position: relative;
+}
+
+#my-info-change-form label {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+#my-info-change-form input {
+  width: 100%;
+  height: 2.5rem;
+  padding: 0 6px;
+  border: 1px solid rgb(62, 62, 62);
+  border-radius: 5px;
+}
+
+#my-info-change-form input[type="submit"] {
+  margin-top: 1.75rem;
+  font-size: 1.15rem;
+  font-weight: 600;
+  cursor: pointer;
+}

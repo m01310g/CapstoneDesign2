@@ -1,0 +1,53 @@
+:root {
+  --main-color: #fff;
+  --side-color: #fff;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  font-family: Arial, sans-serif; /* 기본 폰트 설정 */
+}
+
+html, body {
+  height: 100%;
+  background-color: var(--side-color);
+}
+
+button {
+  cursor: pointer;
+}
+
+.body-container {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.box-body {
+  background-color: var(--main-color);
+  position: relative;
+  z-index: 1;
+  height: auto;
+  min-height: 100%;
+  width: 37rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.page-header {
+  margin: 1rem;
+  margin-bottom: 2.5rem;
+  display: flex;
+}
+
+.page-main {
+  margin: 1rem;
+}
+
+.btn-close {
+  font-size: 1.4rem;
+  font-weight: 500;
+  border: none;
+  background-color: var(--main-color);
+}
