@@ -1,6 +1,11 @@
+.container {
+    max-width: 600px;
+}
+
 .dropdown {
     position: relative;
-    width: 600px;
+    align-items: center;
+    width: 100%;
 }
 
 .btn-select {
@@ -28,9 +33,10 @@
     display: none;
     position: absolute;
     width: 100%;
-    top: 80%;
+    top: 75%;
     left: 0;
     box-sizing: border-box;
+    background-color: white;
     box-shadow: 2px 2px 8px rgba(190, 190, 190, 0.692);
     border-radius: 15px;
     font-size: 15px;
@@ -51,4 +57,31 @@
     border-radius: 15px;
     cursor: pointer;
     text-align: left;
+}
+
+.search {
+    width: 90%;
+    border: 1px solid rgba(190, 190, 190, 0.692);
+    border-radius: 15px;
+    height: 40px;
+    margin: 5px 15px 0 0;
+    padding: 5px 15px;
+    font-size: 15px;
+}
+
+.search-container {
+    display: flex;
+    width: 99%;
+}
+
+.search-btn {
+    width: 25px;
+    height: auto;
+    background-color: rgba(0, 0, 0, 0);
+    border: none;
+}
+
+button > img {
+    width: 23px;
+    height: auto;
 }
