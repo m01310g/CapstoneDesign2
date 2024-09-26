@@ -4,14 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../../css/list.css">
+    <link rel="stylesheet" href="../../css/style.css">
     <title>Document</title>
 </head>
 <body>
-    <h2>게시판</h2>
-    <hr>
-    <div></div>
+    <div class="body-container">
+        <div class="box-body">
+            <h2 style="padding: 1rem;">게시판</h2>
+            <hr>
+            <div class="board"></div>
 
-    <a href="../board/write.html">글쓰기</a>
-    <script src="../board/list.js"></script>
+            <a href="../board/write.html">
+                <img id="write-btn" src="../../../assets/img/write.png">
+            </a>
+        </div>
+    </div>
 </body>
+<script src="../board/list.js"></script>
 </html>

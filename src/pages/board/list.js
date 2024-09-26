@@ -20,8 +20,8 @@ const template = (objValue) => {
     `
 }
 
-const div = document.querySelector("div");
+const board = document.querySelector(".board");
 
 for (let i = 0; i < boardsObj.length; i++) {
-    div.innerHTML += template(boardsObj[i]);
+    board.innerHTML += template(boardsObj[i]);
 }
