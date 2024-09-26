@@ -98,7 +98,7 @@ a:active {
   right: 0;
   bottom: 0;
   display: flex;
-  padding: 0.3rem 3.3rem;
+  padding: 0.3rem 3rem;
   font-size: 0.725rem;
   font-weight: 600;
   justify-content: space-between;
@@ -111,6 +111,11 @@ a:active {
 #category-icon-container div {
   position: relative;
   right: 0.45rem;
+}
+
+#chatting-icon-container div {
+  position: relative;
+  left: 0.135rem;
 }
 
 #home-icon-container div {
