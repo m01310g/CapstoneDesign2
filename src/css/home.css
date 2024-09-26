@@ -1,9 +1,9 @@
-.logo { /* 로고 크기 조절 */
+.logo { 
     width: 6rem;
     height: auto;
-  }
+}
   
-.map-img { /* 맵 아이콘 크기 및 위치 조절 */
+.map-img { 
     width: 2rem;
     height: auto;
     display: flex;
@@ -11,7 +11,7 @@
     align-self: center;
     position: absolute;
     right: 1rem;
-  }
+}
 
 #my-info-title {
     font-size: 1.1rem;
