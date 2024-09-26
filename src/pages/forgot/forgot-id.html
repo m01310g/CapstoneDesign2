@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CO/N</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/forgot.css">
+    <link rel="stylesheet" href="../../css/forgot-id.css">
+  </head>
+  <body>
+    <div class="body-container">
+      <div class="box-body">
+        <header class="page-header">
+          <button class="btn-close">&#215;</button>
+        </header>
+        <nav class="nav-forgot">
+          <ul>
+            <div class="clicked-container" id="forgot-id-container">
+              <li><a href="./forgot-id.html" id="forgot-id-anchor">아이디 찾기</a></li>
+            </div>
+            <div class="non-clicked-container" id="forgot-pw-container">
+              <li><a href="./forgot-pw.html" id="forgot-pw-anchor">비밀번호 찾기</a></li>
+            </div>
+          </ul>
+        </nav>
+        <main class="page-main">
+          <form id="forgot-id-form" target="prevent-form" action="#" method="post">
+            <div>
+              <label for="forgot-id-user-name">이름</label>
+              <br>
+              <input type="text" name="forgot-id-user-name" required>
+            </div>
+            <div>
+              <label for="forgot-id-user-email">이메일</label>
+              <br>
+              <input type="text" name="forgot-id-user-email" style="width: 42.5%" required>
+              <select name="forgot-id-user-email">
+                <option value="naver">@daum.net</option>
+                <option value="naver">@gmail.com</option>
+                <option value="naver">@hotmail.com</option>
+                <option value="naver" selected>@naver.com</option>
+                <option value="naver">@outlook.com</option>
+              </select>
+              <button id="send-authn">전송</button>
+            </div>
+            <div>
+              <label for="forgot-id-authn">인증번호</label>
+              <input type="text" name="forgot-id-authn" required>
+            </div>
+            <input type="submit" value="아이디 찾기">
+          </form>
+        </main>
+      </div>
+    </div>
+    <script src="./forgotId.js"></script>
+  </body>
+</html>
