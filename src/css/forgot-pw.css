@@ -53,3 +53,9 @@
   font-weight: 600;
   cursor: pointer;
 }
+
+@media screen and (max-width: 430px) {
+  #forgot-pw-container {
+    padding-left: 13%;
+  }
+}
