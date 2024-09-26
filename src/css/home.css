@@ -60,7 +60,12 @@ a:active {
 #bottom-nav-bar img {
     height: 1.5rem;
 }
-  
+
+#chatting-icon-container div {
+    position: relative;
+    left: 0.135rem;
+  }
+
   #category-icon-container div {
     position: relative;
     right: 0.45rem;
