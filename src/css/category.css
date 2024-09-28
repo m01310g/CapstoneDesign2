@@ -2,6 +2,11 @@
     padding: 1rem;
 }
 
+.box-body {
+    /* nav 높이 */
+    padding-bottom: 10px;
+}   
+
 a {
     text-decoration: none;
     color: #000;
