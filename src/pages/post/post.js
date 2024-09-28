@@ -3,6 +3,9 @@ const objTypes = document.querySelector(".list-member");
 
 const searchBtn = document.querySelector(".search-btn");
 
+const searchResult = document.querySelector(".post");
+const HIDDEN_CLASS_NAME = "hidden"
+
 const handleBtnClick = () => {
     selectBtn.classList.toggle("on");
 }
@@ -18,5 +21,5 @@ selectBtn.addEventListener("click", handleBtnClick);
 objTypes.addEventListener("click", handleContentClick);
 
 searchBtn.addEventListener("click", () => {
-    console.log("clicked");
+    searchResult.classList.remove(HIDDEN_CLASS_NAME);
 })

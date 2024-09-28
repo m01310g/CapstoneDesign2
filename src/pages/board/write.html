@@ -3,17 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/write.css">
     <title>Document</title>
 </head>
 <body>
-    <h1>작성</h1>
-    <form id="writeFrm">
-        <input type="text" name="subject" placeholder="제목">
-        <div>
-            <textarea name="content" placeholder="글 입력"></textarea>
+    <div class="body-container">
+        <div class="box-body">
+            <h1 style="padding: 1rem;">작성</h1>
+            <!-- 첫 번째 드롭다운: 카테고리 선택 -->
+            <article class="dropdown">
+                <button class="category-btn">카테고리 선택</button>
+                <ul class="category-member">
+                    <li type="button" data-category="택시">택시</li>
+                    <li type="button" data-category="택배">택배</li>
+                    <li type="button" data-category="배달">배달</li>
+                </ul>
+            </article>
+            <!-- 두 번째 드롭다운: 소분류 선택 -->
+            <article class="dropdown hidden sub-dropdown">
+                <button class="sub-btn">소분류 선택</button>
+                <ul class="sub-member"></ul>
+            </article>
+            <!-- 소분류 선택 -> 택시 선택 시 출발지/목적지 검색 -->
+            <form id="writeFrm">
+                <div class="taxi-search hidden">
+                    <input type="text" placeholder="출발지" id="departure">
+                    <input type="text" placeholder="도착지" id="destination">
+                </div>
+                <input type="text" name="subject" placeholder="제목">
+                <div>
+                    <textarea name="content" placeholder="글 입력"></textarea>
+                </div>
+                <button id="write">작성</button>
+            </form>
         </div>
-        <button>글 작성</button>
-    </form>
-    <script src="./write.js"></script>
+    </div>
 </body>
+<script src="./write.js"></script>
 </html>

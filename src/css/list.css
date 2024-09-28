@@ -1,8 +1,24 @@
+h2 {
+    padding: 1rem;
+}
+
+a {
+    text-decoration: none;
+    color: #000;
+}
+
 #subject {
     font-size: 1.2rem;
     font-weight: bold;
     margin-bottom: 0.3rem;
     margin-top: 0.6rem;
+}
+
+a:visited,
+a:hover,
+a:focus,
+a:active {
+    color: #000;
 }
 
 #date {
@@ -15,11 +31,34 @@
     margin-bottom: 0.6rem;
 }
 
+#due {
+    font-size: 0.8rem;
+    margin-bottom: 0.6rem;
+}
+
 .board {
     padding: 0 1rem;
 }
 
-#write-btn {
-    width: 2.2rem;
+.img-container {
+    width: 4.5rem;
     height: auto;
+    border-radius: 50%;
+    background-color: #F5AF12;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    right: 2rem;
+    bottom: 2rem;
+    z-index: 1000;
+}
+
+.img-container img {
+    padding: 1.2rem;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: invert();
 }

@@ -1,0 +1,31 @@
+a > img {
+    width: 1.5rem;
+    height: 1.5rem;
+    margin-right: 1rem;
+}
+
+div > div > div {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin: 1rem;
+}
+
+#category {
+    margin: 1rem;
+}
+
+#subject {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin: 1rem 0 0.5rem 1rem;
+}
+
+#date {
+    font-size: 1rem;
+    margin: 0 0 0.5rem 1rem;
+}
+
+#content {
+    margin: 0 0 0 1rem;
+}

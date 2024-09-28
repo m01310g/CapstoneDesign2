@@ -3,17 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/view.css">
     <title>Document</title>
 </head>
 <body>
-    <form id="viewFrm">
-        <div id="subject">제목: </div>
-        <div id="date">작성일: </div>
-        <div id="content">내용: </div>
-    </form>
-    <button id="modify">수정</button>
-    <a href="./list.html">뒤로가기</a>
-    <button id="delete">삭제</button>
+    <div class="body-container">
+        <div class="box-body">
+            <div>
+                <a href="./list.html">
+                    <img src="../../../assets/img/back-icon.png">
+                </a>
+                <h1>글 보기</h1>
+            </div>
+            <form id="viewFrm">
+                <div id="category">카테고리</div>
+                <div id="subject">제목</div>
+                <div id="date">작성일</div>
+                <div id="content">내용</div>
+            </form>
+            <button id="modify">수정</button>
+            <button id="delete">삭제</button>
+        </div>
+    </div>
 </body>
-<script src="../board/view.js"></script>
+<script src="./view.js"></script>
 </html>
