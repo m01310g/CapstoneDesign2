@@ -18,39 +18,26 @@
         </body>
         <h1>포인트 환전하기</h1>
 
-        <nav id="bottom-nav-bar">
-        <div id="category-icon-container">
-          <a href="../category/category.html">
-            <img class="category-icon" src="../../../assets/img/category-off.png">
-            <div>카테고리</div>
-          </a>  
-        </div>
-        <div id="chatting-icon-container">
-          <a href="#">
-            <img class="category-icon" src="../../../assets/img/chatting-off.png">
-            <div>채팅</div>
-          </a>  
-        </div>
-        <div id="home-icon-container">
-          <a href="../home/home.html">
-            <img class="home-icon" src="../../../assets/img/home-off.png">
-            <div>홈</div>
-          </a>
-        </div>
-        <div id="notification-icon-container">
-          <a href="#">
-            <img class="notification-icon" src="../../../assets/img/notification-off.png">
-            <div>알림</div>
-          </a>
-        </div>
-        <div id="my-page-icon-container">
-          <a href="../my-page/my-page.html">
-            <img class="my-page-icon" src="../../../assets/img/my-on.png">
-            <div>마이</div>
+            <div id="point-info">
+                <div id="available-point">
+                    <div>나의 포인트</div>
+                    <div>45,404원</div>
+                </div>
+            </div>
+
+            <input type="number" id="input" placeholder="원하는 금액을 입력하세요" />
+            <button id="exchangeButton">환전하기</button> <!-- 환전하기 버튼 추가 -->
+                
+              <div id="exchange-point-anchor">
+            </div>
+
+        <bottom-nav data-page="myPage"></bottom-nav>
           </a>
         </div>
       </nav>
     </div>
   </div>
 </body>
+<script src="point-exchange.js"></script>
+<script src="../../component/BottomNav.js"></script>
 </html>
