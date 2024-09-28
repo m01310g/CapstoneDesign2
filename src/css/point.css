@@ -3,75 +3,93 @@
     height: auto;
 }
 
+#inputField {
+    display: none; /* 처음에는 숨김 */
+    margin-top: 10px;
+}
+
 #my-info-title {
     font-size: 1.1rem;
     font-weight: 600;
-}
+  }
   
-.box-body > div:nth-child(2) {
+  .box-body > div:nth-child(2) {
     margin: 1rem;
     display: flex;
     position: relative;
-}
+  }
   
-a {
+  #profile-picture {
+    width: 2.5rem;
+    height: 2.5rem;
+    background-color: lightcyan;
+    border-radius: 50%;
+  }
+  
+  #nickname-abode {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    left: 1.75rem;
+    justify-content: space-around;
+    font-weight: 600;
+  }
+  
+  #nickname-abode > div:nth-child(2) {
+    font-size: 0.8rem;
+  }
+  
+  #my-info-change-anchor-container {
+    display: flex;
+    flex-direction: column;
+    align-self: center;
+    position: absolute;
+    right: 0;
+  }
+  
+  a {
     text-decoration: none;
     color: #000;
     font-weight: 600;
-}
-  
-a:visited,
-a:focus,
-a:hover,
-a:active {
-    color: #000;
-}
-  
-.box-body {
-    /* nav 높이 */
-    padding-bottom: 10px;
-}
-  
-#bottom-nav-bar {
-    max-width: 37rem; /* .box-body와 동일 width */
-    width: 100%;
-    margin: 0 auto;
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    display: flex;
-    padding: 0.3rem 3.3rem;
-    font-size: 0.725rem;
-    font-weight: 600;
-    justify-content: space-between;
-}
-  
-#bottom-nav-bar img {
-    height: 1.5rem;
-}
-
-#chatting-icon-container div {
-    position: relative;
-    left: 0.135rem;
   }
-
-  #category-icon-container div {
-    position: relative;
-    right: 0.45rem;
-}
   
-#home-icon-container div {
-    position: relative;
-    left: 0.422rem;
-}
+  a:visited,
+  a:focus,
+  a:hover,
+  a:active {
+    color: #000;
+  }
   
-#notification-icon-container div {
-    position: relative;
-    left: 0.125rem;
-}
+  #point-info {
+    display: flex;
+    justify-content: space-between;
+    padding: 1rem;
+    background-color: lightgray;
+  }
   
-#my-page-icon-container div {
-    position: relative;
-    left: 0.15rem;
-}
+  #available-point {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  
+  #available-point > :nth-child(1) {
+    font-weight: 650;
+    margin-bottom: 0.2rem;
+  }
+  
+  #exchange-point-anchor {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  
+  #penalty-info-container {
+    display: flex;
+    justify-content: space-between;
+    font-weight: 600 ;
+  }
+  
+  #penalty-count {
+    color: red;
+  }
