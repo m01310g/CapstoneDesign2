@@ -8,49 +8,17 @@
     <link rel="stylesheet" href="../../css/style.css"/>
 </head>
 <body>
-    <div class="body-container">
-      <div class="box-body">
-        <header class="page-header">
-            <img class="logo" src="../../../assets/img/logo.jpg" />
-            <img class="map-img" src="../../../assets/img/map_icon.png" />
-        </header>
-
-        <body>
-        </body>
-
-        <nav id="bottom-nav-bar">
-            <div id="category-icon-container">
-              <a href="../category/category.html">
-                <img class="category-icon" src="../../../assets/img/category-off.png">
-                <div>카테고리</div>
-              </a>  
-            </div>
-            <div id="chatting-icon-container">
-              <a href="#">
-                <img class="category-icon" src="../../../assets/img/chatting-off.png">
-                <div>채팅</div>
-              </a>  
-            </div>
-            <div id="home-icon-container">
-              <a href="../home/home.html">
-                <img class="home-icon" src="../../../assets/img/home-on.png">
-                <div>홈</div>
-              </a>
-            </div>
-            <div id="notification-icon-container">
-              <a href="#">
-                <img class="notification-icon" src="../../../assets/img/notification-off.png">
-                <div>알림</div>
-              </a>
-            </div>
-            <div id="my-page-icon-container">
-              <a href="../my-page/my-page.html">
-                <img class="my-page-icon" src="../../../assets/img/my-on.png">
-                <div>마이</div>
-              </a>
-            </div>
-          </nav>
-        </div>
-      </div>
-    </body>
-    </html>
+  <div class="body-container">
+    <div class="box-body">
+      <header class="page-header">
+          <img class="logo" src="../../../assets/img/logo.jpg" />
+          <a href="../map/map.html">
+              <img class="map-img" src="../../../assets/img/map_icon.png" />
+          </a>
+      </header>
+      <bottom-nav data-page="home"></bottom-nav>
+    </div>
+  </div>
+</body>
+<script src="../../component/BottomNav.js"></script>
+</html>

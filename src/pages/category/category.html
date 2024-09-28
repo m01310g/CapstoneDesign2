@@ -3,31 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/category.css">
     <title>Document</title>
-    <link rel="stylesheet" href="../../css/Category.css" />
 </head>
 <body>
-    <div>
-        <h2>이용하실 서비스를 선택해주세요.</h2>
-        <div>
-            <button id="taxi">택시</button>
-            <button id="package">택배</button>
-            <button id="delibery">배달</button>
-            <button id="calculator">
-                <a href="../category/calculator/calculator.html">
-                    <div>계산기</div>
-                </a>
-            </button>
-        </div>
-        <h3>보유 포인트</h3>
-        <div>
-            <div class="point">
-                <h5>32,000 포인트</h5>
-                <button id="charge">충전</button>
-                <button id="exchange">환전</button>
+    <div class="body-container">
+        <div class="box-body">
+            <h1>카테고리</h1>
+            <div id="point-info">
+                <div id="available-point">
+                    <h3>보유 포인트</h3>
+                    <h5>33,333 포인트</h5>
+                </div>
+                <div id="exchange-point-anchor">
+                    <a href="../point-charge/point-charge.html">충전</a>
+                    <span style="font-weight: bold; padding: 0.325rem;">|</span>
+                    <a href="../point-exchange/point-exchange.html">환전</a>
+                </div>
             </div>
-        </div>
+            <div id="service-container">
+                <h2>이용하실 서비스를 선택해주세요.</h2>
+                <menu id="service-menu">
+                    <a href="../category/taxi/taxi.html">🚕 택시</a>
+                    <a href="../category/package/package.html">📦 택배</a>
+                    <a href="../category/delibery/delibery.html">🏍️ 배달</a>
+                    <a href="../category/calculator/calculator.html">계산기</a>
+                </menu>
+            </div>
+        <bottom-nav data-page="category"></bottom-nav>
     </div>
+    <script src="../../component/BottomNav.js"></script>
 </body>
-<script src="./Category.js"></script>
 </html>

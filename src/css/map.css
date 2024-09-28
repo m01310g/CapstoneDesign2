@@ -1,16 +1,6 @@
-.logo { 
+.logo { /* 로고 크기 조절 */
     width: 6rem;
     height: auto;
-}
-  
-.map-img { 
-    width: 2rem;
-    height: auto;
-    display: flex;
-    flex-direction: column;
-    align-self: center;
-    position: absolute;
-    right: 1rem;
 }
 
 #my-info-title {
