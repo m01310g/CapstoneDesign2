@@ -3,8 +3,9 @@ const boardsStr = localStorage.getItem("boards");
 const boardsObj = JSON.parse(boardsStr);
 
 // 쿼리스트링의 객체 불러오기
-const idxObj = location.search;
-const index = idxObj.split("=")[1];
+const params = new URLSearchParams(window.location.search);
+console.log(params);
+const index = params.get("index");
 
 const board = boardsObj[index];
 
@@ -14,3 +15,11 @@ for (let i = 0; i < viewFrm.length; i++) {
     const id = viewFrm[i].id;
     viewFrm[i].innerText = board[id];
 }
+
+const modifyBtn = document.querySelector("#modify");
+
+const handleModifyBtn = () => {
+    location = "./modify.html" + idxObj;
+}
+
+modifyBtn.addEventListener("click", handleModifyBtn);

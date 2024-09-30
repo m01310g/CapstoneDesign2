@@ -17,11 +17,6 @@ const subCategories = {
     '배달': ['다이어트식', '분식', '야식', '양식', '일식', '중식', '한식']
 };
 
-// 카테고리 선택 드롭다운 클릭 시 카테고리 목록 보여짐
-const handleBtnClick = () => {
-    categoryBtn.classList.toggle(ON_CLASS_NAME);
-};
-
 // 카테고리 버튼 클릭 이벤트
 categoryItems.forEach(item => {
     item.addEventListener('click', (event) => {
@@ -48,7 +43,10 @@ categoryItems.forEach(item => {
     });
 });
 
-categoryBtn.addEventListener("click", handleBtnClick);
+// 카테고리 선택 드롭다운 클릭 시 카테고리 목록 보여짐
+categoryBtn.addEventListener("click", () => {
+    categoryBtn.classList.toggle(ON_CLASS_NAME);
+});
 
 const updateSubCategories = (category) => {
     const items = subCategories[category];
@@ -76,11 +74,18 @@ subBtn.addEventListener('click', () => {
     subBtn.classList.toggle(ON_CLASS_NAME);
 });
 
+// 하나의 드롭다운만 선택될 수 있도록 설정
 categoryBtn.addEventListener('click', () => {
     if (subBtn.classList.contains(ON_CLASS_NAME)) {
         subBtn.classList.remove(ON_CLASS_NAME)
     }
-})
+});
+
+subBtn.addEventListener('click', () => {
+    if (categoryBtn.classList.contains(ON_CLASS_NAME)) {
+        categoryBtn.classList.remove(ON_CLASS_NAME);
+    }
+});
 
 // 작성일 반환 함수
 const recordDate = () => {
@@ -96,7 +101,7 @@ const recordDate = () => {
 };
 
 class Board {
-    constructor(indexNum, subjectStr, contentStr, category, subCategory, departure, destination) {
+    constructor(indexNum, subjectStr, contentStr, category, subCategory, departure, destination, startDate, endDate) {
         this.index = indexNum;
         this.Subject = subjectStr;
         this.Content = contentStr;
@@ -104,8 +109,9 @@ class Board {
         this.SubCategory = subCategory;
         this.Departure = departure;
         this.Destination = destination;
+        this.startDate = startDate;
+        this.endDate = endDate;
         this.date = recordDate();
-        this.views = 0;
     }
 
     set Subject(value) {
@@ -131,10 +137,8 @@ class Board {
     }
 
     set Destination(value) {
-        this.departure = value;
+        this.destination = value;
     }
-
-
 }
 
 const writeFrm = document.querySelector("#writeFrm");
@@ -168,10 +172,15 @@ const handleSubmit = (event) => {
         const index = boardsObj.length;
         let instance;
 
+        const startDate = localStorage.getItem('startDate') || '';
+        const endDate = localStorage.getItem('endDate') || ''; 
+
         // 대분류가 택시일 경우 출발지와 도착지 정보 가져오기
         if (selectedCategory === '택시') {
-            departure = event.target.departure.value;
-            destination = event.target.destination.value;
+            if (event.target.departure && event.target.destination) {
+                departure = event.target.departure.value;
+                destination = event.target.destination.value;
+            }
 
             if (!departure || !destination) {
                 alert("출발지와 도착지를 입력해주세요.");
@@ -185,7 +194,9 @@ const handleSubmit = (event) => {
                 selectedCategory,
                 "",
                 departure,
-                destination
+                destination,
+                startDate,
+                endDate
             );
         } else {
             instance = new Board(
@@ -193,7 +204,11 @@ const handleSubmit = (event) => {
                 subject,
                 content,
                 selectedCategory,
-                selectedSubCategory
+                selectedSubCategory,
+                "",
+                "",
+                startDate,
+                endDate
             );
         }
 
@@ -202,7 +217,8 @@ const handleSubmit = (event) => {
         // boards 저장
         const boardsStr = JSON.stringify(boardsObj);
         localStorage.setItem("boards", boardsStr);
-        location.href = "./view.html?index=" + index;
+        location.href = "./view.html?index=" + index + "&category=" + selectedCategory + "&subCategory=" + selectedSubCategory;
+
     } catch (err) {
         // 예외 발생 시 처리
         alert(err.message);
