@@ -1,37 +1,10 @@
-// let boardsStr = localStorage.getItem("boards");
-
-// if (boardsStr === null) {
-//     const listStr = JSON.stringify([]);
-//     localStorage.setItem("boards", listStr);
-//     boardsStr = listStr;
-// }
-
-// // localStorage에서 저장된 데이터 불러오기
-// const boardsObj = JSON.parse(boardsStr);
-
-// const template = (index, objValue) => {
-//     return `
-//     <a href="./view.html?index=${objValue.index}" target="_top">
-//         <div id="subject">${objValue.subject}</div>
-//         <div id="date">작성일: ${objValue.date}</div>
-//         <div id="due">모집 기한: ${objValue.startDate} ~ ${objValue.endDate}</div>
-//     </a>
-//     <hr>        
-//     `
-// }
-
-// const board = document.querySelector(".board");
-
-// for (let i = 0; i < boardsObj.length; i++) {
-//     board.innerHTML += template(i, boardsObj[i]);
-// }
-
 let boardsStr = localStorage.getItem("boards") || "[]"; // default to empty array string
 const boardsObj = JSON.parse(boardsStr);
 
 const params = new URLSearchParams(window.location.search);
 const selectedCategory = params.get("category");
 const selectedSubCategory = params.get("subCategory") || "전체";
+
 
 let category = "";
 
@@ -46,7 +19,7 @@ if (selectedCategory === "delibery") {
 // 게시글 템플릿
 const template = (index, objValue) => {
     return `
-    <a href="./view.html?index=${index}" target="_top">
+    <a href="./view.html?index=${index}&category=${category}&subCategory=${selectedSubCategory}" target="_top">
         <div id="subject">${objValue.subject}</div>
         <div id="date">작성일: ${objValue.date}</div>
         <div id="due">모집 기한: ${objValue.startDate} ~ ${objValue.endDate}</div>
@@ -55,22 +28,36 @@ const template = (index, objValue) => {
     `;
 }
 
-// const filteredBoards = selectedSubCategory !== "전체"
-//     ? boardsObj.filter(board => board.category === category && board.subCategory === selectedSubCategory)
-//     : boardsObj.filter(board => board.category === category);
-
 // 게시글 필터링
-const filteredBoards = selectedSubCategory === "전체"
+const filterBoards = () => {
+    let filteredBoards =  selectedSubCategory === "전체"
     ? boardsObj.filter(board => board.category === category)
     : boardsObj.filter(board => board.category === category && board.subCategory === selectedSubCategory); // 필터링
 
-const board = document.querySelector(".board");
+    const searchKeyword = params.get("search") || "";
 
-// 게시글 표시
-if (filteredBoards.length === 0) {
-    board.innerHTML = '<div class="delibery-post">해당 카테고리의 게시글이 없습니다.</div>';
-} else {
-    filteredBoards.forEach((objValue, index) => {
-        board.innerHTML += template(index, objValue);
-    });
+    // 검색 키워드로 필터링
+    if (searchKeyword) {
+        filteredBoards = filteredBoards.filter(board => board.subject.includes(searchKeyword));
+    }
+
+    const board = document.querySelector(".board");
+    board.innerHTML = "";   // 기존 게시글 목록 초기화
+
+    // 게시글 표시
+    if (filteredBoards.length === 0) {
+        if (searchKeyword) {
+            board.innerHTML = `<div class="post">"${searchKeyword}"에 대한 검색 결과가 없습니다.</div>`;
+        } else {
+            board.innerHTML = '<div class="post">해당 카테고리의 게시글이 없습니다.</div>';
+        }
+    } else {
+        filteredBoards.forEach((objValue) => {
+            const index = boardsObj.findIndex(board => board === objValue);
+            board.innerHTML += template(index, objValue);
+        });
+    }
 }
+
+// 첫 화면 로딩 시 전체 게시글 표시
+filterBoards("");

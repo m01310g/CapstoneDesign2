@@ -4,13 +4,13 @@ const boardsObj = JSON.parse(boardsStr);
 
 // 쿼리스트링의 객체 불러오기
 const params = new URLSearchParams(window.location.search);
-console.log(params);
 const index = params.get("index");
 
 const board = boardsObj[index];
 
 const viewFrm = document.querySelectorAll("#viewFrm > div");
 
+// 각 id에 맞는 정보 불러오기
 for (let i = 0; i < viewFrm.length; i++) {
     const id = viewFrm[i].id;
     viewFrm[i].innerText = board[id];
@@ -19,7 +19,23 @@ for (let i = 0; i < viewFrm.length; i++) {
 const modifyBtn = document.querySelector("#modify");
 
 const handleModifyBtn = () => {
-    location = "./modify.html" + idxObj;
+    location = "./modify.html?index=" + index;
 }
 
 modifyBtn.addEventListener("click", handleModifyBtn);
+
+// 뒤로 가기 버튼
+const backLink = document.querySelector("#back-link");
+const category = document.querySelector("#category").innerText;
+
+let selectedCategory = "";
+
+if (category === "택배") {
+    selectedCategory = "package";
+} else if (category === "배달") {
+    selectedCategory = "delibery";
+} else if (category === "택시") {
+    selectedCategory = "taxi";
+}
+
+backLink.setAttribute("href", `../post/${selectedCategory}.html`);

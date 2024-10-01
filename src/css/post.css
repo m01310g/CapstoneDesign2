@@ -107,3 +107,7 @@ iframe {
     height: 42rem;
     border: none;
 }
+
+li {
+    cursor: pointer;
+}
