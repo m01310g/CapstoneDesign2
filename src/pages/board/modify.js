@@ -17,6 +17,8 @@ const index = location.search.split("=")[1];
 const boardsObj = JSON.parse(localStorage.getItem("boards"));
 const board = boardsObj[index];
 
+const backIcon = document.querySelector("#back-icon");
+
 const subCategories = {
     '택배': ['건강식품', '문구ㆍ도서', '반려동물용품', '생활용품', '식품', '의류', '화장품'],
     '배달': ['다이어트식', '분식', '야식', '양식', '일식', '중식', '한식']
@@ -24,6 +26,10 @@ const subCategories = {
 
 const HIDDEN_CLASS_NAME = "hidden";
 const ON_CLASS_NAME = "on";
+
+backIcon.addEventListener("click", () => {
+    window.history.back();
+});
 
 const updateSubCategories = (category) => {
     const items = subCategories[category];
@@ -83,6 +89,7 @@ window.onload = function() {
         subDropDown.classList.add(HIDDEN_CLASS_NAME);
         document.querySelector(".taxi-search").classList.remove(HIDDEN_CLASS_NAME);
     } else {
+        updateSubCategories(board.category);
         subBtn.innerText = board.subCategory || "소분류 선택";
     }
 
@@ -121,20 +128,34 @@ const handleModify = (event) => {
         const dateRange = $("#date-picker").data("daterangepicker");
         const startDate = dateRange.startDate.format("YYYY년 MM월 DD일 HH시 mm분");
         const endDate = dateRange.endDate.format("YYYY년 MM월 DD일 HH시 mm분");
+        const subCategory = document.querySelector(".sub-btn").innerText;
+        const category = document.querySelector(".category-btn");
+        let selectedCategory = "";
+
+        if (category.innerText === "택시") {
+            selectedCategory = "taxi";
+        } else if (category.innerText === "택배") {
+            selectedCategory = "package";
+        } else if (category.innerText === "배달") {
+            selectedCategory = "delibery";
+        }
 
         board.subject = subject;
         board.content = content;
         board.startDate = startDate;
         board.endDate = endDate;
+        board.category = category.innerText;
+        board.subCategory = subCategory;
 
         if (board.category === "택시") {
-            board.departure
+            board.departure = departure;
+            board.destination = destination;
         }
-destination
+
         boardsObj[index] = board;
         localStorage.setItem("boards", JSON.stringify(boardsObj));
 
-        location.href = "./view.html?index=" + index;
+        location.href = "./view.html?index=" + index + "&category=" + selectedCategory + "&subCategory=" + subCategory;
     } catch(err) {
         alert(err.message);
         console.error(err);

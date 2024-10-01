@@ -6,6 +6,8 @@ const categoryBtn = document.querySelector('.category-btn');
 const subBtn = document.querySelector('.sub-btn');
 const taxiSearch = document.querySelector('.taxi-search');
 
+const backIcon = document.querySelector("#back-icon");
+
 let selectedCategory = '';
 let selectedSubCategory = '';
 
@@ -16,6 +18,11 @@ const subCategories = {
     '택배': ['건강식품', '문구ㆍ도서', '반려동물용품', '생활용품', '식품', '의류', '화장품'],
     '배달': ['다이어트식', '분식', '야식', '양식', '일식', '중식', '한식']
 };
+
+// 이전 페이지로 돌아가기
+backIcon.addEventListener("click", () => {
+    window.history.back();
+})
 
 // 카테고리 버튼 클릭 이벤트
 categoryItems.forEach(item => {
@@ -163,17 +170,22 @@ const handleSubmit = (event) => {
             return;
         }
     }
+    
+    const selectedDatesStr = localStorage.getItem("selectedDates");
+    const selectedDates = JSON.parse(selectedDatesStr) || [];
+    const boardsObj = JSON.parse(localStorage.getItem("boards")) || [];
+    const index = boardsObj.length
+
+    if (selectedDates.length === 0 || !selectedDates[index] || !selectedDates[index].startDate || !selectedDates[index].endDate) {
+        alert("모집 기한을 선택헤주세요.");
+        return;
+    }
+    
+    const startDate = selectedDates[index].startDate;
+    const endDate = selectedDates[index].endDate;
 
     try {
-        // boards 가져오기
-        const boardsObj = JSON.parse(localStorage.getItem("boards")) || [];
-
-        // 객체 추가
-        const index = boardsObj.length;
         let instance;
-
-        const startDate = localStorage.getItem('startDate') || '';
-        const endDate = localStorage.getItem('endDate') || ''; 
 
         // 대분류가 택시일 경우 출발지와 도착지 정보 가져오기
         if (selectedCategory === '택시') {

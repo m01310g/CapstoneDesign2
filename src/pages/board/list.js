@@ -5,7 +5,6 @@ const params = new URLSearchParams(window.location.search);
 const selectedCategory = params.get("category");
 const selectedSubCategory = params.get("subCategory") || "전체";
 
-
 let category = "";
 
 if (selectedCategory === "delibery") {
@@ -18,14 +17,27 @@ if (selectedCategory === "delibery") {
 
 // 게시글 템플릿
 const template = (index, objValue) => {
-    return `
-    <a href="./view.html?index=${index}&category=${category}&subCategory=${selectedSubCategory}" target="_top">
-        <div id="subject">${objValue.subject}</div>
-        <div id="date">작성일: ${objValue.date}</div>
-        <div id="due">모집 기한: ${objValue.startDate} ~ ${objValue.endDate}</div>
-    </a>
-    <hr>        
-    `;
+    if (category === "택시") {
+        return `
+        <a href="./view.html?index=${index}&category=${category}&subCategory=${selectedSubCategory}" target="_top">
+            <div id="subject">${objValue.subject}</div>
+            <div id="route">${objValue.departure} ➡️ ${objValue.destination}</div>
+            <div id="date">작성일: ${objValue.date}</div>
+            <div id="due">모집 기한: ${objValue.startDate} ~ ${objValue.endDate}</div>
+        </a>
+        <hr>        
+        `;
+    } else {
+    
+        return `
+        <a href="./view.html?index=${index}&category=${category}&subCategory=${selectedSubCategory}" target="_top">
+            <div id="subject">${objValue.subject}</div>
+            <div id="date">작성일: ${objValue.date}</div>
+            <div id="due">모집 기한: ${objValue.startDate} ~ ${objValue.endDate}</div>
+        </a>
+        <hr>        
+        `;
+    }
 }
 
 // 게시글 필터링
@@ -40,6 +52,8 @@ const filterBoards = () => {
     if (searchKeyword) {
         filteredBoards = filteredBoards.filter(board => board.subject.includes(searchKeyword));
     }
+
+    filteredBoards.sort((a, b) => b.index - a.index);
 
     const board = document.querySelector(".board");
     board.innerHTML = "";   // 기존 게시글 목록 초기화
@@ -61,3 +75,8 @@ const filterBoards = () => {
 
 // 첫 화면 로딩 시 전체 게시글 표시
 filterBoards("");
+
+const writeBtn = document.querySelector("#write-btn");
+writeBtn.addEventListener("click", () => {
+    writeBtn.href = `./write.html?index=${boardsObj.length}`;
+})

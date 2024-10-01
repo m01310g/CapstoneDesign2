@@ -20,6 +20,9 @@ const modifyBtn = document.querySelector("#modify");
 
 const handleModifyBtn = () => {
     location = "./modify.html?index=" + index;
+    backLink.addEventListener("click", () => {
+        window.history.back();
+    });
 }
 
 modifyBtn.addEventListener("click", handleModifyBtn);

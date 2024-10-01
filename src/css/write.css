@@ -1,5 +1,5 @@
 .box-body {
-    padding: 2rem;
+    padding: 1rem;
 }
 
 .hidden {
@@ -89,7 +89,6 @@ form > div > textarea:focus {
 .dropdown {
     position: relative;
     align-items: center;
-    /* margin: 1rem; */
 }
 
 a > img {
@@ -107,7 +106,7 @@ div > div > div {
 
 .category-btn,
 .sub-btn {
-    width: 16rem;
+    width: 17.2rem;
     padding: 1rem;
     border: none;
     border-radius: 1rem;

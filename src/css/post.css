@@ -30,6 +30,10 @@ div > div > div {
     font-weight: bold;
 }
 
+.btn-select:focus {
+    outline: none;
+}
+
 .btn-select.on {
     background: url("../../assets/img/arrow-up.png") no-repeat center right 14px rgba(190, 190, 190, 0.692);
     background-size: 1.125rem 1.125rem;
@@ -91,6 +95,10 @@ div > div > div {
     height: auto;
     background-color: rgba(0, 0, 0, 0);
     border: none;
+}
+
+.search-btn:focus {
+    outline: none;
 }
 
 button > img {

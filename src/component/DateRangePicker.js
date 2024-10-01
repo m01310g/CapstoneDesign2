@@ -19,7 +19,33 @@ $(function() {
         "drops": "auto",
         timePicker: true
     }, function(start, end) {
-        localStorage.setItem('startDate', start.format('YYYY년 MM월 DD일 HH시 mm분'));
-        localStorage.setItem('endDate', end.format('YYYY년 MM월 DD일 HH시 mm분'));
+        class selectedDates {
+            constructor(indexNum, startDate, endDate) {
+                this.index = indexNum;
+                this.startDate = startDate;
+                this.endDate = endDate;
+            }
+        }
+
+        try {
+            const startDate = start.format("YYYY년 MM월 DD일 HH시 mm분");
+            const endDate = end.format("YYYY년 MM월 DD일 HH시 mm분");
+
+            const selectedDatesObj = localStorage.getItem("selectedDates") ? JSON.parse(localStorage.getItem("selectedDates")) : [];
+            const index = selectedDatesObj.length;
+
+            let instance = new selectedDates(
+                index,
+                startDate,
+                endDate
+            );
+
+            selectedDatesObj.push(instance);
+
+            localStorage.setItem("selectedDates", JSON.stringify(selectedDatesObj));
+        } catch(err) {
+            alert(err.message);
+            console.log(err);
+        }
     });
 });
