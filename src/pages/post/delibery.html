@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/post.css">
+    <title>Document</title>
+</head>
+<body>
+    <div class="body-container">
+        <div class="box-body">
+            <div>
+                <a id="back-icon" href="../category/category.html">
+                    <img src="../../../assets/img/back-icon.png">
+                </a>
+            <h1>배달음식 게시판</h1>
+            </div>
+            <article class="dropdown">
+                <button class="btn-select">전체</button>
+                <ul class="list-member">
+                    <li type="button" data-category="전체">전체</li>
+                    <li type="button" data-category="다이어트식">다이어트식</li>
+                    <li type="button" data-category="분식">분식</li>
+                    <li type="button" data-category="야식">야식</li>
+                    <li type="button" data-category="양식">양식</li>
+                    <li type="button" data-category="일식">일식</li>
+                    <li type="button" data-category="중식">중식</li>
+                    <li type="button" data-category="한식">한식</li>
+                </ul>
+            </article>
+            <div class="search-container">
+                <input class="search" type="text" placeholder="키워드 검색"></input>
+                <button class="search-btn">
+                    <img class="serach-img" src="../../../assets/img/search.png">
+                </button>
+            </div>
+            <div class="search-result hidden"></div>
+            <iframe src="../board/list.html?category=delibery"></iframe>
+        </div>
+    </div>
+</body>
+<script src="./post.js"></script>
+<script src="./delibery.js"></script>
+</html>

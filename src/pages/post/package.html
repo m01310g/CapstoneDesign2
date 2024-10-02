@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../../css/post.css">
+    <link rel="stylesheet" href="../../css/style.css">
+    <title>Document</title>
+</head>
+<body>
+    <div class="body-container">
+        <div class="box-body">
+            <div>
+                <a id="back-icon" href="../category/category.html">
+                    <img src="../../../assets/img/back-icon.png">
+                </a>
+                <h1>택배 게시판</h1>
+            </div>
+            <article class="dropdown">
+                <button class="btn-select">전체</button>
+                <ul class="list-member">
+                    <li type="button" data-category="전체">전체</li>
+                    <li type="button" data-category="건강식품">건강식품</li>
+                    <li type="button" data-category="문구ㆍ도서">문구ㆍ도서</li>
+                    <li type="button" data-category="반려동물용품">반려동물용품</li>
+                    <li type="button" data-category="생활용품">생활용품</li>
+                    <li type="button" data-category="식품">식품</li>
+                    <li type="button" data-category="의류">의류</li>
+                    <li type="button" data-category="화장품">화장품</li>
+                </ul>
+            </article>
+            <div class="search-container">
+                <input class="search" type="text" placeholder="키워드 검색"></input>
+                <button class="search-btn">
+                    <img class="serach-img" src="../../../assets/img/search.png">
+                </button>
+            </div>
+            <div class="search-result hidden"></div>
+            <iframe src="../board/list.html?category=package"></iframe>
+        </div>
+    </div>
+</body>
+<script src="./post.js"></script>
+<script src="./package.js"></script>
+</html>

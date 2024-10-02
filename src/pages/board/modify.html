@@ -18,8 +18,8 @@
                 <a id="back-icon" href="#">
                     <img src="../../../assets/img/back-icon.png">
                 </a>
-                <h1>작성</h1>
-            </div>
+                <h1>수정</h1>
+            </div>            
             <div>
                 <!-- 첫 번째 드롭다운: 카테고리 선택 -->
                 <article class="dropdown">
@@ -31,17 +31,16 @@
                     </ul>
                 </article>
                 <!-- 두 번째 드롭다운: 소분류 선택 -->
-                <article class="dropdown hidden sub-dropdown">
+                <article class="dropdown sub-dropdown">
                     <button class="sub-btn">소분류 선택</button>
                     <ul class="sub-member"></ul>
                 </article>
             </div>
             <!-- 종료 기한 선택 -->
             <input type="text" id="date-picker">
-            <!-- <input type="date" id="end-date"> -->
-        
-            <form id="writeFrm">
+            
             <!-- 소분류 선택 -> 택시 선택 시 출발지/목적지 검색 -->
+            <form id="modifyFrm">
                 <div class="taxi-search hidden">
                     <input type="text" placeholder="출발지" id="departure">
                     <input type="text" placeholder="도착지" id="destination">
@@ -52,7 +51,7 @@
                 <div>
                     <textarea name="content" placeholder="글 입력"></textarea>
                 </div>
-                <button id="write">작성</button>
+                <button id="modify">수정</button>
             </form>
         </div>
     </div>
@@ -60,6 +59,6 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
     <script src="../../component/DateRangePicker.js"></script>
-    <script src="./write.js"></script>
+    <script src="./modify.js"></script>
 </body>
 </html>
