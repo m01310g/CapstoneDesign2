@@ -40,6 +40,12 @@ subCategory.addEventListener("click", () => {
 });
 
 document.addEventListener("DOMContentLoaded", () => {
+    // 검색창 초기화
+    searchInput.value = "";
+
+    // 검색 결과 div 숨기기
+    searchResult.classList.add(HIDDEN_CLASS_NAME);
+    
     const savedSubCategory = localStorage.getItem("selectedSubCategory");
     if (savedSubCategory) {
         subCategory.innerText = savedSubCategory;
