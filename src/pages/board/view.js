@@ -42,3 +42,16 @@ if (category === "택배") {
 }
 
 backLink.setAttribute("href", `../post/${selectedCategory}.html`);
+
+// 삭제 버튼
+const deleteBtn = document.querySelector("#delete");
+deleteBtn.addEventListener("click", () => {
+    boardsObj.splice(index, 1);
+    for (let i = 0; i < boardsObj.length; i++) {
+        boardsObj[i].index = i;
+    }
+
+    const setBoardsStr = JSON.stringify(boardsObj);
+    localStorage.setItem("boards", setBoardsStr);
+    location.href = `../post/${selectedCategory}.html`;
+});
