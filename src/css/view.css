@@ -52,3 +52,21 @@ div > div > div {
     -webkit-box-orient: vertical;
     word-wrap: break-word;
 }
+
+
+#modify,
+#delete {
+    border: none;
+    border-radius: 1rem;
+    padding: 0.5rem;
+    font-size: 1rem;
+    background-color: transparent;
+    color: grey;
+}
+
+.button-container {
+    position: absolute;
+    top: 9.5rem;
+    right: 2rem;
+    color: grey;
+}
