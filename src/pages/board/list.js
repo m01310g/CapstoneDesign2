@@ -76,7 +76,7 @@ const filterBoards = () => {
 // 첫 화면 로딩 시 전체 게시글 표시
 filterBoards("");
 
-const writeBtn = document.querySelector("#write-btn");
-writeBtn.addEventListener("click", () => {
-    writeBtn.href = `./write.html?index=${boardsObj.length}`;
-})
+// const writeBtn = document.querySelector("#write-btn");
+// writeBtn.addEventListener("click", () => {
+//     writeBtn.href = `./write.html?index=${boardsObj.length}`;
+// })

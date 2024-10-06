@@ -39,13 +39,16 @@
             <!-- 종료 기한 선택 -->
             <input type="text" id="date-picker">
             <!-- <input type="date" id="end-date"> -->
-        
+            <button id="confirm-btn" class="hidden"></button>
+
             <form id="writeFrm">
             <!-- 소분류 선택 -> 택시 선택 시 출발지/목적지 검색 -->
                 <div class="taxi-search hidden">
                     <input type="text" placeholder="출발지" id="departure">
                     <input type="text" placeholder="도착지" id="destination">
                 </div>
+                <!-- 지도 -->
+                <div id="map" class="hidden"></div>
                 <div>
                     <input type="text" name="subject" placeholder="제목">
                 </div>
@@ -61,5 +64,6 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
     <script src="../../component/DateRangePicker.js"></script>
     <script src="./write.js"></script>
+    <script src="../../component/Map.js"></script>
 </body>
 </html>

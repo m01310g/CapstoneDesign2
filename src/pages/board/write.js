@@ -165,7 +165,7 @@ const handleSubmit = (event) => {
             return;
         }
 
-        if (!selectedSubCategory) {
+        if ((selectedCategory === '택배' || selectedCategory === '배달') && !selectedSubCategory) {
             alert("소분류를 선택해주세요.");
             return;
         }
@@ -174,7 +174,7 @@ const handleSubmit = (event) => {
     const selectedDatesStr = localStorage.getItem("selectedDates");
     const selectedDates = JSON.parse(selectedDatesStr) || [];
     const boardsObj = JSON.parse(localStorage.getItem("boards")) || [];
-    const index = boardsObj.length
+    const index = boardsObj.length;
 
     if (selectedDates.length === 0 || !selectedDates[index] || !selectedDates[index].startDate || !selectedDates[index].endDate) {
         alert("모집 기한을 선택헤주세요.");
