@@ -32,12 +32,13 @@
           <div>
             <label for="user-tel">전화번호</label>
             <br>
-            <input type="tel" name="user-tel">
+            <input type="text" name="user-tel" oninput="insertHyphen(this)">
           </div>
           <input type="submit" value="수정">
         </form>
       </main>
     </div>
   </div>
+  <script src="./my-info-change.js"></script>
 </body>
 </html>
