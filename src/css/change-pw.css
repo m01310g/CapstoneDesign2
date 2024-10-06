@@ -2,8 +2,10 @@
   margin-bottom: 2.5rem;
 }
 
-.page-header > a:nth-child(1) {
-  font-size: 1.3rem;
+ .page-header > a:nth-child(1) > img {
+  margin-top: 0.33rem;
+  width: 1.5rem;
+  height: 1.5rem;
 }
 
 .page-main {
@@ -24,7 +26,7 @@ a:active {
 #change-pw-title {
   display: flex;
   justify-content: center;
-  font-size: 1.15rem;
+  font-size: 1.4rem;
   font-weight: 700;
   padding-bottom: 1rem;
   border-bottom: 2px solid rgba(0,0,0, 1);
