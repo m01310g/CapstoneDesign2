@@ -8,9 +8,17 @@ document.addEventListener('DOMContentLoaded', function () {
     let operator = '';
     let shouldResetScreen = false;
 
-    // Function to update the calculator screen
+    // Function to update the calculator screen with formatted numbers
     function updateScreen(value) {
-        calculatorScreen.value = value;
+        calculatorScreen.value = formatNumber(value);
+    }
+
+    // Function to format numbers with commas
+    function formatNumber(number) {
+        if (number === 'Error') return number; // Handle error case without formatting
+        const [integer, decimal] = number.toString().split('.');
+        const formattedInteger = parseFloat(integer).toLocaleString('en-US'); // Add commas to the integer part
+        return decimal ? `${formattedInteger}.${decimal}` : formattedInteger;
     }
 
     // Function to handle digit and decimal point inputs
@@ -21,14 +29,14 @@ document.addEventListener('DOMContentLoaded', function () {
         } else {
             calculatorScreen.value === '0'
                 ? updateScreen(number)
-                : updateScreen(calculatorScreen.value + number);
+                : updateScreen(calculatorScreen.value.replace(/,/g, '') + number); // Remove commas before updating
         }
     }
 
     // Function to handle operator input
     function handleOperatorInput(selectedOperator) {
         if (operator) calculate(); // Perform the calculation if operator already exists
-        firstOperand = calculatorScreen.value;
+        firstOperand = calculatorScreen.value.replace(/,/g, ''); // Remove commas before storing
         operator = selectedOperator;
         shouldResetScreen = true;
     }
@@ -36,7 +44,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Function to perform calculations
     function calculate() {
         if (operator === '' || shouldResetScreen) return;
-        secondOperand = calculatorScreen.value;
+        secondOperand = calculatorScreen.value.replace(/,/g, ''); // Remove commas before calculating
         let result;
         switch (operator) {
             case '+':
