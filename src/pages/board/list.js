@@ -21,7 +21,7 @@ const template = (index, objValue) => {
         return `
         <a href="./view.html?index=${index}&category=${category}&subCategory=${selectedSubCategory}" target="_top">
             <div id="subject">${objValue.subject}</div>
-            <div id="route">${objValue.departure} ➡️ ${objValue.destination}</div>
+            <div id="route">${objValue.departure.address} ➡️ ${objValue.destination.address}</div>
             <div id="date">작성일: ${objValue.date}</div>
             <div id="due">모집 기한: ${objValue.startDate} ~ ${objValue.endDate}</div>
         </a>
@@ -75,8 +75,3 @@ const filterBoards = () => {
 
 // 첫 화면 로딩 시 전체 게시글 표시
 filterBoards("");
-
-const writeBtn = document.querySelector("#write-btn");
-writeBtn.addEventListener("click", () => {
-    writeBtn.href = `./write.html?index=${boardsObj.length}`;
-})

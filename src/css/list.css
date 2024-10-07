@@ -4,9 +4,9 @@ a {
 }
 
 #subject {
-    font-size: 1.2rem;
+    font-size: 1.5rem;
     font-weight: bold;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.3rem;
     /* margin-top: 1rem; */
     text-overflow: ellipsis;
     overflow: hidden;
@@ -23,7 +23,7 @@ a:active {
 
 #date {
     font-size: 1rem;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.3rem;
 }
 
 #due {
@@ -32,36 +32,19 @@ a:active {
     text-overflow: ellipsis;
     overflow: hidden;
     display: block;
-    white-space: nowrap;
+    white-space: normal;
+    word-wrap: break-word;
 }
 
 .board {
     padding: 1rem 2rem 2rem 1.5rem;
+    width: 100%;
 }
 
 .board > hr {
     margin-bottom: 1rem;
 }
 
-.img-container {
-    width: 4.5rem;
-    height: auto;
-    border-radius: 50%;
-    background-color: #F5AF12;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: absolute;
-    right: 2rem;
-    bottom: 2rem;
-    z-index: 1000;
-}
-
-.img-container img {
-    padding: 1.2rem;
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    filter: invert();
+#route {
+    margin-bottom: 0.3rem;
 }
