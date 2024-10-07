@@ -1,15 +1,163 @@
-button {
-    width: 50px;
-    height: 50px;
-    border-radius: 50px;
+.logo { /* 로고 크기 조절 */
+    width: 6rem;
+    height: auto;
+}
+
+#my-info-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+  
+.box-body > div:nth-child(2) {
+    margin: 1rem;
+    display: flex;
+    position: relative;
+}
+  
+a {
+    text-decoration: none;
+    color: #000;
+    font-weight: 600;
+}
+  
+a:visited,
+a:focus,
+a:hover,
+a:active {
+    color: #000;
+}
+  
+.box-body {
+    /* nav 높이 */
+    padding-bottom: 10px;
+}
+  
+#bottom-nav-bar {
+    max-width: 37rem; /* .box-body와 동일 width */
+    width: 100%;
+    margin: 0 auto;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    padding: 0.3rem 3.3rem;
+    font-size: 0.725rem;
+    font-weight: 600;
+    justify-content: space-between;
+}
+  
+#bottom-nav-bar img {
+    height: 1.5rem;
+}
+
+#chatting-icon-container div {
+    position: relative;
+    left: 0.135rem;
+  }
+
+  #category-icon-container div {
+    position: relative;
+    right: 0.45rem;
+}
+  
+#home-icon-container div {
+    position: relative;
+    left: 0.422rem;
+}
+  
+#notification-icon-container div {
+    position: relative;
+    left: 0.125rem;
+}
+  
+#my-page-icon-container div {
+    position: relative;
+    left: 0.15rem;
+}
+
+/* Calculator Container */
+.calculator {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #f0f0f0;
+    border-radius: 12px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    width: 360px; /* Slightly wider to accommodate new buttons */
+    margin: 2rem auto;
+    padding: 1.5rem;
+}
+
+/* Display Screen */
+.calculator-screen {
+    width: 100%;
+    height: 70px;
+    background-color: #222;
+    color: #fff;
+    font-size: 2rem;
+    text-align: right;
+    padding: 0.5rem;
     border: none;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
 }
 
-button:hover {
-    filter: brightness(80%);
+/* Calculator Buttons */
+.calculator-keys {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
 }
 
-.mini-display {
-    font-size: 10px;
-    color: grey;
+.calculator-key {
+    background-color: #fff;
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    padding: 1rem;
+    font-size: 1.5rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.calculator-key:hover {
+    background-color: #f1f1f1;
+}
+
+.calculator-key:active {
+    background-color: #ddd;
+    transform: scale(0.95);
+}
+
+/* Special Buttons (like clear, operators, and equals) */
+.calculator-key--operator {
+    background-color: #f7b731;
+    color: #fff;
+}
+
+.calculator-key--operator:hover {
+    background-color: #ffa502;
+}
+
+.calculator-key--equals {
+    background-color: #2ed573;
+    color: #fff;
+    grid-column: span 2; /* Make the equals button wider */
+}
+
+.calculator-key--equals:hover {
+    background-color: #20bf6b;
+}
+
+.calculator-key--clear {
+    background-color: #ff4757;
+    color: #fff;
+}
+
+.calculator-key--clear:hover {
+    background-color: #ff6b81;
 }
