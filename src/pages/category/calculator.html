@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CO/N</title>
+    <link rel="stylesheet" href="../../css/style.css"/>
+    <link rel="stylesheet" href="../../css/calculator.css"/>
+</head>
+<body>
+    <div class="body-container">
+        <div class="box-body">
+            <header class="page-header">
+                <img class="logo" src="../../../assets/img/logo.jpg"/>
+            </header>
+
+            <H1>계산기</H1>
+
+            <!-- Calculator Component -->
+            <div class="calculator">
+                <input type="text" class="calculator-screen" disabled />
+
+                <div class="calculator-keys">
+                    <button class="calculator-key">7</button>
+                    <button class="calculator-key">8</button>
+                    <button class="calculator-key">9</button>
+                    <button class="calculator-key calculator-key--operator">÷</button>
+
+                    <button class="calculator-key">4</button>
+                    <button class="calculator-key">5</button>
+                    <button class="calculator-key">6</button>
+                    <button class="calculator-key calculator-key--operator">×</button>
+
+                    <button class="calculator-key">1</button>
+                    <button class="calculator-key">2</button>
+                    <button class="calculator-key">3</button>
+                    <button class="calculator-key calculator-key--operator">-</button>
+
+                    <button class="calculator-key">0</button>
+                    <button class="calculator-key">00</button>
+                    <button class="calculator-key">000</button>
+                    <button class="calculator-key calculator-key--operator">+</button>
+                    <button class="calculator-key">C</button>
+                    <button class="calculator-key">.</button>
+                    <button class="calculator-key calculator-key--equals">=</button>
+                </div>
+            </div>
+
+            <!-- Bottom Navigation -->
+            <bottom-nav data-page="category"></bottom-nav>
+        </div>
+    </div>
+    
+    <script src="../../component/BottomNav.js"></script>
+    <script src="./calculator.js"></script>
+</body>
+</html>
