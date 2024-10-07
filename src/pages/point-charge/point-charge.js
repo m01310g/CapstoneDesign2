@@ -1,25 +1,32 @@
 const display = document.querySelector('#display');
-    const amountBtns = document.querySelectorAll('.amount');
-    const inputField = document.querySelector('#inputField');
-    const selfBtn = document.querySelector('#self');
+const amountBtns = document.querySelectorAll('.amount');
+const inputField = document.querySelector('#inputField');
+const selfBtn = document.querySelector('#self');
 
-    amountBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            const amount = btn.innerText; // 클릭한 버튼의 텍스트를 가져옴
-            display.textContent = `충전할 금액: ${amount}원`; // 금액 표시 업데이트
-            inputField.style.display = 'none'; // 입력 필드 숨김
-            selfBtn.style.display = 'block'; // 직접입력 버튼 보이기
-        });
-    });
+// Function to format numbers with commas
+const formatNumberWithCommas = (number) => {
+    return new Intl.NumberFormat('en-US').format(number);
+};
 
-    selfBtn.addEventListener('click', () => {
-        inputField.style.display = 'block'; // 입력 필드 보이기
-        selfBtn.style.display = 'none'; // 직접입력 버튼 숨김
-        display.textContent = ''; // 디스플레이 초기화
-        inputField.focus(); // 입력 필드에 포커스
+amountBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+        const amount = btn.innerText.replace(/,/g, ''); // Remove commas from the button text if any
+        const formattedAmount = formatNumberWithCommas(amount); // Format the amount with commas
+        display.textContent = `충전할 금액: ${formattedAmount}원`; // Update display with formatted amount
+        inputField.style.display = 'none'; // Hide input field
+        selfBtn.style.display = 'block'; // Show self-input button
     });
+});
 
-    inputField.addEventListener('input', () => {
-        const amount = inputField.value; // 입력된 값을 가져옴
-        display.textContent = `충전할 금액: ${amount}원`; // 금액 표시 업데이트 
-    });
+selfBtn.addEventListener('click', () => {
+    inputField.style.display = 'block'; // Show input field
+    selfBtn.style.display = 'none'; // Hide self-input button
+    display.textContent = ''; // Clear display
+    inputField.focus(); // Focus on the input field
+});
+
+inputField.addEventListener('input', () => {
+    const amount = inputField.value.replace(/,/g, ''); // Remove commas from the input field value if any
+    const formattedAmount = formatNumberWithCommas(amount); // Format the amount with commas
+    display.textContent = `충전할 금액: ${formattedAmount}원`; // Update display with formatted amount
+});
