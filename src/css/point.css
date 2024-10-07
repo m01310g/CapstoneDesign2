@@ -93,3 +93,128 @@
   #penalty-count {
     color: red;
   }
+
+  .button-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.amount, #self {
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px 0;
+    text-align: center;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+}
+
+.amount:hover, #self:hover {
+    background-color: #dcdcdc;
+}
+
+#inputField {
+    display: none; /* Initially hidden */
+    margin-top: 10px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 100%;
+}
+
+.amount-container {
+  margin-top: 20px; /* Space between the gray box and the amount container */
+  padding: 15px;
+  background-color: #f9f9f9;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+}
+
+#display {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.button-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 15px; /* Space between the buttons and the input field */
+}
+
+.amount, #self {
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+  flex: 1 1 30%; /* Ensures buttons take up equal width and wrap properly */
+  max-width: 120px; /* Sets a maximum width for the buttons */
+}
+
+.amount:hover, #self:hover {
+  background-color: #dcdcdc;
+}
+
+#inputField {
+  display: none; /* Initially hidden */
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: calc(100% - 20px);
+  margin: 0 auto;
+  text-align: center;
+}
+
+.exchange-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+  padding: 15px;
+  background-color: #f9f9f9;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+}
+
+#inputField {
+  width: 80%;
+  max-width: 300px;
+  padding: 12px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  text-align: center;
+  transition: border-color 0.3s ease;
+}
+
+#inputField:focus {
+  border-color: #a0a0a0; /* Border color changes on focus */
+  outline: none;
+}
+
+#exchangeButton {
+  width: 80%;
+  max-width: 300px;
+  padding: 12px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  text-align: center;
+}
+
+#exchangeButton:hover {
+  background-color: #45a049; /* Darker green on hover */
+}
