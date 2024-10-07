@@ -23,8 +23,8 @@ class WriteBtn extends HTMLElement {
 
             .img-container {
                 padding: 1.2rem;
-                width: 3rem;
-                height: 3rem;
+                width: 2rem;
+                height: 2rem;
                 border-radius: 50%;
                 background-color: #F5AF12;
                 overflow: hidden;
@@ -33,13 +33,13 @@ class WriteBtn extends HTMLElement {
                 justify-content: center;
                 position: absolute;
                 right: 5%;
-                top: 87%;
+                bottom: 5%;
                 z-index: 1000;
             }
 
             .img-container img {
-                width: 3rem;
-                height: 3rem;
+                width: 2rem;
+                height: 2rem;
                 object-fit: contain;
                 filter: invert();
             }

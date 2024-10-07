@@ -50,7 +50,6 @@ class BottomNav extends HTMLElement {
                 right: 0;
                 bottom: 0;
                 display: flex;
-                padding: 0.3rem 3.3rem;
                 font-size: 0.725rem;
                 font-weight: 600;
                 justify-content: space-between;
@@ -72,6 +71,10 @@ class BottomNav extends HTMLElement {
             #bottom-nav-bar div div {
                 margin-top: 0.3rem;
                 font-size: 0.8rem;
+            }
+
+            nav {
+                width: 100%;
             }
         `;
 

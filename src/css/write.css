@@ -104,9 +104,17 @@ div > div > div {
     margin-bottom: 1rem;
 }
 
+.dropdown {
+    width: 48%;
+}
+
+.main-dropdown {
+    margin-right: 4%;
+}
+
 .category-btn,
 .sub-btn {
-    width: 17.2rem;
+    width: 100%;
     padding: 1rem;
     border: none;
     border-radius: 1rem;
@@ -116,10 +124,6 @@ div > div > div {
     background-size: 1.125rem 1.125rem;
     font-size: 1.125rem;
     font-weight: bold;
-}
-
-.sub-btn {
-    margin-left: 0.5rem;
 }
 
 .category-btn.on,
@@ -171,22 +175,16 @@ ul li button {
 }
 
 .taxi-search input {
-    width: 48%;
+    width: 100%;
     height: 3rem;
-    padding: 1rem;
     font-size: 1.125rem;
     border: none;
     border-bottom: 0.1rem solid grey;
-    margin-top: 1rem;
     cursor: pointer;
 }
 
 .taxi-search input:focus {
     outline: none;
-}
-
-.taxi-search :nth-child(2) {
-    margin-left: 1rem;
 }
 
 #date-picker {

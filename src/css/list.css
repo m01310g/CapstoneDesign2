@@ -32,11 +32,13 @@ a:active {
     text-overflow: ellipsis;
     overflow: hidden;
     display: block;
-    white-space: nowrap;
+    white-space: normal;
+    word-wrap: break-word;
 }
 
 .board {
     padding: 1rem 2rem 2rem 1.5rem;
+    width: 100%;
 }
 
 .board > hr {

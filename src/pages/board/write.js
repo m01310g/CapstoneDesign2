@@ -194,6 +194,9 @@ const handleSubmit = (event) => {
                 destination = event.target.destination.value;
             }
 
+            const departureCoords = JSON.parse(localStorage.getItem("departureCoords"));
+            const destinationCoords = JSON.parse(localStorage.getItem("destinationCoords"));
+
             if (!departure || !destination) {
                 alert("출발지와 도착지를 입력해주세요.");
                 return;
@@ -205,8 +208,8 @@ const handleSubmit = (event) => {
                 content,
                 selectedCategory,
                 "",
-                departure,
-                destination,
+                { address: departure, ...departureCoords },
+                { address: destination, ...destinationCoords},
                 startDate,
                 endDate
             );
@@ -229,6 +232,8 @@ const handleSubmit = (event) => {
         // boards 저장
         const boardsStr = JSON.stringify(boardsObj);
         localStorage.setItem("boards", boardsStr);
+        localStorage.removeItem("departureCoords");
+        localStorage.removeItem("destinationCoords");
         location.href = "./view.html?index=" + index + "&category=" + selectedCategory + "&subCategory=" + selectedSubCategory;
 
     } catch (err) {
