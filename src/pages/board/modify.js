@@ -10,6 +10,7 @@ const subDropDown = document.querySelector(".sub-dropdown");
 const categoryItems = document.querySelectorAll(".category-member li");
 const subItems = document.querySelector(".sub-member");
 const taxiSearch = document.querySelector('.taxi-search');
+const maxCapacity = document.querySelector("#capacity");
 
 const idxObj = location.search;
 const index = location.search.split("=")[1];
@@ -84,8 +85,8 @@ window.onload = function() {
     console.log(board);
 
     if (board.category === "택시") {
-        departureInput.value = board.departure;
-        destinationInput.value = board.destination;
+        departureInput.value = board.departure.address;
+        destinationInput.value = board.destination.address;
         subDropDown.classList.add(HIDDEN_CLASS_NAME);
         document.querySelector(".taxi-search").classList.remove(HIDDEN_CLASS_NAME);
     } else {
@@ -95,6 +96,7 @@ window.onload = function() {
 
     subjectInput.value = board.subject;
     contentTextarea.value = board.content;
+    maxCapacity.value = board.maxCapacity;
 
     $("#date-picker").daterangepicker({
         startDate: board.startDate,
@@ -130,6 +132,7 @@ const handleModify = (event) => {
         const endDate = dateRange.endDate.format("YYYY년 MM월 DD일 HH시 mm분");
         const subCategory = document.querySelector(".sub-btn").innerText;
         const category = document.querySelector(".category-btn");
+        const maxCapacity = event.target.capacity.value;
         let selectedCategory = "";
 
         if (category.innerText === "택시") {
@@ -146,6 +149,7 @@ const handleModify = (event) => {
         board.endDate = endDate;
         board.category = category.innerText;
         board.subCategory = subCategory;
+        board.maxCapacity = maxCapacity;
 
         if (board.category === "택시") {
             board.departure = departure;
