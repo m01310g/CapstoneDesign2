@@ -54,6 +54,8 @@ class BottomNav extends HTMLElement {
                 font-weight: 600;
                 justify-content: space-between;
                 align-items: center;
+                background-color: #FFFFFF;
+                padding-top: 1rem;
             }
 
             #bottom-nav-bar img {

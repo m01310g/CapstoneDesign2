@@ -108,7 +108,7 @@ const recordDate = () => {
 };
 
 class Board {
-    constructor(indexNum, subjectStr, contentStr, category, subCategory, departure, destination, startDate, endDate) {
+    constructor(indexNum, subjectStr, contentStr, category, subCategory, departure, destination, startDate, endDate, currentCapacity, maxCapacity, price) {
         this.index = indexNum;
         this.Subject = subjectStr;
         this.Content = contentStr;
@@ -118,6 +118,9 @@ class Board {
         this.Destination = destination;
         this.startDate = startDate;
         this.endDate = endDate;
+        this.currentCapacity = currentCapacity;
+        this.maxCapacity = maxCapacity;
+        this.price = price;
         this.date = recordDate();
     }
 
@@ -183,6 +186,9 @@ const handleSubmit = (event) => {
     
     const startDate = selectedDates[index].startDate;
     const endDate = selectedDates[index].endDate;
+    const maxCapacity = event.target.capacity.value;
+    const currentCapacity = 1;
+    const price = event.target.price.value;
 
     try {
         let instance;
@@ -211,7 +217,10 @@ const handleSubmit = (event) => {
                 { address: departure, ...departureCoords },
                 { address: destination, ...destinationCoords},
                 startDate,
-                endDate
+                endDate,
+                currentCapacity,
+                maxCapacity,
+                price
             );
         } else {
             instance = new Board(
@@ -223,7 +232,10 @@ const handleSubmit = (event) => {
                 "",
                 "",
                 startDate,
-                endDate
+                endDate,
+                currentCapacity,
+                maxCapacity,
+                price
             );
         }
 

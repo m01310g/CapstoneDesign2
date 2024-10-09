@@ -4,6 +4,7 @@ a {
 }
 
 #subject {
+    width: 70%;
     font-size: 1.5rem;
     font-weight: bold;
     margin-bottom: 0.3rem;
@@ -23,12 +24,13 @@ a:active {
 
 #date {
     font-size: 1rem;
-    margin-bottom: 0.3rem;
+    margin-bottom: 1rem;
 }
 
-#due {
+#status {
     font-size: 1rem;
-    margin-bottom: 1rem;
+    margin-bottom: 0.3rem;
+    font-weight: bold;
     text-overflow: ellipsis;
     overflow: hidden;
     display: block;
@@ -47,4 +49,40 @@ a:active {
 
 #route {
     margin-bottom: 0.3rem;
+}
+
+.status-pending {
+    color: grey;
+    font-weight: bold;
+}
+
+.status-active {
+    color: blue;
+    font-weight: bold;
+}
+
+.status-closed {
+    color: red;
+    font-weight: bold;
+}
+
+#capacity-container {
+    margin-left: auto;
+    font-size: 1.3rem;
+}
+
+.current-capacity {
+    color: blue;
+    font-weight: bold;
+}
+
+.board-link {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+#content-container {
+    width: 80%;
 }

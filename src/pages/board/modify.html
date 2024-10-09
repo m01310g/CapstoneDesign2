@@ -45,8 +45,9 @@
                     <input type="text" placeholder="출발지" id="departure">
                     <input type="text" placeholder="도착지" id="destination">
                 </div>
-                <div>
-                    <input type="text" name="subject" placeholder="제목">
+                <div id="subject-container">
+                    <input type="text" id="subject" name="subject" placeholder="제목">
+                    <input type="number" id="capacity" name="capacity" min="2" max="10" placeholder="인원" required>
                 </div>
                 <div>
                     <textarea name="content" placeholder="글 입력"></textarea>

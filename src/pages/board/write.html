@@ -38,7 +38,6 @@
             </div>
             <!-- 종료 기한 선택 -->
             <input type="text" id="date-picker">
-            <!-- <input type="date" id="end-date"> -->
             <button id="confirm-btn" class="hidden"></button>
 
             <form id="writeFrm">
@@ -49,8 +48,13 @@
                 </div>
                 <!-- 지도 -->
                 <div id="map" class="hidden"></div>
-                <div>
-                    <input type="text" name="subject" placeholder="제목">
+                <div id="subject-container">
+                    <input type="text" id="subject" name="subject" placeholder="제목">
+                    <input type="number" id="capacity" name="capacity" min="2" max="10" placeholder="인원" required>
+                </div>
+                <div id="price-container">
+                    <input type="number" id="price" name="price" min="1000" placeholder="예상 총액 입력">
+                    <label for="price">원</label>
                 </div>
                 <div>
                     <textarea name="content" placeholder="글 입력"></textarea>

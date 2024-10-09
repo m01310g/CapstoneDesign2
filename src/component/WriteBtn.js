@@ -33,7 +33,7 @@ class WriteBtn extends HTMLElement {
                 justify-content: center;
                 position: absolute;
                 right: 5%;
-                bottom: 5%;
+                bottom: 6rem;
                 z-index: 1000;
             }
 

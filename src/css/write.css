@@ -6,12 +6,6 @@
     display: none;
 }
 
-div > div > div {
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-}
-
 #write {
     border: none;
     width: 4.8rem;
@@ -49,27 +43,46 @@ div > div > div {
 }
 
 #modifyFrm {
-    /* margin: 1rem; */
     margin-top: 1rem;
 }
 
 #writeFrm {
-    /* margin: 1rem; */
     margin-top: 1rem;
 }
 
-form > div > input {
-    width: 100%;
+#subject {
+    max-width: 70%;
     height: 4rem;
-    font-size: 2rem;
+    font-size: 1.3rem;
     font-weight: bold;
+    padding: 2rem 1rem 1.5rem 1rem;
+    border: none;
+    border-bottom: 0.1rem solid grey;
+    margin-right: 0.5rem;
+}
+
+#subject:focus {
+    outline: none;
+}
+
+#capacity {
+    flex: 0 0 auto;
+    width: 25%;
+    height: 4rem;
+    font-size: 1rem;
     padding: 2rem 1rem 1.5rem 1rem;
     border: none;
     border-bottom: 0.1rem solid grey;
 }
 
-form > div > input:focus {
+#capacity:focus {
     outline: none;
+}
+
+#subject-container {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
 }
 
 form > div > textarea {
@@ -218,8 +231,9 @@ ul li button {
 #confirm-btn {
     position: absolute;
     z-index: 999;
-    top: 23rem;
-    left: 15rem;
+    top: 32%;
+    left: 35%;
+    right: 35%;
     font-size: 1rem;
     font-weight: bold;
     padding: 0.5rem 1rem 0.5rem 1rem;
@@ -233,4 +247,22 @@ ul li button {
     height: auto;
     background-color: rgba(0, 0, 0, 0);
     border: none;
+}
+
+#price {
+    border: none;
+    border-bottom: 0.1rem solid grey;
+    font-weight: bold;
+    padding: 1rem;
+    font-size: 1.1rem;
+    width: 10rem;
+    margin-top: 0.3rem;
+}
+
+#price:focus {
+    outline: none;
+}
+
+#price-container > label {
+    font-size: 1.1rem;
 }
