@@ -1,14 +1,60 @@
-.point {
-    width: auto;
-    height: 80px;
-    background-color: orange;
-    text-align: center;
-    font-weight: bold;
-    position: relative;
-    color: white;
-    border-radius: 25px;
+.box-body > h1 {
+    padding: 1rem;
 }
 
-.hidden {
-    display: none;
+.box-body {
+    /* nav 높이 */
+    padding-bottom: 10px;
+}   
+
+a {
+    text-decoration: none;
+    color: #000;
+    font-weight: 600;
+}
+
+a:visited,
+a:focus,
+a:hover,
+a:active {
+  color: #000;
+}
+
+#point-info {
+    display: flex;
+    justify-content: space-between;
+    padding: 1rem;
+    background-color: lightgray;
+}
+
+#available-point {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+#available-point > :nth-child(1) {
+    font-weight: 650;
+    margin-bottom: 0.2rem;
+  }
+
+#exchange-point-anchor {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    margin-top: 0.7rem;
+}
+
+#service-container > :nth-child(1) {
+    margin: 2rem 0 0.8rem 1rem;
+}
+
+#service-menu > a {
+    display: flex;
+    flex-direction: column;
+    padding: 1.3rem 1.3rem 1.3rem 0;
+}
+
+#service-menu > a {
+    font-size: 1.3rem;
 }

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/post.css">
+    <title>Document</title>
+</head>
+<body>
+    <div class="body-container">
+        <div class="box-body">
+            <div>
+                <a href="../category/category.html">
+                    <img src="../../../assets/img/back-icon.png">
+                </a>
+                <h1>택시 게시판</h1>
+            </div>
+            <div class="search-container">
+                <input class="departure" id="departure" type="text" placeholder="출발지 입력"></input>
+            </div>
+            <div class="search-container">
+                <input class="destination" id="destination" type="text" placeholder="도착지 입력"></input>
+                <button class="search-btn">
+                    <img class="serach-img" src="../../../assets/img/search.png">
+                </button>
+            </div>
+            <div id="map" class="hidden"></div>
+            <div class="list-frame">
+                <iframe src="../board/list.html?category=taxi"></iframe>
+            </div>
+            <div>
+                <button id="confirm-btn" class="hidden"></button>
+            </div>
+            <write-btn></write-btn>
+            <bottom-nav data-page="category"></bottom-nav>
+        </div>
+    </div>
+    <script src="../../component/Map.js"></script>
+    <script src="./taxi.js"></script>
+    <script src="../../component/WriteBtn.js"></script>
+    <script src="../../component/BottomNav.js"></script>
+</body>
+</html>

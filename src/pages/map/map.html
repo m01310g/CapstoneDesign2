@@ -3,12 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>인근 모집</title>
+    <title>CO/N</title>
     <link rel="stylesheet" href="../../css/style.css"/>
     <link rel="stylesheet" href="../../css/map.css"/>
-    <script src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=yjh4qsmvfk"></script>
-    <script src="map.js"></script>
-    <script src="../../../server.js"></script>
+
 </head>
 <body>
     <div class="body-container">
@@ -16,43 +14,17 @@
         <header class="page-header">
             <img class="logo" src="../../../assets/img/logo.jpg"/>
         </header>
-          <h1>내 주변 CO/N</h1>
+          <h1>내 주변 CO/N 모아보기</h1>
           <div id="map" style="width:90%;height: 400px;">
           </div>
 
-         <nav id="bottom-nav-bar">
-        <div id="category-icon-container">
-          <a href="../category/category.html">
-            <img class="category-icon" src="../../../assets/img/category-off.png">
-            <div>카테고리</div>
-          </a>  
-        </div>
-        <div id="chatting-icon-container">
-          <a href="#">
-            <img class="category-icon" src="../../../assets/img/chatting-off.png">
-            <div>채팅</div>
-          </a>  
-        </div>
-        <div id="home-icon-container">
-          <a href="../home/home.html">
-            <img class="home-icon" src="../../../assets/img/home-on.png">
-            <div>홈</div>
-          </a>
-        </div>
-        <div id="notification-icon-container">
-          <a href="#">
-            <img class="notification-icon" src="../../../assets/img/notification-off.png">
-            <div>알림</div>
-          </a>
-        </div>
-        <div id="my-page-icon-container">
-          <a href="../my-page/my-page.html">
-            <img class="my-page-icon" src="../../../assets/img/my-off.png">
-            <div>마이</div>
+          <bottom-nav data-page="home"></bottom-nav>
           </a>
         </div>
       </nav>
     </div>
   </div>
 </body>
+<script src="../../component/BottomNav.js"></script>
+<script src="map.js"></script>
 </html>

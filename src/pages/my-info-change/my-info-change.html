@@ -11,7 +11,9 @@
   <div class="body-container">
     <div class="box-body">
       <header class="page-header">
-        <a href="../my-page/my-page.html"><</a>
+        <a href="../my-page/my-page.html">
+          <img src="../../../assets/img/back-icon.png">
+        </a>
         <a href="./change-pw.html">비밀번호 변경</a>
       </header>
       <div id="my-info-title">나의 정보</div>
@@ -30,12 +32,13 @@
           <div>
             <label for="user-tel">전화번호</label>
             <br>
-            <input type="tel" name="user-tel" placeholder="- 포함 여부">
+            <input type="text" name="user-tel" oninput="insertHyphen(this)" maxlength="13">
           </div>
           <input type="submit" value="수정">
         </form>
       </main>
     </div>
   </div>
+  <script src="./my-info-change.js"></script>
 </body>
 </html>

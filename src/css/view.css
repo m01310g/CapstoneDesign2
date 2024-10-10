@@ -1,0 +1,139 @@
+.box-body {
+    padding-bottom: 5rem;
+}
+
+a > img {
+    width: 1.5rem;
+    height: 1.5rem;
+    margin-right: 1rem;
+}
+
+#viewFrm {
+    width: 100%;
+    padding: 0 2rem;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+.view-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin: 1rem;
+}
+
+#category {
+    font-size: 1.3rem;
+}
+
+#subject {
+    width: 75%;
+    font-size: 2rem;
+    font-weight: bold;
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+    text-overflow: ellipsis;
+    text-align: left;
+    overflow: hidden;
+    display: block;
+    word-wrap: break-word;
+    white-space: normal;
+}
+
+#date {
+    font-size: 1rem;
+    color: grey;
+}
+
+#content {
+    width: 100%;
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+    margin-top: 1rem;
+    text-overflow: ellipsis;
+    text-align: left;
+    overflow: hidden;
+    display: block;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    word-break: break-all;
+}
+
+
+#modify,
+#delete {
+    height: fit-content;
+    border: none;
+    border-radius: 1rem;
+    font-size: 1rem;
+    background-color: transparent;
+    color: grey;
+}
+
+.button-container {
+    color: grey;
+    display: flex;
+    flex-direction: row;
+}
+
+#date-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+#subject-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+#capacity {
+    font-size: 1.3rem;
+}
+
+.current-capacity {
+    color: blue;
+    font-weight: bold;
+}
+
+#participation {
+    font-size: 1.3rem;
+    width: 90%;
+    background-color: #F5AF12;
+    color: white;
+    text-decoration: none;
+    position: absolute;
+    bottom: 1rem;
+    left: 5%;
+    right: 5%;
+    padding: 1rem;
+    text-align: center;
+    border: none;
+    border-radius: 1rem;
+}
+
+.participation-container {
+    background-color: white;
+    width: 100%;
+    padding: 2.75rem;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+}
+
+#participate {
+    font-weight: bold;
+}
+
+#price {
+    font-weight: bold;
+}
+
+#price-container {
+    font-size: 1rem;
+}

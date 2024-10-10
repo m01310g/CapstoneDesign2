@@ -3,75 +3,218 @@
     height: auto;
 }
 
+#inputField {
+    display: none; /* 처음에는 숨김 */
+    margin-top: 10px;
+}
+
 #my-info-title {
     font-size: 1.1rem;
     font-weight: 600;
-}
+  }
   
-.box-body > div:nth-child(2) {
+  .box-body > div:nth-child(2) {
     margin: 1rem;
     display: flex;
     position: relative;
-}
+  }
   
-a {
+  #profile-picture {
+    width: 2.5rem;
+    height: 2.5rem;
+    background-color: lightcyan;
+    border-radius: 50%;
+  }
+  
+  #nickname-abode {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    left: 1.75rem;
+    justify-content: space-around;
+    font-weight: 600;
+  }
+  
+  #nickname-abode > div:nth-child(2) {
+    font-size: 0.8rem;
+  }
+  
+  #my-info-change-anchor-container {
+    display: flex;
+    flex-direction: column;
+    align-self: center;
+    position: absolute;
+    right: 0;
+  }
+  
+  a {
     text-decoration: none;
     color: #000;
     font-weight: 600;
-}
+  }
   
-a:visited,
-a:focus,
-a:hover,
-a:active {
+  a:visited,
+  a:focus,
+  a:hover,
+  a:active {
     color: #000;
-}
+  }
   
-.box-body {
-    /* nav 높이 */
-    padding-bottom: 10px;
-}
-  
-#bottom-nav-bar {
-    max-width: 37rem; /* .box-body와 동일 width */
-    width: 100%;
-    margin: 0 auto;
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: 0;
+  #point-info {
     display: flex;
-    padding: 0.3rem 3.3rem;
-    font-size: 0.725rem;
-    font-weight: 600;
     justify-content: space-between;
-}
+    padding: 1rem;
+    background-color: lightgray;
+  }
   
-#bottom-nav-bar img {
-    height: 1.5rem;
-}
-
-#chatting-icon-container div {
-    position: relative;
-    left: 0.135rem;
+  #available-point {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  
+  #available-point > :nth-child(1) {
+    font-weight: 650;
+    margin-bottom: 0.2rem;
+  }
+  
+  #exchange-point-anchor {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  
+  #penalty-info-container {
+    display: flex;
+    justify-content: space-between;
+    font-weight: 600 ;
+  }
+  
+  #penalty-count {
+    color: red;
   }
 
-  #category-icon-container div {
-    position: relative;
-    right: 0.45rem;
+  .button-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-top: 15px;
 }
-  
-#home-icon-container div {
-    position: relative;
-    left: 0.422rem;
+
+.amount, #self {
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px 0;
+    text-align: center;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
 }
-  
-#notification-icon-container div {
-    position: relative;
-    left: 0.125rem;
+
+.amount:hover, #self:hover {
+    background-color: #dcdcdc;
 }
-  
-#my-page-icon-container div {
-    position: relative;
-    left: 0.15rem;
+
+#inputField {
+    display: none; /* Initially hidden */
+    margin-top: 10px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 100%;
+}
+
+.amount-container {
+  margin-top: 20px; /* Space between the gray box and the amount container */
+  padding: 15px;
+  background-color: #f9f9f9;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+}
+
+#display {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.button-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 15px; /* Space between the buttons and the input field */
+}
+
+.amount, #self {
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+  flex: 1 1 30%; /* Ensures buttons take up equal width and wrap properly */
+  max-width: 120px; /* Sets a maximum width for the buttons */
+}
+
+.amount:hover, #self:hover {
+  background-color: #dcdcdc;
+}
+
+#inputField {
+  display: none; /* Initially hidden */
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: calc(100% - 20px);
+  margin: 0 auto;
+  text-align: center;
+}
+
+.exchange-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+  padding: 15px;
+  background-color: #f9f9f9;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+}
+
+#inputField {
+  width: 80%;
+  max-width: 300px;
+  padding: 12px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  text-align: center;
+  transition: border-color 0.3s ease;
+}
+
+#inputField:focus {
+  border-color: #a0a0a0; /* Border color changes on focus */
+  outline: none;
+}
+
+#exchangeButton {
+  width: 80%;
+  max-width: 300px;
+  padding: 12px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  text-align: center;
+}
+
+#exchangeButton:hover {
+  background-color: #45a049; /* Darker green on hover */
 }

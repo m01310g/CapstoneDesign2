@@ -44,12 +44,12 @@
             <div>
               <label for="user-tel">전화번호</label>
               <br>
-              <input type="tel" name="user-tel" placeholder="- 포함 여부" required>
+              <input type="tel" name="user-tel" oninput="insertHyphen(this)" maxlength="13" required>
             </div>
             <div>
               <label for="user-email">이메일</label>
               <br>
-              <input type="text" name="user-email" style="width: 49%" required>
+              <input type="text" name="user-email" style="width: 42.5%" required>
               <select name="user-email">
                 <option value="naver">@daum.net</option>
                 <option value="naver">@gmail.com</option>
@@ -57,12 +57,17 @@
                 <option value="naver" selected>@naver.com</option>
                 <option value="naver">@outlook.com</option>
               </select>
+              <button id="send-authn">전송</button>
             </div>
+            <div>
+              <label for="email-authn">인증번호</label>
+              <input type="text" name="email-authn" required>
+            </div>  
             <input type="submit" value="가입하기">
           </form>
         </main>
       </div>
     </div>
-    <script src="./signUp.js"></script>
+    <script src="./sign-up.js"></script>
   </body>
 </html>
