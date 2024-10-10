@@ -97,3 +97,27 @@ a:active {
     font-size: 1.1rem;
     color: #444;
 }
+
+/* 배너 인디케이터 스타일 */
+.banner-indicator {
+    position: absolute; /* 배너 안쪽에 위치 */
+    bottom: 10px; /* 배너의 아래쪽에 위치하도록 설정 */
+    display: flex; /* 가로로 나열 */
+    justify-content: center; /* 가운데 정렬 */
+    width: 100%; /* 배너의 전체 너비 사용 */
+}
+
+/* 각 인디케이터 점 스타일 */
+.indicator-dot {
+    width: 7px; /* 원의 너비 설정 */
+    height: 7px; /* 원의 높이 설정 */
+    margin: 0 5px; /* 점 사이의 간격 */
+    background-color: #ddd; /* 비활성화된 점의 색상 */
+    border-radius: 50%; /* 원형으로 만들기 */
+    transition: background-color 0.3s; /* 색상 전환 애니메이션 */
+}
+
+/* 현재 활성화된 인디케이터 점 */
+.indicator-dot.active {
+    background-color: #333; /* 활성화된 점의 색상 */
+}
