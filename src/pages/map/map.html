@@ -6,23 +6,26 @@
     <title>CO/N</title>
     <link rel="stylesheet" href="../../css/style.css"/>
     <link rel="stylesheet" href="../../css/map.css"/>
+
 </head>
-<body></body>
-    <div class="body-container">
+<body>
+  <div class="body-container">
       <div class="box-body">
-        <header class="page-header">
-            <img class="logo" src="../../../assets/img/logo.jpg"/>
-        </header>
-
-        <body>
-        </body>
-
+          <header class="page-header">
+              <img class="logo" src="../../../assets/img/logo.jpg"/>
+          </header>
+          <h1>내 주변 CO/N 모아보기</h1>
+          <div id="map">
+          </div>
+          <div class="button-container">
+              <button id="return-to-location">
+                  현재 위치로 돌아가기
+              </button>
+          </div>
           <bottom-nav data-page="home"></bottom-nav>
-          </a>
-        </div>
-      </nav>
-    </div>
+      </div>
   </div>
 </body>
 <script src="../../component/BottomNav.js"></script>
+<script src="map.js"></script>
 </html>
