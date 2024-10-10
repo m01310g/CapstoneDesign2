@@ -16,6 +16,7 @@ const setIframeAndSaveState = (iframeSrc) => {
     iframe.src = iframeSrc;
     history.pushState({iframeSrc}, "", iframeSrc);
 }
+
 // 뒤로 가기/앞으로 가기 시 발생 이벤트
 window.addEventListener("popstate", (event) => {
     if (event.state && event.state.iframeSrc) {
@@ -24,6 +25,7 @@ window.addEventListener("popstate", (event) => {
 
     // 검색창 초기화
     searchInput.value = "";
+    searchResult.innerText = "";
 
     // 검색 결과 div 숨기기
     searchResult.classList.add(HIDDEN_CLASS_NAME);
@@ -34,6 +36,21 @@ window.addEventListener("popstate", (event) => {
         localStorage.removeItem("selectedSubCategory");
     }
 });
+
+// 페이지 로드 시 초기화 상태 확인
+document.addEventListener("DOMContentLoaded", () => {
+    // 검색창 초기화
+    searchInput.value = "";
+    searchResult.innerText = "";
+    searchResult.classList.add(HIDDEN_CLASS_NAME);
+
+    const savedSubCategory = localStorage.getItem("selectedSubCategory");
+    if (savedSubCategory) {
+        subCategory.innerText = savedSubCategory;
+        localStorage.removeItem("selectedSubCategory");
+    }
+});
+
 
 subCategory.addEventListener("click", () => {
     subCategory.classList.toggle(ON_CLASS_NAME);

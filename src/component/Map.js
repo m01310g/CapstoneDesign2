@@ -157,6 +157,8 @@ departureInput.addEventListener("click", () => {
         // map이 초기화되지 않으면 기본 위치로 초기화
         const defualtLatLng = new kakao.maps.LatLng(37.5665, 126.9780);
         initMap(defualtLatLng);
+    } else {
+        map.relayout();
     }
 });
 
@@ -171,5 +173,7 @@ destinationInput.addEventListener("click", () => {
         // map이 초기화되지 않으면 기본 위치로 초기화
         const defualtLatLng = new kakao.maps.LatLng(37.5665, 126.9780);
         initMap(defualtLatLng);
+    } else {
+        map.relayout();
     }
 });
