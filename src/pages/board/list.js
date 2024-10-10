@@ -25,6 +25,11 @@ const parseDate = (dateStr) => {
     return new Date(year, month - 1, day, hour, minute);
 }
 
+const formatDate = (dateStr) => {
+    const match = dateStr.match(/\d{2}월 \d{2}일 \d{2}시 \d{2}분/);
+    return match ? match[0] : '';
+}
+
 // 게시글 템플릿
 const template = (index, objValue) => {
     const currentDate = new Date();
@@ -33,6 +38,9 @@ const template = (index, objValue) => {
 
     const currentCapacity = objValue.currentCapacity;
     const maxCapacity = parseInt(objValue.maxCapacity);
+
+    const startDateFormatted = formatDate(objValue.startDate);
+    const endDateFormatted = formatDate(objValue.endDate);
 
     console.log(startDate);
 
@@ -56,8 +64,8 @@ const template = (index, objValue) => {
             <div id="content-container">
                 <div id="subject">${objValue.subject}</div>
                 <div id="route">${objValue.departure.address} ➡️ ${objValue.destination.address}</div>
+                <div id="date">${startDateFormatted} ~ ${endDateFormatted}</div>
                 <div id="status" class="${statusClass}">${statusText}</div>
-                <div id="date">${objValue.date}</div>
             </div>
             <div id="capacity-container">
                 <span class="${statusClass}">${objValue.currentCapacity}</span>
@@ -67,13 +75,12 @@ const template = (index, objValue) => {
         <hr>        
         `;
     } else {
-    
         return `
         <a class="board-link" href="./view.html?index=${index}&category=${category}&subCategory=${selectedSubCategory}" target="_top">
             <div id="content-container">
                 <div id="subject">${objValue.subject}</div>
+                <div id="date">${startDateFormatted} ~ ${endDateFormatted}</div>
                 <div id="status" class="${statusClass}">${statusText}</div>
-                <div id="date">${objValue.date}</div>
             </div>
             <div id="capacity-container">
                 <span class="${statusClass}">${objValue.currentCapacity}</span>

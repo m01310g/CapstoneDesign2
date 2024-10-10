@@ -5,6 +5,7 @@ const boardsObj = JSON.parse(boardsStr);
 // 쿼리스트링의 객체 불러오기
 const params = new URLSearchParams(window.location.search);
 const index = params.get("index");
+const viewCategory = params.get("category");
 
 const board = boardsObj[index];
 
@@ -17,11 +18,25 @@ const capacityDiv = document.querySelector("#capacity");
 const currentCapacity = board.currentCapacity;  // 현재 인원
 const maxCapacity = parseInt(board.maxCapacity); // 최대 인원
 
+const locationDiv = document.querySelector("#location-container");
+
+
+
 categoryDiv.innerText = board.category;
 subjectDiv.innerText = board.subject;
 dateDiv.innerText = board.date;
 contentDiv.innerText = board.content;
 capacityDiv.innerHTML = `<span class="current-capacity">${currentCapacity}</span> / ${maxCapacity}`;
+
+if (viewCategory === "택시") {
+    const departureText = board.departure.address;
+    const destinationText = board.destination.address;
+    locationDiv.innerText = `${departureText} ➡️ ${destinationText}`;
+} else {
+    const locationText = board.location.address;
+    locationDiv.innerText = `수령지: ${locationText}`;
+}
+
 
 const modifyBtn = document.querySelector("#modify");
 

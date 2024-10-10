@@ -5,8 +5,16 @@ const subItems = document.querySelector('.sub-member'); // 전체 목록 선택 
 const categoryBtn = document.querySelector('.category-btn');
 const subBtn = document.querySelector('.sub-btn');
 const taxiSearch = document.querySelector('.taxi-search');
+const locationInput = document.querySelector("#location");
+const locatoinMapContainer = document.querySelector("#location-map");
+const taxiMapContainer = document.querySelector("#map");
+
+const taxiDeparture = document.querySelector("#departure");
+const taxiDestination = document.querySelector("#destination");
 
 const backIcon = document.querySelector("#back-icon");
+
+const confirmBtn = document.querySelector("#confirm-btn");
 
 let selectedCategory = '';
 let selectedSubCategory = '';
@@ -35,10 +43,19 @@ categoryItems.forEach(item => {
         if (selectedCategory === '택시') {
             taxiSearch.classList.remove(HIDDEN_CLASS_NAME);
             subDropDown.classList.add(HIDDEN_CLASS_NAME); // 소분류 숨기기
+            locationInput.classList.add(HIDDEN_CLASS_NAME);
+            taxiMapContainer.classList.add(HIDDEN_CLASS_NAME);
+            confirmBtn.classList.add(HIDDEN_CLASS_NAME);
+            locatoinMapContainer.classList.add(HIDDEN_CLASS_NAME);
         } else {
             taxiSearch.classList.add(HIDDEN_CLASS_NAME); // 택시 검색 필드 숨기기
             updateSubCategories(selectedCategory);
             subDropDown.classList.remove(HIDDEN_CLASS_NAME); // 소분류 드롭다운 보이기
+            locationInput.classList.remove(HIDDEN_CLASS_NAME);
+            taxiMapContainer.classList.add(HIDDEN_CLASS_NAME);
+            confirmBtn.classList.add(HIDDEN_CLASS_NAME);
+            locatoinMapContainer.classList.add(HIDDEN_CLASS_NAME);
+
         }
 
         // 모든 카테고리 항목의 'on' 클래스 제거
@@ -108,7 +125,7 @@ const recordDate = () => {
 };
 
 class Board {
-    constructor(indexNum, subjectStr, contentStr, category, subCategory, departure, destination, startDate, endDate, currentCapacity, maxCapacity, price) {
+    constructor(indexNum, subjectStr, contentStr, category, subCategory, departure, destination, startDate, endDate, currentCapacity, maxCapacity, price, location) {
         this.index = indexNum;
         this.Subject = subjectStr;
         this.Content = contentStr;
@@ -121,6 +138,7 @@ class Board {
         this.currentCapacity = currentCapacity;
         this.maxCapacity = maxCapacity;
         this.price = price;
+        this.location = location;
         this.date = recordDate();
     }
 
@@ -161,6 +179,7 @@ const handleSubmit = (event) => {
 
     let departure = '';
     let destination = '';
+    let loc = '';
 
     if (selectedCategory === '택배' || selectedCategory === "배달") {
         if (!selectedCategory) {
@@ -223,6 +242,17 @@ const handleSubmit = (event) => {
                 price
             );
         } else {
+            const locationCoords = JSON.parse(localStorage.getItem("locationCoords"));
+
+            if (event.target.location) {
+                loc = event.target.location.value;
+            }
+
+            if (!loc) {
+                alert("수령지를 입력해주세요.");
+                return;
+            }
+
             instance = new Board(
                 boardsObj.length,
                 subject,
@@ -235,7 +265,8 @@ const handleSubmit = (event) => {
                 endDate,
                 currentCapacity,
                 maxCapacity,
-                price
+                price,
+                { address: loc, ...locationCoords }
             );
         }
 
@@ -246,7 +277,12 @@ const handleSubmit = (event) => {
         localStorage.setItem("boards", boardsStr);
         localStorage.removeItem("departureCoords");
         localStorage.removeItem("destinationCoords");
-        location.href = "./view.html?index=" + index + "&category=" + selectedCategory + "&subCategory=" + selectedSubCategory;
+
+        if (selectedCategory === "택시") {
+            location.href = `./view.html?index=${index}&category=${selectedCategory}`;
+        } else {
+            location.href = `./view.html?index=${index}&category=${selectedCategory}&subCategory=${selectedSubCategory}`;
+        }
 
     } catch (err) {
         // 예외 발생 시 처리
