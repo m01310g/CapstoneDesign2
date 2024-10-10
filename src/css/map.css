@@ -75,3 +75,23 @@ a:active {
     position: relative;
     left: 0.15rem;
 }
+
+#map {
+    width: 90%; /* Ensures the map does not exceed the container's width */
+    height: 400px;
+    margin: 0 auto; /* Centers the map horizontally */
+}
+
+.button-container {
+    text-align: center; /* Centers the button */
+    margin-top: 1rem;
+}
+
+#return-to-location {
+    padding: 0.5rem 1rem;
+    background-color: #000; /* Button background color */
+    color: #fff; /* Button text color */
+    border: none;
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Changes cursor to pointer on hover */
+}

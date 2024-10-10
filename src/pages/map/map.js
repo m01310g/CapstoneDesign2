@@ -3,6 +3,7 @@ let map, marker;
 const departureInput = document.querySelector("#departure");
 const destinationInput = document.querySelector("#destination");
 const taxiPost = document.querySelector("iframe");
+const returnToLocationBtn = document.querySelector("#return-to-location");
 
 const confirmBtn = document.querySelector("#confirm-btn");
 
@@ -81,4 +82,18 @@ function initMap(latlng) {
 
     const center = map.getCenter();
     marker.setPosition(center);
+}
+
+if (returnToLocationBtn) {
+    returnToLocationBtn.addEventListener("click", () => {
+        getCurrentPosition()
+            .then(position => {
+                const latlng = new kakao.maps.LatLng(position.coords.latitude, position.coords.longitude);
+                map.setCenter(latlng); 
+                marker.setPosition(latlng); 
+            })
+            .catch(err => {
+                console.error("Unable to retrieve your location: ", err);
+            });
+    });
 }
