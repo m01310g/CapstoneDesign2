@@ -3,7 +3,7 @@ let map, marker;
 let selectedField = ""; // 출발지/도착지 필드 선택 여부 확인
 const departureInput = document.querySelector("#departure");
 const destinationInput = document.querySelector("#destination");
-const taxiPost = document.querySelector("iframe");
+const taxiPost = document.querySelector(".list-frame");
 
 const confirmBtn = document.querySelector("#confirm-btn");
 
@@ -152,7 +152,14 @@ departureInput.addEventListener("click", () => {
     confirmBtn.innerText = "출발지 선택"
     mapContainer.classList.toggle(HIDDEN_CLASS_NAME_MAP);   // 지도 표시
     confirmBtn.classList.toggle(HIDDEN_CLASS_NAME_MAP);
-    taxiPost.classList.toggle(HIDDEN_CLASS_NAME_MAP);
+    // taxiPost.classList.add(HIDDEN_CLASS_NAME_MAP);
+    if (taxiPost.classList.contains(HIDDEN_CLASS_NAME_MAP)) {
+        taxiPost.classList.remove(HIDDEN_CLASS_NAME_MAP);
+    } else {
+        taxiPost.classList.add(HIDDEN_CLASS_NAME_MAP);
+    }
+
+
     if (!map) {
         // map이 초기화되지 않으면 기본 위치로 초기화
         const defualtLatLng = new kakao.maps.LatLng(37.5665, 126.9780);
@@ -168,7 +175,13 @@ destinationInput.addEventListener("click", () => {
     confirmBtn.innerText = "도착지 선택"
     mapContainer.classList.toggle(HIDDEN_CLASS_NAME_MAP);   // 지도 표시
     confirmBtn.classList.toggle(HIDDEN_CLASS_NAME_MAP);
-    taxiPost.classList.toggle(HIDDEN_CLASS_NAME_MAP);
+    // taxiPost.classList.add(HIDDEN_CLASS_NAME_MAP);
+    if (taxiPost.classList.contains(HIDDEN_CLASS_NAME_MAP)) {
+        taxiPost.classList.remove(HIDDEN_CLASS_NAME_MAP);
+    } else {
+        taxiPost.classList.add(HIDDEN_CLASS_NAME_MAP);
+    }
+
     if (!map) {
         // map이 초기화되지 않으면 기본 위치로 초기화
         const defualtLatLng = new kakao.maps.LatLng(37.5665, 126.9780);
@@ -176,4 +189,8 @@ destinationInput.addEventListener("click", () => {
     } else {
         map.relayout();
     }
+});
+
+confirmBtn.addEventListener("click", () => {
+    taxiPost.classList.remove(HIDDEN_CLASS_NAME_MAP);
 });
