@@ -52,10 +52,11 @@
                     <input type="text" id="subject" name="subject" placeholder="제목">
                     <input type="number" id="capacity" name="capacity" min="2" max="10" placeholder="인원" required>
                 </div>
-                <div id="price-container">
+                <div id="price-location-container">
                     <input type="number" id="price" name="price" min="1000" placeholder="예상 총액 입력">
-                    <label for="price">원</label>
+                    <input type="text" id="location" class="hidden" name="location" placeholder="수령지 선택">
                 </div>
+                <div id="location-map" class="hidden"></div>
                 <div>
                     <textarea name="content" placeholder="글 입력"></textarea>
                 </div>

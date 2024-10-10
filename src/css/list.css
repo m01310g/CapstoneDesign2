@@ -23,13 +23,13 @@ a:active {
 }
 
 #date {
-    font-size: 1rem;
-    margin-bottom: 1rem;
+    font-size: 0.75rem;
+    margin-bottom: 0.3rem;
 }
 
 #status {
     font-size: 1rem;
-    margin-bottom: 0.3rem;
+    margin-bottom: 1rem;
     font-weight: bold;
     text-overflow: ellipsis;
     overflow: hidden;
