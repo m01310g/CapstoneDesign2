@@ -1,6 +1,9 @@
 const $btnClose = document.querySelector(".btn-close");
 const $btnEmailAuthn = document.querySelector("#send-authn");
 const $emailAuthn = document.querySelector("input[name='email-authn']");
+const $userPw = document.querySelector("input[name='user-pw']");
+const $userPwCheck = document.querySelector("input[name='user-pw-check']");
+const $userId = document.querySelector("name='user-id'");
 let authnTimer = 180; // 이메일 인증 번호 입력 제한 시간
     
 $btnClose.addEventListener("click", () => {
@@ -26,3 +29,24 @@ $btnEmailAuthn.addEventListener("click", () => {
     }
   }, 1000);
 });
+
+// 입력 패스워드 double check
+$userPwCheck.addEventListener("focus", () => {
+  $userPwCheck.style.outline = "none";
+  if ($userPw.value !== $userPwCheck.value) {
+    $userPwCheck.style.borderColor = "red";
+  } else {
+    $userPwCheck.style.borderColor = "green";
+  }
+});
+
+$userPwCheck.addEventListener("input", () => {
+  if ($userPw.value !== $userPwCheck.value) {
+    $userPwCheck.style.borderColor = "red";
+  } else {
+    $userPwCheck.style.borderColor = "green";
+  }
+});
+
+// 아이디 제한 사항 작성할 것
+// 비밀번호 제한 사항 작성할 것
