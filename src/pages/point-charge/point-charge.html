@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="../../css/style.css"/>
     <link rel="stylesheet" href="../../css/point.css"/>
 </head>
+
 <body>
   <div class="body-container">
     <div class="box-body">
@@ -22,8 +23,9 @@
             <div>45,404원</div>
         </div>
         <div id="exchange-point-anchor"></div>
-    </div>
-    
+      </div>
+
+      <!-- 금액 선택 컨테이너 -->
       <div class="amount-container">
         <div id="display">충전하실 금액을 골라주세요</div>
         <div class="button-container">
@@ -35,16 +37,17 @@
             <button class="amount">100,000</button>
             <button id="self">직접입력</button>
         </div>
+        <!-- 직접 입력 필드 -->
         <input type="number" id="inputField" placeholder="원하는 금액을 입력하세요" />
       </div>
-        
 
-      <a href="">충전하기</a>
+      <!-- 충전 버튼 -->
+      <button id="button-container-charge">충전하기</button>
 
       <bottom-nav data-page="myPage"></bottom-nav>
     </div>
   </div>
 </body>
 <script src="../../component/BottomNav.js"></script>
-<script src="./point-charge.js"></script>
+<script src="point-charge.js"></script>
 </html>
