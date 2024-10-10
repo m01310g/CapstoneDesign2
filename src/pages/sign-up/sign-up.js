@@ -3,11 +3,29 @@ const $btnEmailAuthn = document.querySelector("#send-authn");
 const $emailAuthn = document.querySelector("input[name='email-authn']");
 const $userPw = document.querySelector("input[name='user-pw']");
 const $userPwCheck = document.querySelector("input[name='user-pw-check']");
-const $userId = document.querySelector("name='user-id'");
+const $userId = document.querySelector("input[name='user-id']");
 let authnTimer = 180; // 이메일 인증 번호 입력 제한 시간
     
 $btnClose.addEventListener("click", () => {
   window.location.href = "../login/login.html";
+});
+
+// 입력 패스워드 double check
+$userPwCheck.addEventListener("focus", () => {
+  $userPwCheck.style.outline = "none";
+  if ($userPw.value !== $userPwCheck.value) {
+    $userPwCheck.style.borderColor = "red";
+  } else {
+    $userPwCheck.style.borderColor = "green";
+  }
+});
+
+$userPwCheck.addEventListener("input", () => {
+  if ($userPw.value !== $userPwCheck.value) {
+    $userPwCheck.style.borderColor = "red";
+  } else {
+    $userPwCheck.style.borderColor = "green";
+  }
 });
 
 // 유저가 전화번호 입력시 자동적으로 '-'를 삽입. ex) 0101 => 010-1, 010-12345 => 010-1234-5
@@ -28,24 +46,6 @@ $btnEmailAuthn.addEventListener("click", () => {
       $emailAuthn.value = "인증번호 만료";
     }
   }, 1000);
-});
-
-// 입력 패스워드 double check
-$userPwCheck.addEventListener("focus", () => {
-  $userPwCheck.style.outline = "none";
-  if ($userPw.value !== $userPwCheck.value) {
-    $userPwCheck.style.borderColor = "red";
-  } else {
-    $userPwCheck.style.borderColor = "green";
-  }
-});
-
-$userPwCheck.addEventListener("input", () => {
-  if ($userPw.value !== $userPwCheck.value) {
-    $userPwCheck.style.borderColor = "red";
-  } else {
-    $userPwCheck.style.borderColor = "green";
-  }
 });
 
 // 아이디 제한 사항 작성할 것
