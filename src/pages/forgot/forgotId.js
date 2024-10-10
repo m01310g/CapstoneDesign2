@@ -10,7 +10,7 @@ $btnClose.addEventListener("click", () => {
 // 이메일로 인증번호 전송하면 -> 인증번호 입력 창에 입력 제한 시간 출력
 $btnEmailAuthn.addEventListener("click", () => {
   const authnIntervalId = setInterval(() => {
-    $emailAuthn.value = `${Math.floor(authnTimer / 60)}:${authnTimer % 60}`;
+    $emailAuthn.value = `${Math.floor(authnTimer / 60)}:${String(authnTimer % 60).padStart(2, "0")}`;
     authnTimer--;
     if(authnTimer === 0) {
       clearInterval(authnIntervalId);
