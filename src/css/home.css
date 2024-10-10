@@ -41,47 +41,59 @@ a:active {
     /* nav 높이 */
     padding-bottom: 10px;
 }
-  
-#bottom-nav-bar {
-    max-width: 37rem; /* .box-body와 동일 width */
-    width: 100%;
-    margin: 0 auto;
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: 0;
+
+/* 배너 컨테이너 스타일 */
+.banner-container {
     display: flex;
-    padding: 0.3rem 3.3rem;
-    font-size: 0.725rem;
-    font-weight: 600;
-    justify-content: space-between;
-}
-  
-#bottom-nav-bar img {
-    height: 1.5rem;
+    flex-direction: column;
+    align-items: center;
+    margin: 2rem 0;
 }
 
-#chatting-icon-container div {
+/* 움직이는 배너 스타일 */
+.moving-banner {
+    display: flex;
+    overflow: hidden;
+    width: 90%;
+    max-width: 600px;
+    height: 18rem;
+    border: 2px solid #ddd;
+    background-color: #f9f9f9;
+    margin-bottom: 1rem;
     position: relative;
-    left: 0.135rem;
-  }
+    justify-content: center;
+    align-items: center;
+}
 
-  #category-icon-container div {
-    position: relative;
-    right: 0.45rem;
+/* 각각의 배너 항목 스타일 */
+.banner-item {
+    display: none; /* 기본적으로 모든 배너를 숨김 */
+    min-width: 100%;
+    text-align: center;
+    line-height: 150px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #333;
 }
-  
-#home-icon-container div {
-    position: relative;
-    left: 0.422rem;
+
+/* 현재 활성화된 배너 항목을 표시하는 클래스 */
+.banner-item.active {
+    display: block; /* 활성화된 배너만 표시 */
 }
-  
-#notification-icon-container div {
-    position: relative;
-    left: 0.125rem;
+
+/* 고정된 배너 스타일 */
+.fixed-banner {
+    width: 90%;
+    max-width: 600px;
+    height: 18rem;
+    border: 2px solid #ddd;
+    background-color: #fafafa;
+    padding: 1rem;
+    text-align: center;
 }
-  
-#my-page-icon-container div {
-    position: relative;
-    left: 0.15rem;
+
+/* 고정된 배너 항목 스타일 */
+.fixed-banner-item {
+    font-size: 1.1rem;
+    color: #444;
 }

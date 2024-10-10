@@ -7,18 +7,36 @@
     <link rel="stylesheet" href="../../css/home.css"/>
     <link rel="stylesheet" href="../../css/style.css"/>
 </head>
+
 <body>
   <div class="body-container">
     <div class="box-body">
       <header class="page-header">
-          <img class="logo" src="../../../assets/img/logo.jpg" />
-          <a href="../map/map.html">
-              <img class="map-img" src="../../../assets/img/map_icon.png" />
-          </a>
+        <img class="logo" src="../../../assets/img/logo.jpg" />
+        <a href="../map/map.html">
+          <img class="map-img" src="../../../assets/img/map_icon.png" />
+        </a>
       </header>
+
+      <!-- 배너 영역 -->
+      <div class="banner-container">
+        <!-- 움직이는 배너 영역 -->
+        <div class="moving-banner">
+          <div class="banner-item">광고 1</div>
+          <div class="banner-item">광고 2</div>
+          <div class="banner-item">광고 3</div>
+        </div>
+
+        <!-- 고정된 배너 영역 -->
+        <div class="fixed-banner">
+          <div class="fixed-banner-item">고정 게시글</div>
+        </div>
+      </div>
+
       <bottom-nav data-page="home"></bottom-nav>
     </div>
   </div>
+
+  <script src="../../component/BottomNav.js"></script>
+  <script src="home.js"></script>
 </body>
-<script src="../../component/BottomNav.js"></script>
-</html>
