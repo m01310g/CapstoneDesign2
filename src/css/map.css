@@ -78,7 +78,7 @@ a:active {
 
 #map {
     width: 90%; /* Ensures the map does not exceed the container's width */
-    height: 400px;
+    height: 500px;
     margin: 0 auto; /* Centers the map horizontally */
 }
 
