@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>채팅방</title>
+    <link rel="stylesheet" href="chat_in.css">
+</head>
+<body>
+    <div class="chat-container">
+        <!-- 채팅방 헤더 -->
+        <header class="chat-header">
+            <button class="back-button">
+                <img src="https://www.flaticon.com/svg/vstatic/svg/3916/3916912.svg?token=exp=1727180557~hmac=49233a737667d37b149e080731333e35" alt="뒤로가기">
+            </button>
+            <h2 class="chat-title">길동이</h2>
+            <div class="user-info">
+                <img src="https://cdn-icons-png.flaticon.com/512/5264/5264565.png" alt="User Icon" class="user-icon">
+                <span class="user-count">2</span>
+            </div>
+        </header>
+
+        <!-- 채팅 메시지 영역 -->
+        <div class="chat-area" id="chatArea">
+            <div class="message message-received">안녕하세요! 치킨 엔빵 때문에 연락드렸어요</div>
+        </div>
+
+        <!-- 채팅 입력 영역 -->
+        <div class="chat-input-area">
+            <button class="menu-button" id="menuButton">
+                <img id="menuIcon" src="https://cdn-icons-png.flaticon.com/512/5135/5135168.png" alt="메뉴 아이콘" class="menu-icon">
+            </button>
+            <input type="text" class="chat-input" id="chatInput" placeholder="메시지를 입력하세요" />
+            <button class="send-button">
+                <img src="https://cdn-icons-png.flaticon.com/512/11013/11013530.png" alt="전송 아이콘" class="send-icon">
+            </button>
+        </div>
+    </div>
+
+    <!-- 하단 메뉴 -->
+    <div class="bottom-menu" id="bottomMenu">
+        <button class="bottom-menu-item">정산하기</button>
+        <button class="bottom-menu-item">미니게임</button>
+        <button class="bottom-menu-item">영수증 인증</button>
+        <button class="bottom-menu-item">포인트 송금</button>
+        <button class="bottom-menu-item">나가기</button>
+    </div>
+
+    <script src="Chat_in.js"></script>
+</body>
+</html>
