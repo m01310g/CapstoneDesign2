@@ -1,220 +1,109 @@
 .logo { /* 로고 크기 조절 */
-    width: 6rem;
-    height: auto;
+  width: 6rem;
+  height: auto;
 }
 
 #inputField {
-    display: none; /* 처음에는 숨김 */
-    margin-top: 10px;
+  display: none; /* 처음에는 숨김 */
+  margin-top: 10px;
 }
 
-#my-info-title {
-    font-size: 1.1rem;
-    font-weight: 600;
-  }
-  
-  .box-body > div:nth-child(2) {
-    margin: 1rem;
-    display: flex;
-    position: relative;
-  }
-  
-  #profile-picture {
-    width: 2.5rem;
-    height: 2.5rem;
-    background-color: lightcyan;
-    border-radius: 50%;
-  }
-  
-  #nickname-abode {
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    left: 1.75rem;
-    justify-content: space-around;
-    font-weight: 600;
-  }
-  
-  #nickname-abode > div:nth-child(2) {
-    font-size: 0.8rem;
-  }
-  
-  #my-info-change-anchor-container {
-    display: flex;
-    flex-direction: column;
-    align-self: center;
-    position: absolute;
-    right: 0;
-  }
-  
-  a {
-    text-decoration: none;
-    color: #000;
-    font-weight: 600;
-  }
-  
-  a:visited,
-  a:focus,
-  a:hover,
-  a:active {
-    color: #000;
-  }
-  
-  #point-info {
-    display: flex;
-    justify-content: space-between;
-    padding: 1rem;
-    background-color: lightgray;
-  }
-  
-  #available-point {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
-  
-  #available-point > :nth-child(1) {
-    font-weight: 650;
-    margin-bottom: 0.2rem;
-  }
-  
-  #exchange-point-anchor {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
-  
-  #penalty-info-container {
-    display: flex;
-    justify-content: space-between;
-    font-weight: 600 ;
-  }
-  
-  #penalty-count {
-    color: red;
-  }
-
-  .button-container {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    margin-top: 15px;
+#point-info {
+  display: flex; /* 나의 포인트와 교환 포인트 정보를 정렬 */
+  justify-content: space-between;
+  padding: 1rem;
+  background-color: lightgray; /* 배경색 설정 */
 }
 
-.amount, #self {
-    background-color: #f0f0f0;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    padding: 10px 0;
-    text-align: center;
-    cursor: pointer;
-    font-weight: 600;
-    transition: background-color 0.3s ease;
+#available-point {
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* 세로 중앙 정렬 */
 }
 
-.amount:hover, #self:hover {
-    background-color: #dcdcdc;
-}
-
-#inputField {
-    display: none; /* Initially hidden */
-    margin-top: 10px;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    width: 100%;
-}
-
-.amount-container {
-  margin-top: 20px; /* Space between the gray box and the amount container */
-  padding: 15px;
-  background-color: #f9f9f9;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-}
-
-#display {
-  font-size: 1rem;
-  font-weight: 600;
-  margin-bottom: 10px;
-  text-align: center;
+#available-point > :nth-child(1) {
+  font-weight: 650;
+  margin-bottom: 0.2rem;
 }
 
 .button-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  justify-content: center;
-  margin-bottom: 15px; /* Space between the buttons and the input field */
+  display: grid; /* 버튼을 그리드로 정렬 */
+  grid-template-columns: repeat(3, 1fr); /* 3열로 배치 */
+  gap: 10px; /* 버튼 간격 */
+  margin-top: 15px; /* 버튼 위에 간격 추가 */
 }
 
 .amount, #self {
-  background-color: #f0f0f0;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  padding: 10px 20px;
-  cursor: pointer;
+  background-color: #f0f0f0; /* 버튼 배경색 */
+  border: 1px solid #ccc; /* 버튼 테두리 색상 */
+  border-radius: 5px; /* 버튼 모서리 둥글게 */
+  padding: 10px 0;
+  text-align: center;
+  cursor: pointer; /* 마우스 포인터 변경 */
   font-weight: 600;
-  transition: background-color 0.3s ease;
-  flex: 1 1 30%; /* Ensures buttons take up equal width and wrap properly */
-  max-width: 120px; /* Sets a maximum width for the buttons */
+  transition: background-color 0.3s ease; /* 배경색 전환 효과 */
 }
 
 .amount:hover, #self:hover {
-  background-color: #dcdcdc;
+  background-color: #dcdcdc; /* 버튼에 마우스 올렸을 때 배경색 변경 */
 }
 
 #inputField {
-  display: none; /* Initially hidden */
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  width: calc(100% - 20px);
-  margin: 0 auto;
-  text-align: center;
+  display: none; /* 처음에는 숨김 */
+  margin-top: 10px; /* 입력 필드 위쪽 간격 */
+  padding: 8px; /* 입력 필드 내부 여백 */
+  border: 1px solid #ccc; /* 입력 필드 테두리 색상 */
+  border-radius: 5px; /* 모서리 둥글게 처리 */
+  width: 100%; /* 입력 필드 너비 설정 */
 }
 
-.exchange-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-top: 20px;
-  padding: 15px;
-  background-color: #f9f9f9;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
+.amount-container {
+  margin-top: 20px; /* 금액 선택 영역과 다른 요소 간의 간격 */
+  padding: 15px; /* 내부 여백 */
+  background-color: #f9f9f9; /* 배경색 설정 */
+  border: 1px solid #e0e0e0; /* 테두리 색상 */
+  border-radius: 8px; /* 모서리 둥글게 처리 */
 }
 
-#inputField {
-  width: 80%;
-  max-width: 300px;
-  padding: 12px;
-  margin-bottom: 15px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  text-align: center;
-  transition: border-color 0.3s ease;
-}
-
-#inputField:focus {
-  border-color: #a0a0a0; /* Border color changes on focus */
-  outline: none;
+#display {
+  font-size: 1rem; /* 텍스트 크기 */
+  font-weight: 600; /* 텍스트 굵기 */
+  margin-bottom: 10px; /* 텍스트 아래 간격 */
+  text-align: center; /* 텍스트 중앙 정렬 */
 }
 
 #exchangeButton {
   width: 80%;
-  max-width: 300px;
-  padding: 12px;
-  background-color: #4CAF50;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  text-align: center;
+  max-width: 300px; /* 최대 너비 설정 */
+  padding: 12px; /* 내부 여백 */
+  background-color: #4CAF50; /* 버튼 배경색 */
+  color: white; /* 텍스트 색상 */
+  border: none; /* 테두리 제거 */
+  border-radius: 5px; /* 모서리 둥글게 */
+  font-weight: 600; /* 텍스트 굵기 */
+  cursor: pointer; /* 마우스 포인터 변경 */
+  transition: background-color 0.3s ease; /* 배경색 전환 효과 */
+  text-align: center; /* 텍스트 중앙 정렬 */
 }
 
 #exchangeButton:hover {
-  background-color: #45a049; /* Darker green on hover */
+  background-color: #45a049; /* 버튼에 마우스 올렸을 때 배경색 변경 */
+}
+
+#button-container-charge {
+  display: block; /* 버튼을 블록 요소로 설정하여 너비 조정 */
+  margin: 20px auto; /* 위아래 20px의 간격을 추가하고, 좌우를 자동으로 설정하여 가운데 정렬 */
+  padding: 12px 24px; /* 버튼 내부 여백 조정 */
+  background-color: #4CAF50; /* 버튼 배경색 */
+  color: white; /* 텍스트 색상 */
+  border: none; /* 테두리 제거 */
+  border-radius: 5px; /* 모서리 둥글게 처리 */
+  font-weight: 600; /* 텍스트 굵기 */
+  cursor: pointer; /* 마우스 포인터 변경 */
+  transition: background-color 0.3s ease; /* 배경색 전환 효과 */
+  text-align: center; /* 텍스트 중앙 정렬 */
+}
+
+#button-container-charge:hover {
+  background-color: #45a049; /* 버튼에 마우스 올렸을 때 배경색 변경 */
 }
