@@ -71,6 +71,11 @@ function initMap(latlng, container, isLocationMap = false) {
         level: 2
     };
 
+    if (!container) {
+        console.error("Map is not initialized yet.");
+        return;
+    }
+
     const mapInstance = new kakao.maps.Map(container, options);
     const markerInstance = new kakao.maps.Marker({
         position: latlng,

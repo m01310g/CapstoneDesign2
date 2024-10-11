@@ -111,6 +111,21 @@ subBtn.addEventListener('click', () => {
     }
 });
 
+// 예상 총액 input 쉼표 추가
+document.querySelector("#price").addEventListener("input", (event) => {
+    const value = event.target.value.replace(/,/g, '');
+
+    // input 창 비어 있는지 확인
+    if (value === '') {
+        event.target.value = '';
+        return;
+    }
+
+    if (!isNaN(value)) {
+        event.target.value = parseInt(value, 10).toLocaleString();
+    }
+})
+
 // 작성일 반환 함수
 const recordDate = () => {
     const date = new Date();
@@ -207,7 +222,7 @@ const handleSubmit = (event) => {
     const endDate = selectedDates[index].endDate;
     const maxCapacity = event.target.capacity.value;
     const currentCapacity = 1;
-    const price = event.target.price.value;
+    const price = parseInt(event.target.price.value.replace(/,/g, ''), 10);
 
     try {
         let instance;
