@@ -99,11 +99,15 @@ const checkCapacityStatus = () => {
     const endDate = parseDate(board.endDate);
     const currentDate = new Date();
     const price = (board.price / board.maxCapacity).toFixed(2);
+    const [intPart, decPart] = price.split(".");
+    const formattedIntPart = parseInt(intPart, 10).toLocaleString();
+    const formattedPrice = `${formattedIntPart}.${decPart}`;
+
 
     if (currentDate < startDate) {
         // participationBtn.innerText = "모집 예정";
         participationBtn.innerHTML = `
-            <div id="price-container">인당 <span id="price">${price}</span>원씩 부담하면 돼요!</div>
+            <div id="price-container">인당 <span id="price">${formattedPrice}</span>원씩 부담하면 돼요!</div>
             <div id="participate">모집 예정</div>
         `;
         participationBtn.style.backgroundColor = "grey";
@@ -119,7 +123,7 @@ const checkCapacityStatus = () => {
     } else {
         // participationBtn.innerText = "참여하기";
         participationBtn.innerHTML = `
-            <div id="price-container">인당 <span id="price">${price}</span>원씩 부담하면 돼요!</div>
+            <div id="price-container">인당 <span id="price">${formattedPrice}</span>원씩 부담하면 돼요!</div>
             <div id="participate">참여하기</div>
         `;
         participationBtn.style.backgroundColor = "#F5AF12";
