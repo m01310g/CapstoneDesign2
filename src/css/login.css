@@ -64,6 +64,7 @@ a:active {
   font-weight: 600;
   cursor: pointer;
   width: auto;
+  height: 3rem;
   border: none;
   background-color: var(--main-color);
 }
