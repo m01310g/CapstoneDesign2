@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>채팅 페이지</title>
+    <link rel="stylesheet" href="chat_main.css">
+</head>
+<body>
+    <div class="chat-container">
+        <header class="chat-header">
+            <button class="back-button">
+                <img src="https://www.flaticon.com/svg/vstatic/svg/3916/3916912.svg?token=exp=1727180557~hmac=49233a737667d37b149e080731333e35" alt="뒤로가기">
+            </button>
+            <h2>채팅</h2>
+            <button class="notification-button">
+                <img src="https://cdn-icons-png.flaticon.com/512/12328/12328821.png" alt="알림">
+            </button>
+        </header>
+        <div class="chat-list">
+            <div class="chat-item">
+                <div class="profile-pic"></div>
+                <div class="chat-info">
+                    <span class="chat-name">길동이</span>
+                    <span class="chat-time">오후 8:52</span>
+                    <p class="chat-text">안녕하세요! ....</p>
+                </div>
+                <img src="https://i.pinimg.com/736x/2e/d1/6f/2ed16f13045301fae60e229edaa990f8.jpg" class="chat-icon" alt="배달">
+            </div>
+
+            <div class="chat-item">
+                <div class="profile-pic"></div>
+                <div class="chat-info">
+                    <span class="chat-name">기흥역 5번출구</span>
+                    <span class="chat-time">오전 10:30</span>
+                    <p class="chat-text">N빵이 님이 입장하셨습니다.</p>
+                </div>
+                <img src="https://cdn-icons-png.flaticon.com/512/5900/5900567.png" class="chat-icon" alt="택시">
+            </div>
+
+            <div class="chat-item">
+                <div class="profile-pic"></div>
+            </div>
+        </div>
+
+        <!-- 입력 섹션 -->
+        <div class="chat-input">
+            <input type="text" placeholder="메시지를 입력하세요">
+            <button class="send-button">
+                <img src="https://cdn-icons-png.flaticon.com/512/11013/11013530.png" alt="전송">
+            </button>
+        </div>
+    </div>
+
+    <script src="Chat_main.js"></script>
+</body>
+</html>

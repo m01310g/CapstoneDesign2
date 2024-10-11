@@ -1,0 +1,189 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body, html {
+    font-family: Arial, sans-serif;
+    height: 100%;
+    background-color: #f5f5f5;
+}
+
+/* 채팅방 전체 페이지 */
+.chat-container {
+    display: flex;
+    flex-direction: column; 
+    width: 100%;
+    max-width: 37rem;
+    margin: 0 auto;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    height: 100vh;
+    position: relative;
+}
+
+/* 채팅방 헤더 */
+.chat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background-color: #fff;
+    border-bottom: 1px solid #ddd;
+}
+
+.back-button img {
+    width: 24px;
+    height: 24px;
+}
+.back-button {
+    border: none;
+    background: none;
+    cursor: pointer;
+}
+
+.chat-title {
+    font-size: 18px;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+}
+
+.user-icon {
+    width: 24px;
+    height: 24px;
+}
+
+.user-count {
+    margin-left: 5px;
+    font-size: 16px;
+}
+
+/* 채팅 메시지 영역 */
+.chat-area {
+    flex: 1;
+    flex-direction: column;
+    padding: 10px;
+    background-color: #f9f9f9;
+    overflow-y: auto;
+}
+
+.message {
+    background-color: #f7b500;
+    color: white;
+    padding: 10px;
+    border-radius: 20px;
+    margin-bottom: 10px;
+    max-width: 60%;
+    display: inline-block;
+}
+
+
+.message-received {
+    background-color: #f7b500;
+    align-self: flex-start;
+    margin: 10px 0 10px 10px;
+    padding: 10px;
+    border-radius: 15px;
+    max-width: 60%;
+}
+
+/* 채팅 입력 영역 */
+.chat-input-area {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    background-color: #f0f0f0;
+    border-top: 1px solid #ddd;
+    position: relative;
+}
+
+.chat-input {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 20px;
+    margin: 0 10px;
+}
+
+.menu-list {
+    display: none;
+    background-color: #f0f0f0;
+    padding: 10px;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+}
+
+/* 하단 메뉴 바 ( 누르면 ) */
+.menu-button, .send-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.menu-icon, .send-icon {
+    width: 24px;
+    height: 24px;
+}
+
+/* 하단 메뉴 */
+.bottom-menu {
+    display: flex;
+    background-color: #e0e0e0;
+    padding: 15px;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-around;
+    border-top: 1px solid #ddd;
+    border-radius: 20px 20px 0 0;
+    transition: transform 0.3s ease-out;
+    transform: translateY(100%);
+    max-width: 37rem;
+    width: 100%;
+    margin:0 auto;
+    box-sizing: border-box;
+}
+
+.bottom-menu-item {
+    background-color: #f0f0f0;
+    border-radius: 50%;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    cursor: pointer;
+}
+
+.bottom-menu-item:hover {
+        background-color: #f7b500;
+}
+
+/* 메뉴 아이콘에서 X로 바뀌는 아이콘 */
+.menu-button img.x-icon {
+    content: url('https://cdn-icons-png.flaticon.com/512/4013/4013407.png');
+}
+
+/* 메뉴가 열리면 하단 메뉴 보이게끔 */
+.bottom-menu.open {
+    transform: translateY(0);
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(100%);
+    }
+    to {
+        transform: translateY(0);
+    }
+}
+
+.chat-input-area.menu-open {
+    transform: translateY(-60px);
+    transition: transform 0.3s ease-out;
+}
