@@ -46,6 +46,18 @@
   border-radius: 5px;
 }
 
+#address-container input {
+  margin-bottom: 0.4rem;
+}
+
+#user-detail-address, #user-extra-address {
+  width: 49.6% !important;
+}
+#user-extra-address {
+  position: absolute;
+  right: 0;
+}
+
 #sign-up-form input[type="submit"] {
   margin-top: 1.75rem;
   font-size: 1.15rem;
