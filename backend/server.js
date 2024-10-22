@@ -124,4 +124,29 @@ app.get("/my-page/my-page.html", (req, res) => {
   res.sendFile(path.join(__dirname, "..", "src", "pages", "my-page", "my-page.html"));
 });
 
+
+app.get('/api/session/user-info', (req, res) => {
+  if (req.session.isLogined) {
+    // 로그인 상태라면
+    // 세션 데이터에서 필요한 값을 가져오기
+    const query = 'SELECT user_nickname, user_address, user_point FROM user_info WHERE user_id = ?';
+    db.query(query, [req.session.userId], (err, result) => {
+      if (result.length > 0) {
+        // result[0]은 user_info 테이블에서 user_id에 대응되는 데이터 row
+        // user_nickname, user_address, user_point는 테이블의 포인트 속성명
+        const userNickname = result[0].user_nickname; 
+        const userAddress = (result[0].user_address).split(" ")[1]; // 경기 수원시 ~~ 값을 -> 수원시만 할당되도록
+        const userPoint = result[0].user_point;
+
+        // JSON 형태로 응답
+        res.json({
+          userNickname: userNickname,
+          userAddress: userAddress,
+          userPoint: userPoint
+        });
+      }
+    });
+  }
+});
+
 app.listen(port);
