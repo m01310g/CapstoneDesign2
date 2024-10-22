@@ -78,6 +78,15 @@ app.post("/login", (req, res) => {
   }
 });
 
+// 로그아웃 처리
+app.get("/logout", (req, res) => {
+  // 세션 삭제
+  req.session.destroy((err) => {
+    // 로그아웃 시 로그인 페이지로 이동
+    res.redirect("/");
+  });
+});
+
 // 회원가입 페이지
 app.get("/sign-up/sign-up.html", (req, res) => {
   res.sendFile(path.join(__dirname, "..", "src", "pages", "sign-up", "sign-up.html"));
