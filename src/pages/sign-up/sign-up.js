@@ -5,6 +5,14 @@ const $userPw = document.querySelector("input[name='user-pw']");
 const $userPwCheck = document.querySelector("input[name='user-pw-check']");
 const $userId = document.querySelector("input[name='user-id']");
 let authnTimer = 180; // 이메일 인증 번호 입력 제한 시간
+
+// 회원 가입 실패 시 alert
+const urlParams = new URLSearchParams(window.location.search);
+const message = urlParams.get('message');
+const errorMessage = urlParams.get('error'); // 에러 메시지 추가
+if (errorMessage) {
+  alert(errorMessage);
+}
     
 $btnClose.addEventListener("click", () => {
   window.location.href = "../login/login.html";

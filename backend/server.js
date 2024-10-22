@@ -1,17 +1,32 @@
 const express = require("express");
+const session = require("express-session");
+const FileStore = require("session-file-store")(session);
 const path = require("path");
-var cors = require("cors");
+const cors = require("cors"); //
 const app = express();
 const port = 3000;
 
-var mysql = require('mysql');
-var db = mysql.createConnection({
+const mysql = require('mysql'); //
+const db = mysql.createConnection({ //
   host     : 'localhost',
   user     : 'root',
   password : 'Capstone2@',
   database : 'co_n'
 });
 db.connect();
+
+// 세션 설정
+app.use(session({
+  secret: "1868cc469dc47695069aa7c6324f41e4eef1e34b1afa9a", // 키값 숨길 것
+  resave: false,
+  saveUninitialized: true,
+  store: new FileStore(),
+  cookie: {
+    maxAge: 1000 * 60 * 60 * 3, // 3시간 유지
+    secure: false, // true: https에서만 동작
+    httpOnly: true
+  }
+}));
 
 // body parser: 아래 코드 2줄 없으면 form 제출 시 오류 발생
 app.use(express.json());
@@ -34,6 +49,33 @@ app.use(express.static(path.join(__dirname, "..", "src", "pages", "login"))); //
 // 로그인 페이지
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "..", "src", "pages", "login", "login.html"));
+});
+
+// 로그인 처리
+app.post("/login", (req, res) => {
+  const loginId = req.body["login-id"];
+  const loginPw = req.body["login-pw"];
+
+  const query = "SELECT * FROM user_info WHERE user_id = ? AND user_pw = ?";
+
+  if (loginId && loginPw) {
+    db.query(query, [loginId, loginPw], (err, result) => {
+      if (err) {
+        // 로그인 실패 시
+        res.redirect('/?fault_message=로그인 정보가 일치하지 않습니다.');
+      }
+      if (result.length > 0) {       // db에서의 반환값이 있으면 로그인 성공
+        req.session.isLogined = true; // 세션 정보 갱신: 로그인 상태
+        req.session.userId = loginId; // 세션 정보 갱신: 유저 아이디
+        req.session.save(() => {
+          // 로그인 성공 시 메인 페이지로 redirect
+          res.redirect("/home/home.html");
+        });
+      } else {              
+        res.redirect('/?fault_message=로그인 정보가 일치하지 않습니다.');  
+      }
+    })
+  }
 });
 
 // 회원가입 페이지
@@ -70,6 +112,16 @@ app.get("/forgot/forgot-id.html", (req, res) => {
 // 비밀번호 찾기 페이지
 app.get("/forgot/forgot-pw.html", (req, res) => {
   res.sendFile(path.join(__dirname, "..", "src", "pages", "forgot", "forgot-pw.html"));
+});
+
+// 메인 페이지
+app.get("/home/home.html", (req, res) => {
+  res.sendFile(path.join(__dirname, "..", "src", "pages", "home", "home.html"));
+});
+
+// 마이 페이지
+app.get("/my-page/my-page.html", (req, res) => {
+  res.sendFile(path.join(__dirname, "..", "src", "pages", "my-page", "my-page.html"));
 });
 
 app.listen(port);
