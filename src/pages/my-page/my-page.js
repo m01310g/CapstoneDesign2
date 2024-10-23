@@ -6,7 +6,7 @@ window.onload = function() {
       // 받은 데이터로 HTML 내용 변경
       document.getElementById('user-nickname').textContent = data.userNickname;
       document.getElementById('user-address').textContent = data.userAddress;
-      document.getElementById('user-point').textContent = data.userPoint.toLocaleString();
+      document.getElementById('user-point').textContent = `${data.userPoint.toLocaleString()}${" 포인트"}`;
     })
     .catch(error => console.error('Error fetching session data:', error));
 };
