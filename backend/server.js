@@ -108,10 +108,19 @@ app.post("/sign-up/user-info", (req, res) => {
   const userName = req.body["user-name"];
   const userNickname = req.body["user-nickname"];
   const userTel = req.body["user-tel"];
-  const userEmail = `${req.body["user-email"][0]}${req.body["user-email"][1]}`;
   const userAddress = req.body["user-address"];
   const userSalt = crypto.randomBytes(16).toString('base64');
   const userPw = crypto.createHash("sha256").update(req.body["user-pw"] + userSalt).digest("hex");
+  const userEmailPre = req.body["user-email-pre"];
+  const userEmailPost = req.body["user-email-post"];
+  let userEmail;
+  // 아이디, 비밀번호 찾기도 input, select 부분 pre, post로 잘라서 아래 코드로 판별 후 userEmail 완성 후 query
+
+  if (userEmailPost) {
+    userEmail = `${userEmailPre}${userEmailPost}`;
+  } else {
+    userEmail = userEmailPre;
+  }
 
   const query = "INSERT INTO user_info (user_id, user_pw, user_name, user_nickname, user_tel, user_email, user_address, user_salt) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
   
@@ -142,6 +151,11 @@ app.get("/home/home.html", (req, res) => {
 // 마이 페이지
 app.get("/my-page/my-page.html", (req, res) => {
   res.sendFile(path.join(__dirname, "..", "src", "pages", "my-page", "my-page.html"));
+});
+
+// 카테고리 페이지
+app.get("/category/category.html", (req, res) => {
+  res.sendFile(path.join(__dirname, "..", "src", "pages", "category", "category.html"));
 });
 
 // 세션에서 유저 정보 가져오기
