@@ -6,6 +6,22 @@ const $userPwCheck = document.querySelector("input[name='user-pw-check']");
 const $userId = document.querySelector("input[name='user-id']");
 let authnTimer = 180; // 이메일 인증 번호 입력 제한 시간
 
+document.addEventListener("DOMContentLoaded", () => {
+  const $emailSelect = document.querySelector("select[name='user-email-post']");
+  const $emailInput = document.querySelector("#user-email");
+
+  $emailSelect.addEventListener("change", () => {
+    if ($emailSelect.value === "email-typing") {
+      $emailInput.value = "";
+      $emailInput.placeholder = 'Ex) userEmail@mju.ac.kr';
+      $emailInput.focus();
+      $emailSelect.style.display = "none";
+      $emailSelect.value= "";
+      $emailInput.style.width = "86%";
+    }
+  });
+});
+
 // 회원 가입 실패 시 alert
 const urlParams = new URLSearchParams(window.location.search);
 const message = urlParams.get('message');
@@ -13,7 +29,7 @@ const errorMessage = urlParams.get('error'); // 에러 메시지 추가
 if (errorMessage) {
   alert(errorMessage);
 }
-    
+
 $btnClose.addEventListener("click", () => {
   window.location.href = "../login/login.html";
 });

@@ -49,13 +49,14 @@
             <div>
               <label for="user-email">이메일</label>
               <br>
-              <input type="text" name="user-email" style="width: 42.5%" required>
-              <select name="user-email">
-                <option value="naver">@daum.net</option>
-                <option value="naver">@gmail.com</option>
-                <option value="naver">@hotmail.com</option>
-                <option value="naver" selected>@naver.com</option>
-                <option value="naver">@outlook.com</option>
+              <input id="user-email" type="text" name="user-email-pre" required>
+              <select name="user-email-post">
+                <option value="@daum.net">@daum.net</option>
+                <option value="@gamil.com">@gmail.com</option>
+                <option value="@hotmail.com">@hotmail.com</option>
+                <option value="@naver.com" selected>@naver.com</option>
+                <option value="@outlook.com">@outlook.com</option>
+                <option value="email-typing">-직접 입력-</option>
               </select>
               <button id="send-authn">전송</button>
             </div>

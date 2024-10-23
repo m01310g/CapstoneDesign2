@@ -28,7 +28,18 @@
   position: relative;
 }
 
-#forgot-pw-form input {
+/* #forgot-pw-form input {
+  width: 100%;
+  height: 2.5rem;
+  padding: 0 6px;
+  border: 1px solid rgb(62, 62, 62);
+  border-radius: 5px;
+} */
+input[name="forgot-pw-user-name"],
+input[name="forgot-pw-user-id"],
+input[name="forgot-pw-user-id"],
+input[name="forgot-pw-authn"],
+input[value="비밀번호 찾기"] {
   width: 100%;
   height: 2.5rem;
   padding: 0 6px;
@@ -36,15 +47,41 @@
   border-radius: 5px;
 }
 
+input[name="forgot-pw-user-email"] {
+  width: 42.5%;
+  height: 2.5rem;
+  padding: 0 6px;
+  border: 1px solid rgb(62, 62, 62);
+  border-radius: 5px;
+}
+
 #forgot-pw-form select {
-  position: absolute;
+  /* position: absolute;
   right: 0;
   width: 49%;
   height: 2.5rem;
   padding: 0 6px;
   border: 1px solid rgb(62, 62, 62);
   border-radius: 5px;
+  cursor: pointer; */
+  position: absolute;
+  left: 43.5%;
+  width: 42.5%;
+  height: 2.5rem;
+  padding: 0 6px;
+  border: 1px solid rgb(62, 62, 62);
+  border-radius: 5px;
   cursor: pointer;
+}
+
+#send-authn {
+  position: absolute;
+  right: 0;
+  height: 2.5rem;
+  width: 13%;
+  background-color: #fff;
+  border: 1px solid rgb(62, 62, 62);
+  border-radius: 5px;
 }
 
 #forgot-pw-form input[type="submit"] {
