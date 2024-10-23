@@ -2,12 +2,13 @@ const express = require("express");
 const session = require("express-session");
 const FileStore = require("session-file-store")(session);
 const path = require("path");
-const cors = require("cors"); //
+const cors = require("cors");
 const app = express();
+const crypto = require("crypto");
 const port = 3000;
 
-const mysql = require('mysql'); //
-const db = mysql.createConnection({ //
+const mysql = require('mysql');
+const db = mysql.createConnection({
   host     : 'localhost',
   user     : 'root',
   password : 'Capstone2@',
@@ -56,25 +57,34 @@ app.post("/login", (req, res) => {
   const loginId = req.body["login-id"];
   const loginPw = req.body["login-pw"];
 
-  const query = "SELECT * FROM user_info WHERE user_id = ? AND user_pw = ?";
+  const query = "SELECT user_pw, user_salt FROM user_info WHERE user_id = ?";
 
   if (loginId && loginPw) {
-    db.query(query, [loginId, loginPw], (err, result) => {
+    db.query(query, [loginId], (err, result) => {
       if (err) {
         // 로그인 실패 시
         res.redirect('/?fault_message=로그인 정보가 일치하지 않습니다.');
       }
-      if (result.length > 0) {       // db에서의 반환값이 있으면 로그인 성공
-        req.session.isLogined = true; // 세션 정보 갱신: 로그인 상태
-        req.session.userId = loginId; // 세션 정보 갱신: 유저 아이디
-        req.session.save(() => {
-          // 로그인 성공 시 메인 페이지로 redirect
-          res.redirect("/home/home.html");
-        });
+      if (result.length > 0) {       // db에서의 반환값이 있으면 salt와 해쉬
+        const user = result[0];
+        const userSalt = user.user_salt;
+        const hashedPw = crypto.createHash("sha256").update(loginPw + userSalt).digest("hex");
+          if (hashedPw === user.user_pw) {
+            req.session.isLogined = true; // 세션 정보 갱신: 로그인 상태
+            req.session.userId = loginId; // 세션 정보 갱신: 유저 아이디
+            req.session.save(() => {
+              // 로그인 성공 시 메인 페이지로 redirect
+              res.redirect("/home/home.html");
+            });
+          } else {              
+            res.redirect('/?fault_message=로그인 정보가 일치하지 않습니다.');  
+          }
       } else {              
         res.redirect('/?fault_message=로그인 정보가 일치하지 않습니다.');  
       }
-    })
+    });
+  } else {              
+    res.redirect('/?fault_message=로그인 정보가 일치하지 않습니다.');  
   }
 });
 
@@ -95,16 +105,17 @@ app.get("/sign-up/sign-up.html", (req, res) => {
 // 회원가입 처리
 app.post("/sign-up/user-info", (req, res) => {
   const userId = req.body["user-id"];
-  const userPw = req.body["user-pw"];
   const userName = req.body["user-name"];
   const userNickname = req.body["user-nickname"];
   const userTel = req.body["user-tel"];
   const userEmail = `${req.body["user-email"][0]}${req.body["user-email"][1]}`;
   const userAddress = req.body["user-address"];
+  const userSalt = crypto.randomBytes(16).toString('base64');
+  const userPw = crypto.createHash("sha256").update(req.body["user-pw"] + userSalt).digest("hex");
 
-  const query = "INSERT INTO user_info (user_id, user_pw, user_name, user_nickname, user_tel, user_email, user_address) VALUES (?, ?, ?, ?, ?, ?, ?)";
+  const query = "INSERT INTO user_info (user_id, user_pw, user_name, user_nickname, user_tel, user_email, user_address, user_salt) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
   
-  db.query(query, [userId, userPw, userName, userNickname, userTel, userEmail, userAddress], (err, result) => {
+  db.query(query, [userId, userPw, userName, userNickname, userTel, userEmail, userAddress, userSalt], (err, result) => {
     if (err) {
       return res.redirect(`/sign-up/sign-up.html?error=${encodeURIComponent('회원가입에 실패했습니다. 다시 시도해주세요.')}`);
     }
@@ -133,7 +144,7 @@ app.get("/my-page/my-page.html", (req, res) => {
   res.sendFile(path.join(__dirname, "..", "src", "pages", "my-page", "my-page.html"));
 });
 
-
+// 세션에서 유저 정보 가져오기
 app.get('/api/session/user-info', (req, res) => {
   if (req.session.isLogined) {
     // 로그인 상태라면
