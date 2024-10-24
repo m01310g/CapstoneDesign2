@@ -1,3 +1,12 @@
+// URL의 쿼리 파라미터에서 메시지 가져오기
+const urlParams = new URLSearchParams(window.location.search);
+const message = urlParams.get('message');
+
+// 회원 정보 변경 성공 시
+if (message) {
+  alert(message);
+}
+
 // 페이지 로드 시 세션 데이터를 요청
 window.onload = function() {
   fetch('/api/session/user-info') // API 엔드포인트에 요청

@@ -15,7 +15,7 @@
           <button class="btn-close">&#215;</button>
         </header>
         <main class="page-main">
-          <form id="sign-up-form" target="prevent-form" action="/sign-up/user-info" method="post">
+          <form id="sign-up-form" target="_self" action="/sign-up/user-info" method="post">
             <div>
               <label for="user-id">아이디</label>
               <br>
@@ -72,7 +72,7 @@
               <br>
               <input type="text" name="user-address" id="user-address" placeholder="주소" readonly required>
               <input type="text" id="user-detail-address" placeholder="상세주소" required>
-              <input type="text" id="user-extra-address" placeholder="참고항목" readonly required>
+              <input type="text" id="user-extra-address" placeholder="참고항목" readonly>
             </div>
             <input type="submit" value="가입하기">
           </form>

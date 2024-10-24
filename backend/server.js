@@ -153,6 +153,69 @@ app.get("/my-page/my-page.html", (req, res) => {
   res.sendFile(path.join(__dirname, "..", "src", "pages", "my-page", "my-page.html"));
 });
 
+// 회원 정보 변경 페이지
+app.get("/my-info-change/my-info-change.html", (req, res) => {
+  res.sendFile(path.join(__dirname, "..", "src", "pages", "my-info-change", "my-info-change.html"));
+});
+
+// 회원 정보 변경 처리
+app.post("/my-info-change", (req, res) => {
+  const userNickname = req.body["user-nickname"];
+  const userTel = req.body["user-tel"];
+  const userAddress = req.body["user-address"];
+  const userId = req.session.userId;
+
+  // 업데이트할 필드와 값을 저장할 배열
+  const updates = [];
+  const values = [];
+
+  // 입력된 값에 따라 업데이트할 필드를 동적으로 추가
+  if (userNickname) {
+    updates.push("user_nickname = ?");
+    values.push(userNickname);
+  }
+  if (userTel) {
+    updates.push("user_tel = ?");
+    values.push(userTel);
+  }
+  if (userAddress) {
+    updates.push("user_address = ?");
+    values.push(userAddress);
+  }
+
+  // 업데이트할 필드가 없으면 바로 리턴
+  if (updates.length === 0) {
+    return res.redirect("/my-info-change/my-info-change.html?fault_message=변경할 내용이 없습니다.");
+  }
+
+  // WHERE 절에 user_id를 추가
+  values.push(userId);
+
+  const query = `
+    UPDATE user_info
+    SET ${updates.join(", ")}
+    WHERE user_id = ?
+  `;
+
+  db.query(query, values, (err, result) => {
+    if (err) {
+      console.error("DB 쿼리 오류: ", err);
+      return res.redirect("/my-info-change/my-info-change.html?fault_message=변경에 실패했습니다.");
+    }
+
+    if (result.affectedRows === 0) {
+      return res.redirect("/my-info-change/my-info-change.html?fault_message=변경 사항이 없습니다.");
+    }
+
+    res.redirect('/my-page/my-page.html?message=변경이 완료되었습니다.');
+  });
+});
+
+// 비밀번호 변경 페이지
+app.get("/my-info-change/change-pw.html", (req, res) => {
+  res.sendFile(path.join(__dirname, "..", "src", "pages", "my-info-change", "change-pw.html"));
+});
+
 // 카테고리 페이지
 app.get("/category/category.html", (req, res) => {
   res.sendFile(path.join(__dirname, "..", "src", "pages", "category", "category.html"));
