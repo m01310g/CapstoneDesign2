@@ -216,6 +216,51 @@ app.get("/my-info-change/change-pw.html", (req, res) => {
   res.sendFile(path.join(__dirname, "..", "src", "pages", "my-info-change", "change-pw.html"));
 });
 
+// 비밀번호 변경 처리
+app.post("/change-pw", (req, res) => {
+  const currentPw = req.body["current-pw"];
+  const newPw = req.body["new-pw"];
+  const userId = req.session.userId;
+
+  if (!userId) {
+    return res.status(401).send("User not authenticated");
+  }
+
+  const query = "SELECT user_pw, user_salt FROM user_info WHERE user_id = ?";
+
+  db.query(query, [userId], (err, results) => {
+    if (err) {
+      console.error("Error fetching user data: ", err);
+      return res.status(500).send("Server error");
+    }
+
+    if (results.length === 0) {
+      return res.status(404).send("User not found");
+    }
+
+    const userPw = results[0].user_pw; // db에 저장되어 있는 pw
+    const userSalt = results[0].user_salt; // db에 저장되어 있는 salt
+    const hashedPw = crypto.createHash("sha256").update(currentPw + userSalt).digest("hex"); // 사용자가 입력한 현재 pw
+
+    if (hashedPw === userPw) {
+      // 현재 비밀번호가 일치할 경우
+      const newHashedPw = crypto.createHash("sha256").update(newPw + userSalt).digest("hex"); // 새로운 비밀번호 해시 생성
+
+      const updateQuery = "UPDATE user_info SET user_pw = ? WHERE user_id = ?";
+      db.query(updateQuery, [newHashedPw, userId], (updateErr) => {
+        if (updateErr) {
+          console.error("Error updating password: ", updateErr);
+          return res.status(500).send("Server error during password update");
+        }
+        return res.redirect('/my-page/my-page.html?message=변경이 완료되었습니다.');
+      });
+    } else {
+      // 현재 비밀번호가 일치하지 않는 경우
+      return res.status(400).send("Current password is incorrect");
+    }
+  });
+});
+
 // 카테고리 페이지
 app.get("/category/category.html", (req, res) => {
   res.sendFile(path.join(__dirname, "..", "src", "pages", "category", "category.html"));
