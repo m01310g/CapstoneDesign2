@@ -4,9 +4,11 @@ const $emailAuthn = document.querySelector("input[name='email-authn']");
 const $userPw = document.querySelector("input[name='user-pw']");
 const $userPwCheck = document.querySelector("input[name='user-pw-check']");
 const $userId = document.querySelector("input[name='user-id']");
+const $formSubmitBtn = document.querySelector("input[type='submit']")
 let authnTimer = 180; // 이메일 인증 번호 입력 제한 시간
 
 document.addEventListener("DOMContentLoaded", () => {
+  // 이메일 도메인 직접 입력 시
   const $emailSelect = document.querySelector("select[name='user-email-post']");
   const $emailInput = document.querySelector("#user-email");
 
@@ -22,6 +24,46 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
+document.getElementById("id-availability-check").addEventListener("click", async (event) => {
+  // id 중복 검사 체크
+  const checkAvailableId = $userId.value;
+
+  try {
+    const response = await fetch("/sign-up/user-id-availability", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ "user-id": checkAvailableId }),
+    });
+
+    const data = await response.json();
+    console.log(data.available);
+    if (data.available) {
+      // 사용 가능한 아이디
+      $userId.style.borderWidth = "1.8px";
+      $userId.style.borderColor = "green";
+      $formSubmitBtn.disabled = false; // 가입 버튼 활성화
+    } else {
+      // 아이디 중복
+      $userId.style.borderWidth = "1.8px";
+      $userId.style.borderColor = "red";
+      $userId.value = "";
+      $userId.placeholder = "이미 존재하는 아이디입니다. 다시 입력해주세요.(6자 이상)";
+      $formSubmitBtn.disabled = true; // 가입 버튼 비활성화
+    }
+  } catch (error) {
+    console.error("Error checking username availability:", error);
+  }
+});
+
+// id 중복 검사 통과 후 input value 바꾸면 다시 제출 버튼 비활성화
+$userId.addEventListener("input", () => {
+  $userId.style.borderWidth = "1.8px";
+  $userId.style.borderColor = "red";
+  $formSubmitBtn.disabled = true; // 가입 버튼 비활성화
+});
+
 // 회원 가입 실패 시 alert
 const urlParams = new URLSearchParams(window.location.search);
 const message = urlParams.get('message');
@@ -34,21 +76,34 @@ $btnClose.addEventListener("click", () => {
   window.location.href = "../login/login.html";
 });
 
+$userPw.addEventListener("input", () => {
+  $userPw.style.borderWidth = "1.8px";
+  $formSubmitBtn.disabled = true; // 가입 버튼 비활성화
+});
+
 // 입력 패스워드 double check
 $userPwCheck.addEventListener("focus", () => {
   $userPwCheck.style.outline = "none";
   if ($userPw.value !== $userPwCheck.value) {
+    $userPwCheck.style.borderWidth = "1.8px";
     $userPwCheck.style.borderColor = "red";
   } else {
-    $userPwCheck.style.borderColor = "green";
+    $userPwCheck.style.borderWidth = "1.8px";
+    $userPw.style.borderColor = "green";
   }
 });
 
 $userPwCheck.addEventListener("input", () => {
   if ($userPw.value !== $userPwCheck.value) {
+    $userPwCheck.style.borderWidth = "1.8px";
     $userPwCheck.style.borderColor = "red";
+    $formSubmitBtn.disabled = true; // 가입 버튼 비활성화
   } else {
+    $userPwCheck.style.borderWidth = "1.8px";
     $userPwCheck.style.borderColor = "green";
+    $userPw.style.borderWidth = "1.8px";
+    $userPwCheck.style.borderColor = "green";
+    $formSubmitBtn.disabled = false; // 가입 버튼 활성화
   }
 });
 
@@ -108,6 +163,3 @@ function execDaumPostcode() {
     }
   }).open();
 }
-
-// 아이디 제한 사항 작성할 것
-// 비밀번호 제한 사항 작성할 것

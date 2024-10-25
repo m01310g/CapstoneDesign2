@@ -102,6 +102,21 @@ app.get("/sign-up/sign-up.html", (req, res) => {
   res.sendFile(path.join(__dirname, "..", "src", "pages", "sign-up", "sign-up.html"));
 });
 
+// user id 중복 검사
+app.post("/sign-up/user-id-availability", (req, res) => {
+  const userId = req.body["user-id"];
+  const query = "SELECT COUNT(*) AS count FROM user_info WHERE user_id = ?";
+
+  db.query(query, [userId], (err, results) => {
+    if (err) {
+      return res.status(500).send("Server error");
+    }
+
+    const isAvailable = results[0].count === 0;
+    res.json({ available: isAvailable });
+  });
+});
+
 // 회원가입 처리
 app.post("/sign-up/user-info", (req, res) => {
   const userId = req.body["user-id"];
