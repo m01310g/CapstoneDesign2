@@ -76,36 +76,39 @@ $btnClose.addEventListener("click", () => {
   window.location.href = "../login/login.html";
 });
 
+// 새로운 비밀번호 입력 시, 버튼 비활성화
 $userPw.addEventListener("input", () => {
-  $userPw.style.borderWidth = "1.8px";
-  $formSubmitBtn.disabled = true; // 가입 버튼 비활성화
+  $userPwCheck.style.borderWidth = "1.8px";
+  // 새로운 비밀번호가 비어 있으면 버튼 비활성화
+  if ($userPw.value === "") {
+    $formSubmitBtn.disabled = true;
+  } else {
+    checkPasswords(); // 비밀번호 확인 함수 호출
+  }
 });
 
-// 입력 패스워드 double check
+// 비밀번호 확인란 포커스 시 스타일 초기화
 $userPwCheck.addEventListener("focus", () => {
   $userPwCheck.style.outline = "none";
-  if ($userPw.value !== $userPwCheck.value) {
-    $userPwCheck.style.borderWidth = "1.8px";
-    $userPwCheck.style.borderColor = "red";
-  } else {
-    $userPwCheck.style.borderWidth = "1.8px";
-    $userPw.style.borderColor = "green";
-  }
 });
 
+// 비밀번호 확인 입력 시 처리
 $userPwCheck.addEventListener("input", () => {
-  if ($userPw.value !== $userPwCheck.value) {
-    $userPwCheck.style.borderWidth = "1.8px";
-    $userPwCheck.style.borderColor = "red";
-    $formSubmitBtn.disabled = true; // 가입 버튼 비활성화
-  } else {
-    $userPwCheck.style.borderWidth = "1.8px";
-    $userPwCheck.style.borderColor = "green";
-    $userPw.style.borderWidth = "1.8px";
-    $userPwCheck.style.borderColor = "green";
-    $formSubmitBtn.disabled = false; // 가입 버튼 활성화
-  }
+  $userPwCheck.style.borderWidth = "1.8px";
+  checkPasswords(); // 비밀번호 확인 함수 호출
 });
+
+// 비밀번호 확인 함수
+function checkPasswords() {
+  if ($userPw.value !== $userPwCheck.value) {
+    $userPwCheck.style.borderColor = "red";
+    $formSubmitBtn.disabled = true; // 버튼 비활성화
+  } else {
+    $userPwCheck.style.borderColor = "green";
+    // 두 비밀번호가 같고 새로운 비밀번호가 비어있지 않으면 버튼 활성화
+    $formSubmitBtn.disabled = $userPw.value === "" ? true : false; 
+  }
+}
 
 // 유저가 전화번호 입력시 자동적으로 '-'를 삽입. ex) 0101 => 010-1, 010-12345 => 010-1234-5
 const insertHyphen = (t) => {

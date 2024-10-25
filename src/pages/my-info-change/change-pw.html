@@ -21,19 +21,19 @@
           <div>
             <label for="now-pw">현재 비밀번호</label>
             <br>
-            <input type="password" name="current-pw">
+            <input type="password" name="current-pw" required>
           </div>
           <div>
             <label for="new-pw">새로운 비밀번호</label>
             <br>
-            <input type="password" name="new-pw" pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$">
+            <input type="password" name="new-pw" placeholder="영문(대,소문자), 숫자, 특수문자 포함 8자 이상 입력" pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&#^()])[A-Za-z\d@$!%*?&#^()]{8,}$" required>
           </div>
           <div>
             <label for="new-pw-check">다시 입력해주세요</label>
             <br>
-            <input type="password" name="new-pw-check">
+            <input type="password" name="new-pw-check" required>
           </div>
-          <input type="submit" value="변경">
+          <input type="submit" value="변경" disabled>
         </form>
       </main>
     </div>
