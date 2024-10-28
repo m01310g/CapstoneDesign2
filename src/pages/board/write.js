@@ -6,7 +6,7 @@ const categoryBtn = document.querySelector('.category-btn');
 const subBtn = document.querySelector('.sub-btn');
 const taxiSearch = document.querySelector('.taxi-search');
 const locationInput = document.querySelector("#location");
-const locatoinMapContainer = document.querySelector("#location-map");
+const locationContainer = document.querySelector("#location-map");
 const taxiMapContainer = document.querySelector("#map");
 
 const taxiDeparture = document.querySelector("#departure");
@@ -37,6 +37,7 @@ categoryItems.forEach(item => {
     item.addEventListener('click', (event) => {
         selectedCategory = event.target.getAttribute('data-category');
         categoryBtn.innerText = selectedCategory; // 선택된 카테고리 표시
+        console.log('Selected Category on click: ', selectedCategory);
         categoryBtn.classList.remove(ON_CLASS_NAME);
 
         // 택시 선택 시 출발지/목적지 검색 필드 표시
@@ -46,7 +47,7 @@ categoryItems.forEach(item => {
             locationInput.classList.add(HIDDEN_CLASS_NAME);
             taxiMapContainer.classList.add(HIDDEN_CLASS_NAME);
             confirmBtn.classList.add(HIDDEN_CLASS_NAME);
-            locatoinMapContainer.classList.add(HIDDEN_CLASS_NAME);
+            locationContainer.classList.add(HIDDEN_CLASS_NAME);
         } else {
             taxiSearch.classList.add(HIDDEN_CLASS_NAME); // 택시 검색 필드 숨기기
             updateSubCategories(selectedCategory);
@@ -54,8 +55,7 @@ categoryItems.forEach(item => {
             locationInput.classList.remove(HIDDEN_CLASS_NAME);
             taxiMapContainer.classList.add(HIDDEN_CLASS_NAME);
             confirmBtn.classList.add(HIDDEN_CLASS_NAME);
-            locatoinMapContainer.classList.add(HIDDEN_CLASS_NAME);
-
+            locationContainer.classList.add(HIDDEN_CLASS_NAME);
         }
 
         // 모든 카테고리 항목의 'on' 클래스 제거
@@ -139,55 +139,33 @@ const recordDate = () => {
     return `${year}년 ${month}월 ${day}일`;
 };
 
-class Board {
-    constructor(indexNum, subjectStr, contentStr, category, subCategory, departure, destination, startDate, endDate, currentCapacity, maxCapacity, price, location) {
-        this.index = indexNum;
-        this.Subject = subjectStr;
-        this.Content = contentStr;
-        this.Category = category;
-        this.SubCategory = subCategory;
-        this.Departure = departure;
-        this.Destination = destination;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.currentCapacity = currentCapacity;
-        this.maxCapacity = maxCapacity;
-        this.price = price;
-        this.location = location;
-        this.date = recordDate();
+const fetchUserInfo = async () => {
+    try {
+        const response = await fetch('/api/session/user-id');
+        if (!response.ok) {
+            console.error("Response not OK: ", response)
+            alert("로그인 되어 있지 않습니다.");
+            return null;
+        }
+        const userInfo = await response.json();
+        return userInfo;
+    } catch (error) {
+        console.error('Error fetching user info: ', error);
+        window.location.href = '/';
+        return null;
     }
-
-    set Subject(value) {
-        if (value.length === 0) throw new Error("제목을 입력해주세요.");
-        this.subject = value;
-    }
-
-    set Content(value) {
-        if (value.length === 0) throw new Error("내용을 입력해주세요.");
-        this.content = value;
-    }
-
-    set Category(value) {
-        this.category = value;
-    }
-
-    set SubCategory(value) {
-        this.subCategory = value;
-    }
-
-    set Departure(value) {
-        this.departure = value;
-    }
-
-    set Destination(value) {
-        this.destination = value;
-    }
-}
+};
 
 const writeFrm = document.querySelector("#writeFrm");
 
 const handleSubmit = async (event) => {
     event.preventDefault();
+
+    const userInfo = await fetchUserInfo();
+    if (!userInfo) {
+        alert('로그인 정보가 없습니다. 로그인 해주세요.');
+        return;
+    }
 
     const subject = event.target.subject.value;
     const content = event.target.content.value;
@@ -195,17 +173,16 @@ const handleSubmit = async (event) => {
     const price = parseInt(event.target.price.value.replace(/,/g, ''), 10);
     const selectedDatesStr = localStorage.getItem("selectedDates");
     const selectedDates = JSON.parse(selectedDatesStr) || [];
-    const boardsObj = JSON.parse(localStorage.getItem("boards")) || [];
-    const index = boardsObj.length;
-    const startDate = selectedDates[index].startDate;
-    const endDate = selectedDates[index].endDate;
+    const startDate = selectedDates[selectedDates.length - 1].startDate;
+    const endDate = selectedDates[selectedDates.length - 1].endDate;
     const currentCapacity = 1;
     const departureCoords = selectedCategory === "택시" ? JSON.parse(localStorage.getItem("departureCoords")) : null;
     const destinationCoords = selectedCategory === "택시" ? JSON.parse(localStorage.getItem("destinationCoords")) : null;
     const locationCoords = selectedCategory !== "택시" ? JSON.parse(localStorage.getItem("locationCoords")) : null;
-    const departure = selectedCategory === "택시" ? { address: event.target.departure.value, ...departureCoords } : null;
-    const destination = selectedCategory === "택시" ? { address: event.target.destination.value, ...destinationCoords } : null;
-    const loc = selectedCategory !== "택시" ? { address: event.target.location.value, ...locationCoords } : null;
+    const departure = selectedCategory === "택시" ? JSON.stringify({ address: event.target.departure.value, ...departureCoords }) : null;
+    const destination = selectedCategory === "택시" ? JSON.stringify({ address: event.target.destination.value, ...destinationCoords }) : null;
+    const loc = selectedCategory !== "택시" ? JSON.stringify({ address: event.target.location.value, ...locationCoords }) : null;
+    const loggedInUserId = userInfo.userId;
 
     // 대분류가 택시일 경우 출발지와 도착지 정보 가져오기
     if (selectedCategory === '택시') {
@@ -227,7 +204,7 @@ const handleSubmit = async (event) => {
         }
     }
 
-    if (selectedDates.length === 0 || !selectedDates[index] || !selectedDates[index].startDate || !selectedDates[index].endDate) {
+    if (selectedDates.length === 0) {
         alert("모집 기한을 선택헤주세요.");
         return;
     }
@@ -235,8 +212,8 @@ const handleSubmit = async (event) => {
     const postData = {
         subject,
         content,
-        selectedCategory,
-        selectedSubCategory,
+        category: selectedCategory,
+        subCategory: selectedSubCategory,
         departure,
         destination,
         loc,
@@ -249,7 +226,7 @@ const handleSubmit = async (event) => {
     };
 
     try {
-        const response = await fetch('/post',{
+        const response = await fetch('/api/post',{
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(postData)

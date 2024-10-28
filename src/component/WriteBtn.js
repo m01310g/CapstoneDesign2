@@ -56,7 +56,7 @@ class WriteBtn extends HTMLElement {
         const index = (JSON.parse(localStorage.getItem("boards")) || []).length;
         
         writeBtn.innerHTML = `
-            <a id="write-btn" href="/src/pages/board/write.html?index=${index}" target="_top">
+            <a id="write-btn" href="/post?index=${index}" target="_top">
                 <div class="img-container">
                     <img src="${icon}">
                 </div>

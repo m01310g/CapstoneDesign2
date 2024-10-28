@@ -43,7 +43,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:3000',
+  credentials: true   // 쿠키 허용
+}));
 app.use(express.static(path.join(__dirname, "..", "assets")));
 /*
 assets/img에 있는 이미지 html에서 사용 시
@@ -54,7 +57,7 @@ assets/img에 있는 이미지 html에서 사용 시
 app.use(express.static(path.join(__dirname, "..", "src")));
 app.use(express.static(path.join(__dirname, "..", "src", "pages"))); // html파일에 연결된 js로드 안되는 문제 해결
 app.use(express.static(path.join(__dirname, "..", "src", "pages", "login"))); // login페이지의 js로드 안되는 문제 해결
-
+app.use(express.static(path.join(__dirname, "..", "src", "pages", "board"))); // 게시물 작성 페이지의 js로드 안되는 문제 해결
 
 // 로그인 페이지
 app.get("/", (req, res) => {
@@ -285,22 +288,55 @@ app.get("/category", (req, res) => {
 });
 
 // 카테고리 별 라우팅
-app.get("/category/:category", (req, res) => {
-  const category = req.params.category;
+app.get("/category/:categoryName", (req, res) => {
+  const categoryName = req.params.categoryName;
+  console.log(categoryName);
 
-  if (category !== "calculator") {  // 택배, 배달, 택시 게시판
-    res.sendFile(__dirname, `/src/pages/post/${category}.html`);
-  } else {  // 계산기
-    res.sendFile(__dirname, `/src/pages/category/${category}.html`);
+  const filePath = categoryName !== "calculator"
+    ? path.join(__dirname, "..", "src", "pages", "post", `${categoryName}.html`)
+    : path.join(__dirname, "..", "src", "pages", "category", `${categoryName}.html`);
+
+  res.sendFile(filePath, (err) => {
+    if (err) {
+      console.error(err);
+      res.status(err.status).end();
+    }
+  });
+});
+
+// 게시물 작성 엔드포인트
+app.get('/post', (req, res) => {
+  res.sendFile(path.join(__dirname, "..", "src", "pages", "board", "write.html"));
+});
+
+// 세션에서 유저 아이디 가져오는 api
+app.get('/api/session/user-id', async (req, res) => {
+  if (req.session.isLogined) {
+    const query = 'SELECT user_id FROM user_info WHERE user_id = ?';
+    try {
+      const [result] = await db.query(query, [req.session.userId]);
+
+      if (result.length > 0) {
+        const userId = result[0].user_id;
+        res.json({ userId: userId });
+      } else {
+        res.status(404).json({ message: "User not found" });
+      }
+    } catch (err) {
+      console.error("Database query error: ", err);
+      res.status(500).json({ message: "Server error" });
+    }
+  } else {
+    res.status(401).json({ message: '로그인 되어 있지 않습니다.' });
   }
 });
 
 // 게시물 작성 api
 app.post('/api/post', (req, res) => {
-  const { title, content, category, subCategory, departure, destination, loc, price, startDate, endDate, currentCapacity, maxCapacity, user_id } = req.body;
+  const { subject, content, category, subCategory, departure, destination, loc, price, startDate, endDate, currentCapacity, maxCapacity, user_id } = req.body;
   
-  const query = "INSERT INTO post_list (title, content, category, subCategory, departure, destination, loc, price, startDate, endDate, currentCapacity, maxCapacity, user_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-  const values = [title, content, category, subCategory, departure, destination, loc, price, startDate, endDate, currentCapacity, maxCapacity, user_id];
+  const query = "INSERT INTO post_list (title, content, category, sub_category, departure, destination, location, price, start_date, end_date, current_capacity, max_capacity, user_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+  const values = [subject, content, category, subCategory, departure, destination, loc, price, startDate, endDate, currentCapacity, maxCapacity, user_id];
 
   db.query(query, values, (err, result) => {
     if (err) {
