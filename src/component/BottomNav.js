@@ -5,24 +5,24 @@ class BottomNav extends HTMLElement {
 
         const icons = {
             category: {
-                on: '/img/category-on.png',
-                off: '/img/category-off.png'
+                on: '/assets/img/category-on.png',
+                off: '/assets/img/category-off.png'
             },
             chatting: {
-                on: '/img/chatting-on.png',
-                off: '/img/chatting-off.png'
+                on: '/assets/img/chatting-on.png',
+                off: '/assets/img/chatting-off.png'
             },
             home: {
-                on: '/img/home-on.png',
-                off: '/img/home-off.png'
+                on: '/assets/img/home-on.png',
+                off: '/assets/img/home-off.png'
             },
             notification: {
-                on: '/img/notification-on.png',
-                off: '/img/notification-off.png'
+                on: '/assets/img/notification-on.png',
+                off: '/assets/img/notification-off.png'
             },
             myPage: {
-                on: '/img/my-on.png',
-                off: '/img/my-off.png'
+                on: '/assets/img/my-on.png',
+                off: '/assets/img/my-off.png'
             }
         };
 

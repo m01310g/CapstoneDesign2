@@ -277,8 +277,36 @@ app.post("/change-pw", (req, res) => {
 });
 
 // 카테고리 페이지
-app.get("/category/category.html", (req, res) => {
+app.get("/category", (req, res) => {
   res.sendFile(path.join(__dirname, "..", "src", "pages", "category", "category.html"));
+});
+
+// 카테고리 별 라우팅
+app.get("/category/:category", (req, res) => {
+  const category = req.params.category;
+
+  if (category !== "calculator") {  // 택배, 배달, 택시 게시판
+    res.sendFile(__dirname, `/src/pages/post/${category}.html`);
+  } else {  // 계산기
+    res.sendFile(__dirname, `/src/pages/category/${category}.html`);
+  }
+});
+
+// 게시물 작성 api
+app.post('/api/post', (req, res) => {
+  const { title, content, category, subCategory, departure, destination, loc, price, startDate, endDate, currentCapacity, maxCapacity, user_id } = req.body;
+  
+  const query = "INSERT INTO post_list (title, content, category, subCategory, departure, destination, loc, price, startDate, endDate, currentCapacity, maxCapacity, user_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+  const values = [title, content, category, subCategory, departure, destination, loc, price, startDate, endDate, currentCapacity, maxCapacity, user_id];
+
+  db.query(query, values, (err, result) => {
+    if (err) {
+      console.error("DB Error: ", err);
+      res.status(500).json({ "error": "Database error" });
+    } else {
+      res.status(201).json({ "success": "Data saved successfully" });
+    }
+  });
 });
 
 // 세션에서 유저 정보 가져오기

@@ -186,15 +186,34 @@ class Board {
 
 const writeFrm = document.querySelector("#writeFrm");
 
-const handleSubmit = (event) => {
+const handleSubmit = async (event) => {
     event.preventDefault();
 
     const subject = event.target.subject.value;
     const content = event.target.content.value;
+    const maxCapacity = event.target.capacity.value;
+    const price = parseInt(event.target.price.value.replace(/,/g, ''), 10);
+    const selectedDatesStr = localStorage.getItem("selectedDates");
+    const selectedDates = JSON.parse(selectedDatesStr) || [];
+    const boardsObj = JSON.parse(localStorage.getItem("boards")) || [];
+    const index = boardsObj.length;
+    const startDate = selectedDates[index].startDate;
+    const endDate = selectedDates[index].endDate;
+    const currentCapacity = 1;
+    const departureCoords = selectedCategory === "택시" ? JSON.parse(localStorage.getItem("departureCoords")) : null;
+    const destinationCoords = selectedCategory === "택시" ? JSON.parse(localStorage.getItem("destinationCoords")) : null;
+    const locationCoords = selectedCategory !== "택시" ? JSON.parse(localStorage.getItem("locationCoords")) : null;
+    const departure = selectedCategory === "택시" ? { address: event.target.departure.value, ...departureCoords } : null;
+    const destination = selectedCategory === "택시" ? { address: event.target.destination.value, ...destinationCoords } : null;
+    const loc = selectedCategory !== "택시" ? { address: event.target.location.value, ...locationCoords } : null;
 
-    let departure = '';
-    let destination = '';
-    let loc = '';
+    // 대분류가 택시일 경우 출발지와 도착지 정보 가져오기
+    if (selectedCategory === '택시') {
+        if (!departure || !destination) {
+            alert("출발지와 도착지를 입력해주세요.");
+            return;
+        }
+    }
 
     if (selectedCategory === '택배' || selectedCategory === "배달") {
         if (!selectedCategory) {
@@ -207,102 +226,44 @@ const handleSubmit = (event) => {
             return;
         }
     }
-    
-    const selectedDatesStr = localStorage.getItem("selectedDates");
-    const selectedDates = JSON.parse(selectedDatesStr) || [];
-    const boardsObj = JSON.parse(localStorage.getItem("boards")) || [];
-    const index = boardsObj.length;
 
     if (selectedDates.length === 0 || !selectedDates[index] || !selectedDates[index].startDate || !selectedDates[index].endDate) {
         alert("모집 기한을 선택헤주세요.");
         return;
     }
-    
-    const startDate = selectedDates[index].startDate;
-    const endDate = selectedDates[index].endDate;
-    const maxCapacity = event.target.capacity.value;
-    const currentCapacity = 1;
-    const price = parseInt(event.target.price.value.replace(/,/g, ''), 10);
+
+    const postData = {
+        subject,
+        content,
+        selectedCategory,
+        selectedSubCategory,
+        departure,
+        destination,
+        loc,
+        price,
+        startDate,
+        endDate,
+        currentCapacity,
+        maxCapacity,
+        user_id: loggedInUserId
+    };
 
     try {
-        let instance;
+        const response = await fetch('/post',{
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(postData)
+        });
 
-        // 대분류가 택시일 경우 출발지와 도착지 정보 가져오기
-        if (selectedCategory === '택시') {
-            if (event.target.departure && event.target.destination) {
-                departure = event.target.departure.value;
-                destination = event.target.destination.value;
-            }
-
-            const departureCoords = JSON.parse(localStorage.getItem("departureCoords"));
-            const destinationCoords = JSON.parse(localStorage.getItem("destinationCoords"));
-
-            if (!departure || !destination) {
-                alert("출발지와 도착지를 입력해주세요.");
-                return;
-            }
-
-            instance = new Board(
-                boardsObj.length,
-                subject,
-                content,
-                selectedCategory,
-                "",
-                { address: departure, ...departureCoords },
-                { address: destination, ...destinationCoords},
-                startDate,
-                endDate,
-                currentCapacity,
-                maxCapacity,
-                price
-            );
+        const result = await response.json();
+        if (result.success) {
+            window.location.href = `/view?index=${result.postId}&category=${selectedCategory}&subCategory=${selectedSubCategory}`;
         } else {
-            const locationCoords = JSON.parse(localStorage.getItem("locationCoords"));
-
-            if (event.target.location) {
-                loc = event.target.location.value;
-            }
-
-            if (!loc) {
-                alert("수령지를 입력해주세요.");
-                return;
-            }
-
-            instance = new Board(
-                boardsObj.length,
-                subject,
-                content,
-                selectedCategory,
-                selectedSubCategory,
-                "",
-                "",
-                startDate,
-                endDate,
-                currentCapacity,
-                maxCapacity,
-                price,
-                { address: loc, ...locationCoords }
-            );
+            alert("게시물 작성 중 오류가 발생했습니다.");
         }
-
-        boardsObj.push(instance);
-
-        // boards 저장
-        const boardsStr = JSON.stringify(boardsObj);
-        localStorage.setItem("boards", boardsStr);
-        localStorage.removeItem("departureCoords");
-        localStorage.removeItem("destinationCoords");
-
-        if (selectedCategory === "택시") {
-            location.href = `./view.html?index=${index}&category=${selectedCategory}`;
-        } else {
-            location.href = `./view.html?index=${index}&category=${selectedCategory}&subCategory=${selectedSubCategory}`;
-        }
-
-    } catch (err) {
-        // 예외 발생 시 처리
-        alert(err.message);
-        console.error(err);
+    } catch (error) {
+        console.error("Error:", error);
+        alert("네트워크 오류가 발생했습니다.");
     }
 };
 

@@ -4,7 +4,7 @@ class WriteBtn extends HTMLElement {
         super();
         const shadow = this.attachShadow({ mode: 'open' });
 
-        const icon = "../../../assets/img/write.png";
+        const icon = "/assets/img/write.png";
 
         const style = document.createElement("style");
         style.textContent = `
@@ -56,7 +56,7 @@ class WriteBtn extends HTMLElement {
         const index = (JSON.parse(localStorage.getItem("boards")) || []).length;
         
         writeBtn.innerHTML = `
-            <a id="write-btn" href="../board/write.html?index=${index}" target="_top">
+            <a id="write-btn" href="/src/pages/board/write.html?index=${index}" target="_top">
                 <div class="img-container">
                     <img src="${icon}">
                 </div>
