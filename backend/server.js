@@ -8,12 +8,9 @@ const crypto = require("crypto");
 const port = 3000;
 
 const mysql = require('mysql2/promise');
-// const db = await mysql.createConnection({
-//   host     : 'localhost',
-//   user     : 'root',
-//   password : 'Capstone2@',
-//   database : 'co_n'
-// });
+
+let db;
+
 async function initializeDatabase() {
   db = await mysql.createConnection({
     host: 'localhost',
@@ -97,40 +94,6 @@ app.post("/login", async (req, res) => {
     res.redirect('/?fault_message=로그인 정보가 일치하지 않습니다.');
   }
 });
-// app.post("/login", (req, res) => {
-//   const loginId = req.body["login-id"];
-//   const loginPw = req.body["login-pw"];
-
-//   const query = "SELECT user_pw, user_salt FROM user_info WHERE user_id = ?";
-
-//   if (loginId && loginPw) {
-//     db.query(query, [loginId], (err, result) => {
-//       if (err) {
-//         // 로그인 실패 시
-//         res.redirect('/?fault_message=로그인 정보가 일치하지 않습니다.');
-//       }
-//       if (result.length > 0) {       // db에서의 반환값이 있으면 salt와 해쉬
-//         const user = result[0];
-//         const userSalt = user.user_salt;
-//         const hashedPw = crypto.createHash("sha256").update(loginPw + userSalt).digest("hex");
-//           if (hashedPw === user.user_pw) {
-//             req.session.isLogined = true; // 세션 정보 갱신: 로그인 상태
-//             req.session.userId = loginId; // 세션 정보 갱신: 유저 아이디
-//             req.session.save(() => {
-//               // 로그인 성공 시 메인 페이지로 redirect
-//               res.redirect("/home/home.html");
-//             });
-//           } else {              
-//             res.redirect('/?fault_message=로그인 정보가 일치하지 않습니다.');  
-//           }
-//       } else {              
-//         res.redirect('/?fault_message=로그인 정보가 일치하지 않습니다.');  
-//       }
-//     });
-//   } else {              
-//     res.redirect('/?fault_message=로그인 정보가 일치하지 않습니다.');  
-//   }
-// });
 
 // 로그아웃 처리
 app.get("/logout", (req, res) => {
@@ -147,22 +110,22 @@ app.get("/sign-up/sign-up.html", (req, res) => {
 });
 
 // user id 중복 검사
-app.post("/sign-up/user-id-availability", (req, res) => {
+app.post("/sign-up/user-id-availability", async (req, res) => {
   const userId = req.body["user-id"];
   const query = "SELECT COUNT(*) AS count FROM user_info WHERE user_id = ?";
 
-  db.query(query, [userId], (err, results) => {
-    if (err) {
-      return res.status(500).send("Server error");
-    }
-
+  try {
+    const [results] = await db.query(query, [userId]);
     const isAvailable = results[0].count === 0;
     res.json({ available: isAvailable });
-  });
+  } catch (err) {
+    console.error("Database error:", err);
+    res.status(500).send("Server error");
+  }
 });
 
 // 회원가입 처리
-app.post("/sign-up/user-info", (req, res) => {
+app.post("/sign-up/user-info", async (req, res) => {
   const userId = req.body["user-id"];
   const userName = req.body["user-name"];
   const userNickname = req.body["user-nickname"];
@@ -173,23 +136,23 @@ app.post("/sign-up/user-info", (req, res) => {
   const userEmailPre = req.body["user-email-pre"];
   const userEmailPost = req.body["user-email-post"];
   let userEmail;
-  // 아이디, 비밀번호 찾기도 input, select 부분 pre, post로 잘라서 아래 코드로 판별 후 userEmail 완성 후 query
 
+  // 이메일 조합
   if (userEmailPost) {
-    userEmail = `${userEmailPre}${userEmailPost}`;
+    userEmail = `${userEmailPre}@${userEmailPost}`; // 이메일에 @ 기호 추가
   } else {
     userEmail = userEmailPre;
   }
 
   const query = "INSERT INTO user_info (user_id, user_pw, user_name, user_nickname, user_tel, user_email, user_address, user_salt) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-  
-  db.query(query, [userId, userPw, userName, userNickname, userTel, userEmail, userAddress, userSalt], (err, result) => {
-    if (err) {
-      return res.redirect(`/sign-up/sign-up.html?error=${encodeURIComponent('회원가입에 실패했습니다. 다시 시도해주세요.')}`);
-    }
 
+  try {
+    await db.query(query, [userId, userPw, userName, userNickname, userTel, userEmail, userAddress, userSalt]);
     res.redirect('/?message=회원가입이 완료되었습니다!'); // 회원 가입 완료 시 로그인 페이지로
-  });
+  } catch (err) {
+    console.error("회원가입 오류:", err);
+    return res.redirect(`/sign-up/sign-up.html?error=${encodeURIComponent('회원가입에 실패했습니다. 다시 시도해주세요.')}`);
+  }
 });
 
 // 아이디 찾기 페이지
@@ -218,7 +181,7 @@ app.get("/my-info-change/my-info-change.html", (req, res) => {
 });
 
 // 회원 정보 변경 처리
-app.post("/my-info-change", (req, res) => {
+app.post("/my-info-change", async (req, res) => {
   const userNickname = req.body["user-nickname"];
   const userTel = req.body["user-tel"];
   const userAddress = req.body["user-address"];
@@ -256,18 +219,18 @@ app.post("/my-info-change", (req, res) => {
     WHERE user_id = ?
   `;
 
-  db.query(query, values, (err, result) => {
-    if (err) {
-      console.error("DB 쿼리 오류: ", err);
-      return res.redirect("/my-info-change/my-info-change.html?fault_message=변경에 실패했습니다.");
-    }
-
+  try {
+    const [result] = await db.query(query, values);
+    
     if (result.affectedRows === 0) {
       return res.redirect("/my-info-change/my-info-change.html?fault_message=변경 사항이 없습니다.");
     }
 
     res.redirect('/my-page/my-page.html?message=변경이 완료되었습니다.');
-  });
+  } catch (err) {
+    console.error("DB 쿼리 오류: ", err);
+    return res.redirect("/my-info-change/my-info-change.html?fault_message=변경에 실패했습니다.");
+  }
 });
 
 // 비밀번호 변경 페이지
@@ -276,7 +239,7 @@ app.get("/my-info-change/change-pw.html", (req, res) => {
 });
 
 // 비밀번호 변경 처리
-app.post("/change-pw", (req, res) => {
+app.post("/change-pw", async (req, res) => {
   const currentPw = req.body["current-pw"];
   const newPw = req.body["new-pw"];
   const userId = req.session.userId;
@@ -287,11 +250,8 @@ app.post("/change-pw", (req, res) => {
 
   const query = "SELECT user_pw, user_salt FROM user_info WHERE user_id = ?";
 
-  db.query(query, [userId], (err, results) => {
-    if (err) {
-      console.error("Error fetching user data: ", err);
-      return res.status(500).send("Server error");
-    }
+  try {
+    const [results] = await db.query(query, [userId]);
 
     if (results.length === 0) {
       return res.status(404).send("User not found");
@@ -306,18 +266,17 @@ app.post("/change-pw", (req, res) => {
       const newHashedPw = crypto.createHash("sha256").update(newPw + userSalt).digest("hex"); // 새로운 비밀번호 해시 생성
 
       const updateQuery = "UPDATE user_info SET user_pw = ? WHERE user_id = ?";
-      db.query(updateQuery, [newHashedPw, userId], (updateErr) => {
-        if (updateErr) {
-          console.error("Error updating password: ", updateErr);
-          return res.status(500).send("Server error during password update");
-        }
-        return res.redirect('/my-page/my-page.html?message=변경이 완료되었습니다.');
-      });
+      await db.query(updateQuery, [newHashedPw, userId]);
+
+      return res.redirect('/my-page/my-page.html?message=변경이 완료되었습니다.');
     } else {
       // 현재 비밀번호가 일치하지 않는 경우
       return res.status(400).send("Current password is incorrect");
     }
-  });
+  } catch (err) {
+    console.error("Error processing request: ", err);
+    return res.status(500).send("Server error");
+  }
 });
 
 // 카테고리 페이지
@@ -326,27 +285,35 @@ app.get("/category/category.html", (req, res) => {
 });
 
 // 세션에서 유저 정보 가져오기
-app.get('/api/session/user-info', (req, res) => {
+app.get('/api/session/user-info', async (req, res) => {
   if (req.session.isLogined) {
     // 로그인 상태라면
-    // 세션 데이터에서 필요한 값을 가져오기
     const query = 'SELECT user_nickname, user_address, user_point FROM user_info WHERE user_id = ?';
-    db.query(query, [req.session.userId], (err, result) => {
+
+    try {
+      const [result] = await db.query(query, [req.session.userId]);
+
       if (result.length > 0) {
         // result[0]은 user_info 테이블에서 user_id에 대응되는 데이터 row
-        // user_nickname, user_address, user_point는 테이블의 포인트 속성명
         const userNickname = result[0].user_nickname; 
-        const userAddress = (result[0].user_address).split(" ")[1]; // 경기 수원시 ~~ 값을 -> 수원시만 할당되도록
+        const userAddress = result[0].user_address.split(" ")[1]; // 경기 수원시 ~~ 값을 -> 수원시만 할당되도록
         const userPoint = result[0].user_point;
 
         // JSON 형태로 응답
         res.json({
-          userNickname: userNickname,
-          userAddress: userAddress,
-          userPoint: userPoint
+          userNickname,
+          userAddress,
+          userPoint
         });
+      } else {
+        res.status(404).json({ message: "User not found" });
       }
-    });
+    } catch (err) {
+      console.error("Database query error: ", err);
+      res.status(500).json({ message: "Server error" });
+    }
+  } else {
+    res.status(401).json({ message: "User not logged in" });
   }
 });
 
