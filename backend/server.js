@@ -1,3 +1,6 @@
+const dotenv = require("dotenv");
+dotenv.config();
+
 const express = require("express");
 const session = require("express-session");
 const FileStore = require("session-file-store")(session);
@@ -15,7 +18,7 @@ async function initializeDatabase() {
   db = await mysql.createConnection({
     host: 'localhost',
     user: 'root',
-    password: 'Capstone2@',
+    password: process.env.DB_PASSWORD,
     database: 'co_n'
   });
 }
@@ -27,7 +30,7 @@ initializeDatabase().catch(err => {
 
 // 세션 설정
 app.use(session({
-  secret: "1868cc469dc47695069aa7c6324f41e4eef1e34b1afa9a", // 키값 숨길 것
+  secret: process.env.SESSION_KEY, // 키값 숨길 것
   resave: false,
   saveUninitialized: true,
   store: new FileStore(),
@@ -51,6 +54,43 @@ assets/img에 있는 이미지 html에서 사용 시
 <img class="logo" src="/img/logo.jpg" />
 2번째 태그와 같이 사용할 것
 */
+
+const nodemailer = require('nodemailer');
+
+let authnCode = "";
+function generateAuthnCode() {
+  return Math.floor(1000 + Math.random() * 9000).toString(); // 인증번호: 1000 이상 9999 이하의 숫자 생성
+}
+
+app.post('/send-authn', async (req, res) => {
+  const { email } = req.body;
+
+  authnCode = generateAuthnCode();
+
+  const transporter = nodemailer.createTransport({
+      service: 'naver',
+      auth: {
+          user: process.env.NODEMAILER_USER,
+          pass: process.env.NODEMAILER_PASSWORD
+      }
+  });
+
+  const mailOptions = {
+      from: process.env.NODEMAILER_USER,
+      to: email,
+      subject: 'CO/N 이메일 인증 번호',
+      text: `인증 번호: ${authnCode}`
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+    // 여기에서 인증 코드를 저장하는 로직 추가
+    res.status(200).json({ message: '인증 코드가 발송되었습니다.' }); // JSON 응답
+  } catch (error) {
+      res.status(500).json({ message: '이메일 발송에 실패했습니다.' }); // JSON 응답
+  }
+});
+
 app.use(express.static(path.join(__dirname, "..", "src")));
 app.use(express.static(path.join(__dirname, "..", "src", "pages"))); // html파일에 연결된 js로드 안되는 문제 해결
 app.use(express.static(path.join(__dirname, "..", "src", "pages", "login"))); // login페이지의 js로드 안되는 문제 해결
@@ -135,7 +175,12 @@ app.post("/sign-up/user-info", async (req, res) => {
   const userPw = crypto.createHash("sha256").update(req.body["user-pw"] + userSalt).digest("hex");
   const userEmailPre = req.body["user-email-pre"];
   const userEmailPost = req.body["user-email-post"];
+  const checkAuthn = req.body["email-authn"];
   let userEmail;
+
+  if (authnCode !== checkAuthn) {
+    return res.redirect(`/sign-up/sign-up.html?error=${encodeURIComponent('인증번호 불일치로 회원가입에 실패했습니다.')}`);
+  }
 
   // 이메일 조합
   if (userEmailPost) {

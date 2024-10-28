@@ -1,11 +1,11 @@
 const $btnClose = document.querySelector(".btn-close");
-const $btnEmailAuthn = document.querySelector("#send-authn");
+const $btnEmailAuthn = document.querySelector("#send-authn-btn");
 const $emailAuthn = document.querySelector("input[name='email-authn']");
 const $userPw = document.querySelector("input[name='user-pw']");
 const $userPwCheck = document.querySelector("input[name='user-pw-check']");
 const $userId = document.querySelector("input[name='user-id']");
 const $formSubmitBtn = document.querySelector("input[type='submit']")
-let authnTimer = 180; // 이메일 인증 번호 입력 제한 시간
+// let authnTimer = 180; // 이메일 인증 번호 입력 제한 시간
 
 document.addEventListener("DOMContentLoaded", () => {
   // 이메일 도메인 직접 입력 시
@@ -119,15 +119,47 @@ const insertHyphen = (t) => {
 };
 
 // 이메일로 인증번호 전송하면 -> 인증번호 입력 창에 입력 제한 시간 출력
+// $btnEmailAuthn.addEventListener("click", () => {
+//   const authnIntervalId = setInterval(() => {
+//     $emailAuthn.value = `${Math.floor(authnTimer / 60)}:${String(authnTimer % 60).padStart(2, "0")}`;
+//     authnTimer--;
+//     if(authnTimer === 0) {
+//       clearInterval(authnIntervalId);
+//       $emailAuthn.value = "인증번호 만료";
+//     }
+//   }, 1000);
+// });
 $btnEmailAuthn.addEventListener("click", () => {
-  const authnIntervalId = setInterval(() => {
-    $emailAuthn.value = `${Math.floor(authnTimer / 60)}:${String(authnTimer % 60).padStart(2, "0")}`;
-    authnTimer--;
-    if(authnTimer === 0) {
-      clearInterval(authnIntervalId);
-      $emailAuthn.value = "인증번호 만료";
+  document.querySelector("#email-authn-container").style.display = "block";
+  const authnForEmailPre = document.querySelector("#user-email").value;
+  const authnForEmailPost = document.querySelector("select[name='user-email-post']").value;
+  let fullEmail;
+  if (authnForEmailPost === "email-typing") {
+    // 직접 입력 선택 시
+    fullEmail = authnForEmailPre; // authnForEmailPre 값만 사용
+  } else {
+    fullEmail = `${authnForEmailPre}${authnForEmailPost}`; // authnForEmailPre와 authnForEmailPost 결합
+  }
+
+  fetch('/send-authn', {
+    method: 'POST', // POST 요청
+    headers: {
+      'Content-Type': 'application/json' // JSON 형식으로 데이터 전송
+    },
+    body: JSON.stringify({ email: fullEmail }) // 이메일 주소를 JSON 형식으로 변환하여 전송
+  })
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('네트워크 응답이 정상이 아닙니다.');
     }
-  }, 1000);
+    return response.json(); // JSON 형식으로 응답 받기
+  })
+  .then(data => {
+    console.log('성공:', data); // 성공적으로 전송된 데이터 확인
+  })
+  .catch((error) => {
+    console.error('문제가 발생했습니다:', error); // 에러 처리
+  });
 });
 
 function execDaumPostcode() {

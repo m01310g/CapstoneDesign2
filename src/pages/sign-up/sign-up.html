@@ -59,11 +59,11 @@
                 <option value="@outlook.com">@outlook.com</option>
                 <option value="email-typing">-직접 입력-</option>
               </select>
-              <button id="send-authn">전송</button>
+              <button id="send-authn-btn">전송</button>
             </div>
-            <div>
+            <div id="email-authn-container">
               <label for="email-authn">인증번호</label>
-              <input type="text" name="email-authn" required>
+              <input type="text" name="email-authn" pattern=".{1,4}" required>
             </div>
             <div id="address-container">
               <label>주소</label>
