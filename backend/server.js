@@ -7,14 +7,26 @@ const app = express();
 const crypto = require("crypto");
 const port = 3000;
 
-const mysql = require('mysql');
-const db = mysql.createConnection({
-  host     : 'localhost',
-  user     : 'root',
-  password : 'Capstone2@',
-  database : 'co_n'
+const mysql = require('mysql2/promise');
+// const db = await mysql.createConnection({
+//   host     : 'localhost',
+//   user     : 'root',
+//   password : 'Capstone2@',
+//   database : 'co_n'
+// });
+async function initializeDatabase() {
+  db = await mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    password: 'Capstone2@',
+    database: 'co_n'
+  });
+}
+// db.connect();
+initializeDatabase().catch(err => {
+  console.error("DB 연결 오류: ", err);
+  process.exit(1); // 연결 실패 시 서버 종료
 });
-db.connect();
 
 // 세션 설정
 app.use(session({
@@ -53,40 +65,72 @@ app.get("/", (req, res) => {
 });
 
 // 로그인 처리
-app.post("/login", (req, res) => {
+app.post("/login", async (req, res) => {
   const loginId = req.body["login-id"];
   const loginPw = req.body["login-pw"];
-
   const query = "SELECT user_pw, user_salt FROM user_info WHERE user_id = ?";
 
   if (loginId && loginPw) {
-    db.query(query, [loginId], (err, result) => {
-      if (err) {
-        // 로그인 실패 시
-        res.redirect('/?fault_message=로그인 정보가 일치하지 않습니다.');
-      }
-      if (result.length > 0) {       // db에서의 반환값이 있으면 salt와 해쉬
+    try {
+      const [result] = await db.query(query, [loginId]);
+      if (result.length > 0) {
         const user = result[0];
         const userSalt = user.user_salt;
         const hashedPw = crypto.createHash("sha256").update(loginPw + userSalt).digest("hex");
-          if (hashedPw === user.user_pw) {
-            req.session.isLogined = true; // 세션 정보 갱신: 로그인 상태
-            req.session.userId = loginId; // 세션 정보 갱신: 유저 아이디
-            req.session.save(() => {
-              // 로그인 성공 시 메인 페이지로 redirect
-              res.redirect("/home/home.html");
-            });
-          } else {              
-            res.redirect('/?fault_message=로그인 정보가 일치하지 않습니다.');  
-          }
-      } else {              
-        res.redirect('/?fault_message=로그인 정보가 일치하지 않습니다.');  
+        if (hashedPw === user.user_pw) {
+          req.session.isLogined = true;
+          req.session.userId = loginId;
+          req.session.save(() => {
+            res.redirect("/home/home.html");
+          });
+        } else {
+          res.redirect('/?fault_message=로그인 정보가 일치하지 않습니다.');
+        }
+      } else {
+        res.redirect('/?fault_message=로그인 정보가 일치하지 않습니다.');
       }
-    });
-  } else {              
-    res.redirect('/?fault_message=로그인 정보가 일치하지 않습니다.');  
+    } catch (err) {
+      console.error("Login error:", err);
+      res.redirect('/?fault_message=서버 오류가 발생했습니다.');
+    }
+  } else {
+    res.redirect('/?fault_message=로그인 정보가 일치하지 않습니다.');
   }
 });
+// app.post("/login", (req, res) => {
+//   const loginId = req.body["login-id"];
+//   const loginPw = req.body["login-pw"];
+
+//   const query = "SELECT user_pw, user_salt FROM user_info WHERE user_id = ?";
+
+//   if (loginId && loginPw) {
+//     db.query(query, [loginId], (err, result) => {
+//       if (err) {
+//         // 로그인 실패 시
+//         res.redirect('/?fault_message=로그인 정보가 일치하지 않습니다.');
+//       }
+//       if (result.length > 0) {       // db에서의 반환값이 있으면 salt와 해쉬
+//         const user = result[0];
+//         const userSalt = user.user_salt;
+//         const hashedPw = crypto.createHash("sha256").update(loginPw + userSalt).digest("hex");
+//           if (hashedPw === user.user_pw) {
+//             req.session.isLogined = true; // 세션 정보 갱신: 로그인 상태
+//             req.session.userId = loginId; // 세션 정보 갱신: 유저 아이디
+//             req.session.save(() => {
+//               // 로그인 성공 시 메인 페이지로 redirect
+//               res.redirect("/home/home.html");
+//             });
+//           } else {              
+//             res.redirect('/?fault_message=로그인 정보가 일치하지 않습니다.');  
+//           }
+//       } else {              
+//         res.redirect('/?fault_message=로그인 정보가 일치하지 않습니다.');  
+//       }
+//     });
+//   } else {              
+//     res.redirect('/?fault_message=로그인 정보가 일치하지 않습니다.');  
+//   }
+// });
 
 // 로그아웃 처리
 app.get("/logout", (req, res) => {
