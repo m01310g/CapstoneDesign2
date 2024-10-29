@@ -25,7 +25,7 @@
           </ul>
         </nav>
         <main class="page-main">
-          <form id="forgot-pw-form" target="prevent-form" action="#" method="post">
+          <form id="forgot-pw-form" target="_self" action="/forgot-pw" method="post">
             <div>
               <label for="forgot-pw-user-name">이름</label>
               <br>
@@ -39,8 +39,8 @@
             <div>
               <label for="forgot-pw-user-email">이메일</label>
               <br>
-              <input type="text" name="forgot-pw-user-email" style="width: 42.5%" required>
-              <select name="forgot-pw-user-email">
+              <input type="text" name="forgot-pw-user-email-pre" required>
+              <select name="forgot-pw-user-email-post">
                 <option value="@daum.net">@daum.net</option>
                 <option value="@gamil.com">@gmail.com</option>
                 <option value="@hotmail.com">@hotmail.com</option>
@@ -48,7 +48,7 @@
                 <option value="@outlook.com">@outlook.com</option>
                 <option value="email-typing">-직접 입력-</option>
               </select>
-              <button id="send-authn">전송</button>
+              <!-- <button id="send-authn">전송</button> -->
             </div>
             <!-- <div>
               <label for="forgot-pw-authn">인증번호</label>

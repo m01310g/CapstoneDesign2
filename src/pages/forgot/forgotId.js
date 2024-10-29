@@ -21,7 +21,7 @@ $emailSelect.addEventListener("change", () => {
     $emailInput.focus();
     $emailSelect.style.display = "none";
     $emailSelect.value= "";
-    $emailInput.style.width = "86%";
+    $emailInput.style.width = "100%";
   }
 });
     
