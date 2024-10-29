@@ -84,7 +84,6 @@ app.post('/send-authn', async (req, res) => {
 
   try {
     await transporter.sendMail(mailOptions);
-    // 여기에서 인증 코드를 저장하는 로직 추가
     res.status(200).json({ message: '인증 코드가 발송되었습니다.' }); // JSON 응답
   } catch (error) {
       res.status(500).json({ message: '이메일 발송에 실패했습니다.' }); // JSON 응답
@@ -182,9 +181,8 @@ app.post("/sign-up/user-info", async (req, res) => {
     return res.redirect(`/sign-up/sign-up.html?error=${encodeURIComponent('인증번호 불일치로 회원가입에 실패했습니다.')}`);
   }
 
-  // 이메일 조합
   if (userEmailPost) {
-    userEmail = `${userEmailPre}@${userEmailPost}`; // 이메일에 @ 기호 추가
+    userEmail = `${userEmailPre}${userEmailPost}`;
   } else {
     userEmail = userEmailPre;
   }
@@ -203,6 +201,53 @@ app.post("/sign-up/user-info", async (req, res) => {
 // 아이디 찾기 페이지
 app.get("/forgot/forgot-id.html", (req, res) => {
   res.sendFile(path.join(__dirname, "..", "src", "pages", "forgot", "forgot-id.html"));
+});
+
+// 아이디 찾기 처리
+app.post("/forgot-id", async (req, res) => {
+  const userName = req.body["forgot-id-user-name"];
+  const userEmailPre = req.body["forgot-id-user-email-pre"];
+  const userEmailPost = req.body["forgot-id-user-email-post"];
+  let userEmail;
+
+  if (userEmailPost) {
+    userEmail = `${userEmailPre}${userEmailPost}`;
+  } else {
+    userEmail = userEmailPre;
+  }
+
+  const query = 'SELECT user_id FROM user_info WHERE user_name = ? AND user_email = ?';  
+
+  try {
+    const [results] = await db.query(query, [userName, userEmail]);
+    if (results.length > 0) {
+      const userId = results[0].user_id;
+
+      const transporter = nodemailer.createTransport({
+        service: 'naver',
+        auth: {
+            user: process.env.NODEMAILER_USER,
+            pass: process.env.NODEMAILER_PASSWORD
+        }
+      });
+  
+      const mailOptions = {
+        from: process.env.NODEMAILER_USER,
+        to: userEmail,
+        subject: 'CO/N 회원 아이디',
+        text: `아이디: ${userId}`
+      };
+
+      await transporter.sendMail(mailOptions);
+
+      return res.redirect(`/forgot/forgot-id.html?message=해당 이메일로 아이디가 전송되었습니다.`);
+    } else {
+      return res.redirect(`/forgot/forgot-id.html?message=일치하는 회원 정보가 존재하지 않습니다.`);
+    }
+  } catch (error) {
+    console.error("Database query error:", error);
+    res.status(500).json({ success: false, message: "서버 오류가 발생했습니다." });
+  }
 });
 
 // 비밀번호 찾기 페이지
