@@ -17,7 +17,15 @@
   font-weight: 600;
 }
 
-#sign-up-form input {
+#user-email {
+  width: 42.5%;
+}
+
+#user-id {
+  width: 86%;
+}
+
+input {
   width: 100%;
   height: 2.5rem;
   padding: 0 6px;
@@ -25,7 +33,25 @@
   border-radius: 5px;
 }
 
-#sign-up-form select {
+/* input[name="user-id"],
+input[name="user-pw"],
+input[name="user-pw-check"],
+input[name="user-name"],
+input[name="user-nickname"],
+input[name="user-tel"],
+input[name="email-authn"],
+input[value="가입하기"],
+#user-detail-address,
+#user-detail-address,
+#user-extra-address {
+  width: 100%;
+  height: 2.5rem;
+  padding: 0 6px;
+  border: 1px solid rgb(62, 62, 62);
+  border-radius: 5px;
+} */
+
+select {
   position: absolute;
   left: 43.5%;
   width: 42.5%;
@@ -36,7 +62,7 @@
   cursor: pointer;
 }
 
-#send-authn {
+#send-authn-btn, #id-availability-check {
   position: absolute;
   right: 0;
   height: 2.5rem;
@@ -44,6 +70,10 @@
   background-color: #fff;
   border: 1px solid rgb(62, 62, 62);
   border-radius: 5px;
+}
+
+#email-authn-container {
+  display: none;
 }
 
 #address-container input {

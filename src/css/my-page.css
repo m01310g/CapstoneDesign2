@@ -1,6 +1,18 @@
+.page-header {
+  position: relative;
+}
+
 #my-info-title {
   font-size: 1.1rem;
   font-weight: 600;
+}
+
+#logout-btn {
+  position: absolute;
+  right: 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.6);
 }
 
 .box-body > div:nth-child(2) {

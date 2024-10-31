@@ -1,3 +1,14 @@
+  // URL의 쿼리 파라미터에서 메시지 가져오기
+  const urlParams = new URLSearchParams(window.location.search);
+  const faultMessage = urlParams.get('fault_message');
+
+  // 회원 정보 변경 실패 시
+  if (faultMessage) {
+    alert(faultMessage);
+  }
+
+
+
 // 유저가 전화번호 입력시 자동적으로 '-'를 삽입. ex) 0101 => 010-1, 010-12345 => 010-1234-5
 const insertHyphen = (t) => {
   t.value = t.value

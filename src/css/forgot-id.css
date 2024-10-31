@@ -29,8 +29,26 @@
   position: relative;
 }
 
-#forgot-id-form input {
+/* #forgot-id-form input {
   width: 100%;
+  height: 2.5rem;
+  padding: 0 6px;
+  border: 1px solid rgb(62, 62, 62);
+  border-radius: 5px;
+} */
+
+input[name="forgot-id-user-name"],
+input[name="forgot-id-authn"],
+input[value="아이디 찾기"] {
+  width: 100%;
+  height: 2.5rem;
+  padding: 0 6px;
+  border: 1px solid rgb(62, 62, 62);
+  border-radius: 5px;
+}
+
+input[name="forgot-id-user-email-pre"] {
+  width: 49.5%;
   height: 2.5rem;
   padding: 0 6px;
   border: 1px solid rgb(62, 62, 62);
@@ -39,8 +57,9 @@
 
 #forgot-id-form select {
   position: absolute;
-  left: 43.5%;
-  width: 42.5%;
+  right: 0;
+  /* left: 43.5%; */
+  width: 49.5%;
   height: 2.5rem;
   padding: 0 6px;
   border: 1px solid rgb(62, 62, 62);

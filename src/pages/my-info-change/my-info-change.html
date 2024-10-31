@@ -12,18 +12,13 @@
     <div class="box-body">
       <header class="page-header">
         <a href="../my-page/my-page.html">
-          <img src="../../../assets/img/back-icon.png">
+          <img src="/img/back-icon.png">
         </a>
         <a href="./change-pw.html">비밀번호 변경</a>
       </header>
       <div id="my-info-title">나의 정보</div>
       <main class="page-main">
-        <form id="my-info-change-form" target="prevent-form" action="#" method="post">
-          <div>
-            <label for="user-abode">거주지역</label>
-            <br>
-            <input type="text" name="user-abode">
-          </div>
+        <form id="my-info-change-form" target="_self" action="/my-info-change" method="post">
           <div>
             <label for="user-nickname">닉네임</label>
             <br>
@@ -37,12 +32,12 @@
           <div id="address-container">
             <label>주소</label>
             <br>
-            <input type="text" id="user-postcode" placeholder="우편번호" style="width: 49.6%" readonly required>
+            <input type="text" id="user-postcode" placeholder="우편번호" style="width: 49.6%" readonly>
             <input type="button" id="address-btn" onclick="execDaumPostcode()" value="찾기" style="height: 2.5rem; width: 13%; background-color: #fff; cursor: pointer;">
             <br>
-            <input type="text" id="user-address" placeholder="주소" readonly required>
-            <input type="text" id="user-detail-address" placeholder="상세주소" required>
-            <input type="text" id="user-extra-address" placeholder="참고항목" readonly required>
+            <input type="text" name="user-address" id="user-address" placeholder="주소" readonly>
+            <input type="text" id="user-detail-address" placeholder="상세주소">
+            <input type="text" id="user-extra-address" placeholder="참고항목" readonly>
           </div>
           <input type="submit" value="수정">
         </form>
