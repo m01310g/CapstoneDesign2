@@ -49,11 +49,11 @@ const modifyBtn = document.querySelector("#modify");
 
 const handleModifyBtn = (event) => {
     event.preventDefault();
-    location.href = "./modify.html?index=" + index;
+    location.href = `/post/modify?index=${index}`;
     backLink.addEventListener("click", () => {
         window.history.back();
     });
-}
+};
 
 modifyBtn.addEventListener("click", handleModifyBtn);
 

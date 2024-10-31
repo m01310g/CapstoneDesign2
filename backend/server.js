@@ -341,12 +341,12 @@ app.post("/forgot-pw", async (req, res) => {
 });
 
 // 메인 페이지
-app.get("/home/home.html", (req, res) => {
+app.get("/home", (req, res) => {
   res.sendFile(path.join(__dirname, "..", "src", "pages", "home", "home.html"));
 });
 
 // 마이 페이지
-app.get("/my-page/my-page.html", (req, res) => {
+app.get("/my-page", (req, res) => {
   res.sendFile(path.join(__dirname, "..", "src", "pages", "my-page", "my-page.html"));
 });
 
@@ -516,8 +516,34 @@ app.post('/api/post', async (req, res) => {
   try {
     const { subject, content, category, subCategory, departure, destination, loc, price, startDate, endDate, currentCapacity, maxCapacity, user_id } = req.body;
     
+    // 필수 필드 검증
+    if (category === "택시") {
+      if (!subject || !content || !category || !departure || !destination || !price || !startDate || !endDate || !maxCapacity) {
+        return res.status(400).json({ success: false, error: "모든 필드를 입력해 주세요." });
+      }
+    } else if (category === "택배" || category === "배달") {
+      if (!subject || !content || !category || !subCategory || !loc || !price || !startDate || !endDate || !maxCapacity) {
+        return res.status(400).json({ success: false, error: "모든 필드를 입력해 주세요." });
+      }
+    } else {
+      return res.status(400).json({ success: false, error: "유효하지 않은 카테고리입니다." });
+    }
+
     const query = "INSERT INTO post_list (title, content, category, sub_category, departure, destination, location, price, start_date, end_date, current_capacity, max_capacity, user_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    const values = [subject, content, category, subCategory, JSON.stringify(departure), JSON.stringify(destination), JSON.stringify(loc), price, startDate, endDate, currentCapacity, maxCapacity, user_id];
+    const values = [
+      subject, 
+      content, 
+      category, 
+      subCategory || null, 
+      JSON.stringify(departure || null), 
+      JSON.stringify(destination || null), 
+      JSON.stringify(loc || null), 
+      price, 
+      startDate, 
+      endDate, 
+      currentCapacity, 
+      maxCapacity, 
+      user_id];
     const result = await db.query(query, values);
     if (result[0] && result[0].insertId) {
       res.json({ success: true, postId: result[0].insertId });
@@ -605,26 +631,9 @@ app.post('/api/post/update-capacity/:id', async (req, res) => {
   }
 });
 
-// 게시물 참가 인원 정보 가져오기
-// app.get('/api/post/get-capacity/:id', async (req, res) => {
-//   const index = req.params.id;
-//   const query = 'SELECT current_capacity, max_capacity FROM post_list WHERE post_index = ?';
-
-//   try {
-//     const [result] = await db.query(query, [index]);
-
-//     if (result) {
-//       const currentCapacity = result[0].current_capacity;
-//       const maxCapacity = result[0].max_capacity;
-
-//       res.json({ current_capacity: currentCapacity, max_capacity: maxCapacity });
-//     } else {
-//       res.status(404).json({ error: "Post not found" });
-//     }
-//   } catch (error) {
-//     console.error("Database query error: ", error);
-//   }
-// });
+app.get("/post/modify", (req, res) => {
+  res.sendFile(path.join(__dirname, "..", "src", "pages", "board", "modify.html"));
+});
 
 // 세션에서 유저 정보 가져오기
 app.get('/api/session/user-info', async (req, res) => {
