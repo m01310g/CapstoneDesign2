@@ -52,19 +52,17 @@ class WriteBtn extends HTMLElement {
 
         const writeBtn = document.createElement("div");
         writeBtn.setAttribute("id", "write-btn");
-
-        const index = (JSON.parse(localStorage.getItem("boards")) || []).length;
         
         writeBtn.innerHTML = `
-            <a id="write-btn" href="/post?index=${index}" target="_top">
+            <a href="/post" target="_top">
                 <div class="img-container">
                     <img src="${icon}">
                 </div>
             </a>
         `;
 
-        shadow.appendChild(style);
         shadow.appendChild(writeBtn);
+        shadow.appendChild(style);
     }
 }
 

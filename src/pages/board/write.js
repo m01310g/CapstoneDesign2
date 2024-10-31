@@ -37,7 +37,6 @@ categoryItems.forEach(item => {
     item.addEventListener('click', (event) => {
         selectedCategory = event.target.getAttribute('data-category');
         categoryBtn.innerText = selectedCategory; // 선택된 카테고리 표시
-        console.log('Selected Category on click: ', selectedCategory);
         categoryBtn.classList.remove(ON_CLASS_NAME);
 
         // 택시 선택 시 출발지/목적지 검색 필드 표시
@@ -232,11 +231,20 @@ const handleSubmit = async (event) => {
             body: JSON.stringify(postData)
         });
 
-        const result = await response.json();
-        if (result.success) {
-            window.location.href = `/view?index=${result.postId}&category=${selectedCategory}&subCategory=${selectedSubCategory}`;
+        console.log("Response: ", response);
+
+        if (response.ok) {
+            const result = await response.json();
+
+            if (result.success) {
+                window.location.href = selectedCategory === "택시"
+                ? `/post/view?index=${result.postId - 1}&category=${selectedCategory}&subCategory=전체`
+                : `/post/view?index=${result.postId - 1}&category=${selectedCategory}&subCategory=${selectedSubCategory}`;
+            } else {
+                alert("게시물 작성 중 오류가 발생했습니다." + result.error);
+            }
         } else {
-            alert("게시물 작성 중 오류가 발생했습니다.");
+            alert("서버 오류: " + response.error);
         }
     } catch (error) {
         console.error("Error:", error);
