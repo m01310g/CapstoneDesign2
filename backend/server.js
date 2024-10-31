@@ -93,7 +93,8 @@ app.post('/send-authn', async (req, res) => {
 app.use(express.static(path.join(__dirname, "..", "src")));
 app.use(express.static(path.join(__dirname, "..", "src", "pages"))); // html파일에 연결된 js로드 안되는 문제 해결
 app.use(express.static(path.join(__dirname, "..", "src", "pages", "login"))); // login페이지의 js로드 안되는 문제 해결
-
+app.use(express.static(path.join(__dirname, "..", "src", "pages", "board"))); // 게시물 관련 페이지의 js로드 안되는 문제 해결
+app.use(express.static(path.join(__dirname, "..", "src", "pages", "post"))); // 게시물 관련 페이지의 js로드 안되는 문제 해결
 
 // 로그인 페이지
 app.get("/", (req, res) => {
@@ -454,9 +455,167 @@ app.post("/change-pw", async (req, res) => {
 });
 
 // 카테고리 페이지
-app.get("/category/category.html", (req, res) => {
+app.get("/category", (req, res) => {
   res.sendFile(path.join(__dirname, "..", "src", "pages", "category", "category.html"));
 });
+
+// 카테고리 별 라우팅
+app.get("/category/:categoryName", (req, res) => {
+  const categoryName = req.params.categoryName;
+
+  const filePath = categoryName === "calculator"
+    ? path.join(__dirname, "..", "src", "pages", "category", `${categoryName}.html`)
+    : path.join(__dirname, "..", "src", "pages", "post", `${categoryName}.html`);
+
+  res.sendFile(filePath, (err) => {
+    if (err) {
+      console.error(err);
+      res.status(err.status).end();
+    }
+  });
+});
+
+// 게시물 작성 엔드포인트
+app.get('/post', (req, res) => {
+  res.sendFile(path.join(__dirname, "..", "src", "pages", "board", "write.html"));
+});
+
+// 세션에서 유저 아이디 가져오는 api
+app.get('/api/session/user-id', async (req, res) => {
+  if (req.session.isLogined) {
+    const query = 'SELECT user_id FROM user_info WHERE user_id = ?';
+    try {
+      const [result] = await db.query(query, [req.session.userId]);
+
+      if (result.length > 0) {
+        const userId = result[0].user_id;
+        res.json({ userId: userId });
+      } else {
+        res.status(404).json({ message: "User not found" });
+      }
+    } catch (err) {
+      console.error("Database query error: ", err);
+      res.status(500).json({ message: "Server error" });
+    }
+  } else {
+    res.status(401).json({ message: '로그인 되어 있지 않습니다.' });
+  }
+});
+
+// 게시물 작성 api
+app.post('/api/post', async (req, res) => {
+  try {
+    const { subject, content, category, subCategory, departure, destination, loc, price, startDate, endDate, currentCapacity, maxCapacity, user_id } = req.body;
+    
+    const query = "INSERT INTO post_list (title, content, category, sub_category, departure, destination, location, price, start_date, end_date, current_capacity, max_capacity, user_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    const values = [subject, content, category, subCategory, JSON.stringify(departure), JSON.stringify(destination), JSON.stringify(loc), price, startDate, endDate, currentCapacity, maxCapacity, user_id];
+    const result = await db.query(query, values);
+    if (result[0] && result[0].insertId) {
+      res.json({ success: true, postId: result[0].insertId });
+    } else {
+      res.json({ success: false, error: "게시물 작성 실패" });
+    }
+  } catch (error) {
+    console.error("DB 오류: ", error);
+    res.status(500).json({ success: false, error: "DB 처리 중 오류 발생" });
+  }
+});
+
+// 게시물 목록 반환
+app.get('/api/post', async (req, res) => {
+  const { category, subCategory } = req.query;
+
+  let query = `SELECT * FROM post_list WHERE category = ?`;
+  let params = [category];
+
+  if (subCategory !== '전체') {
+    query += ' AND subCategory = ?';
+    params.push(subCategory);
+  }
+  
+  try {
+    const [result] = await db.query(query, params);
+    res.json(result);
+  } catch (err) {
+    console.error(err);
+    return res.status(500).send("Database query error");
+  }
+});
+
+app.get('/post/view', (req, res) => {
+  res.sendFile(path.join(__dirname, "..", "src", "pages", "board", "view.html"));
+});
+
+app.get('/post/list', (req, res) => {
+  res.sendFile(path.join(__dirname, "..", "src", "pages", "board", "list.html"));
+});
+
+// id에 맞는 게시물 데이터 반환
+app.get('/api/post/view/:id', async (req, res) => {
+  const postId = parseInt(req.params.id) + 1;
+  const query = 'SELECT * FROM post_list WHERE post_index = ?';
+
+  try {
+    const [result] = await db.execute(query, [postId]);
+
+    // 결과가 없을 경우 처리
+    if (result.length === 0) {
+      return res.status(404).json({ error: 'Post not found' });
+    }
+
+    res.json(result[0]);
+  } catch (error) {
+    console.error('Database query error:', error);
+    return res.status(500).json({ error: 'Database query error' });
+  }
+});
+
+// 참여 버튼 클릭시 게시물의 current_capacity 업데이트하는 엔드포인트
+app.post('/api/post/update-capacity/:id', async (req, res) => {
+  const index = parseInt(req.params.id) + 1;
+  const currentCapacity = req.body.current_capacity;
+  console.log(index);
+
+  console.log("current capacity: ", currentCapacity);
+
+  const query = 'UPDATE post_list SET current_capacity = ? WHERE post_index = ?';
+
+  try {
+    const [result] = await db.query(query, [currentCapacity, index]);
+
+    if (result.affectedRows === 0) {
+      console.log(`게시물 ${index}의 current_capacity 업데이트에 실패하였습니다.`);
+      return res.status(404).json({ error: "게시물을 찾을 수 없습니다." });
+    }
+
+    console.log("current capacity 업데이트 완료");
+    res.status(200).json({ current_capacity: currentCapacity });
+  } catch (error) {
+    console.error('현재 인원 업데이트 중 오류 발생: ', error);
+    res.status(500).json({ error: "현재 인원 업데이트 중 오류가 발생했습니다." });
+  }
+});
+
+// 게시물 참가 인원 정보 가져오기
+// app.get('/api/post/get-capacity/:id', async (req, res) => {
+//   const index = req.params.id;
+//   const query = 'SELECT current_capacity, max_capacity FROM post_list WHERE post_index = ?';
+
+//   try {
+//     const [result] = await db.query(query, [index]);
+
+//     if (result) {
+//       const currentCapacity = result[0].current_capacity;
+//       const maxCapacity = result[0].max_capacity;
+
+//       res.json({ current_capacity: currentCapacity, max_capacity: maxCapacity });
+//     } else {
+//       res.status(404).json({ error: "Post not found" });
+//     }
+//   } catch (error) {
+//     console.error("Database query error: ", error);
+//   }
+// });
 
 // 세션에서 유저 정보 가져오기
 app.get('/api/session/user-info', async (req, res) => {

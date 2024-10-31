@@ -7,7 +7,7 @@ let selectedField = ""; // 출발지/도착지 필드 선택 여부 확인
 const departureInput = document.querySelector("#departure");
 const destinationInput = document.querySelector("#destination");
 const locationValue = document.querySelector("#location");
-const locationMapConatainer = document.querySelector("#location-map");
+const locationMapContainer = document.querySelector("#location-map");
 
 const taxiConfirm = document.querySelector("#confirm-btn");
 
@@ -46,14 +46,14 @@ window.onload = function() {
             .then(position => {
                 const latlng = new kakao.maps.LatLng(position.coords.latitude, position.coords.longitude);
                 initMap(latlng, taxiMap);
-                initMap(latlng, locationMapConatainer, true);
+                initMap(latlng, locationMapContainer, true);
             })
             .catch(err => {
                 console.error("Unable to retrieve your location: ", err);
                 // 기본 위치로 초기화(서울 중심)
                 const defualtLatLng = new kakao.maps.LatLng(37.5665, 126.9780);
                 initMap(defualtLatLng, taxiMap);
-                initMap(defualtLatLng, locationMapConatainer, true);
+                initMap(defualtLatLng, locationMapContainer, true);
             });
         });
     }
@@ -87,7 +87,7 @@ function initMap(latlng, container, isLocationMap = false) {
     if (container === taxiMap) {
         departureMap = mapInstance;
         departureMarker = markerInstance;
-    } else if (container === locatoinMapContainer) {
+    } else if (container === locationMapContainer) {
         locationMap = mapInstance;
         locationMarker = markerInstance;
     } else {
@@ -160,10 +160,8 @@ function searchAddress(latlng) {
 
     geocoder.coord2Address(latlng.getLng(), latlng.getLat(), function(result, status) {
         if (status === kakao.maps.services.Status.OK) {
-            console.log(result);
             const address = result[0].road_address ? result[0].road_address.building_name : result[0].address.address_name;
 
-            console.log(address);
             // 선택한 input 필드에 주소 입력
             if (selectedField === "departure") {
                 departureInput.value = address;
@@ -175,7 +173,7 @@ function searchAddress(latlng) {
 
             // 주소 선택 후 지도 숨기기
             taxiMap.classList.add(HIDDEN_CLASS_NAME_MAP);
-            locationMapConatainer.classList.add(HIDDEN_CLASS_NAME_MAP);
+            locationMapContainer.classList.add(HIDDEN_CLASS_NAME_MAP);
             taxiConfirm.classList.add(HIDDEN_CLASS_NAME_MAP);
         } else {
             console.error("주소 변환 실패: ", status);
@@ -222,7 +220,7 @@ destinationInput.addEventListener("click", () => {
 locationValue.addEventListener("click", () => {
     selectedField = "location";
     taxiConfirm.innerText = "수령지 선택";
-    locationMapConatainer.classList.toggle(HIDDEN_CLASS_NAME_MAP);
+    locationMapContainer.classList.toggle(HIDDEN_CLASS_NAME_MAP);
     taxiConfirm.classList.toggle(HIDDEN_CLASS_NAME_MAP);
 
     taxiConfirm.style.top = "35%"
@@ -230,7 +228,7 @@ locationValue.addEventListener("click", () => {
     if (!locationMap) {
         // map이 초기화되지 않으면 기본 위치로 초기화
         const defualtLatLng = new kakao.maps.LatLng(37.5665, 126.9780);
-        initMap(defualtLatLng, locationMapConatainer, true);
+        initMap(defualtLatLng, locationMapContainer, true);
     } else {
         locationMap.relayout();
     }

@@ -5,24 +5,24 @@ class BottomNav extends HTMLElement {
 
         const icons = {
             category: {
-                on: '/img/category-on.png',
-                off: '/img/category-off.png'
+                on: '/assets/img/category-on.png',
+                off: '/assets/img/category-off.png'
             },
             chatting: {
-                on: '/img/chatting-on.png',
-                off: '/img/chatting-off.png'
+                on: '/assets/img/chatting-on.png',
+                off: '/assets/img/chatting-off.png'
             },
             home: {
-                on: '/img/home-on.png',
-                off: '/img/home-off.png'
+                on: '/assets/img/home-on.png',
+                off: '/assets/img/home-off.png'
             },
             notification: {
-                on: '/img/notification-on.png',
-                off: '/img/notification-off.png'
+                on: '/assets/img/notification-on.png',
+                off: '/assets/img/notification-off.png'
             },
             myPage: {
-                on: '/img/my-on.png',
-                off: '/img/my-off.png'
+                on: '/assets/img/my-on.png',
+                off: '/assets/img/my-off.png'
             }
         };
 
@@ -85,7 +85,7 @@ class BottomNav extends HTMLElement {
 
         nav.innerHTML = `
             <div id="category-icon-container">
-                <a href="../category/category.html">
+                <a href="/category">
                     <img class="category-icon" src="${icons.category.off}">
                     <div>카테고리</div>
                 </a>  
@@ -97,7 +97,7 @@ class BottomNav extends HTMLElement {
                 </a>  
             </div>
             <div id="home-icon-container">
-                <a href="../home/home.html">
+                <a href="/home">
                     <img class="home-icon" src="${icons.home.off}">
                     <div>홈</div>
                 </a>
@@ -109,7 +109,7 @@ class BottomNav extends HTMLElement {
                 </a>
             </div>
             <div id="my-page-icon-container">
-                <a href="../my-page/my-page.html">
+                <a href="/my-page">
                     <img class="my-page-icon" src="${icons.myPage.off}">
                     <div>마이</div>
                 </a>
