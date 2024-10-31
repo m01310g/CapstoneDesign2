@@ -463,6 +463,15 @@ app.get("/category", (req, res) => {
 app.get("/category/:categoryName", (req, res) => {
   const categoryName = req.params.categoryName;
 
+  
+  /* .js 파일 요청 차단
+  req.params.categoryName을 콘솔에 출력해보면 두 개가 나오는데,
+  .js 파일 요청이 함께 되면서 충돌 발생 */
+  
+  if (categoryName.endsWith(".js")) {
+    return res.status(404).send("Not found");
+  }
+
   const filePath = categoryName === "calculator"
     ? path.join(__dirname, "..", "src", "pages", "category", `${categoryName}.html`)
     : path.join(__dirname, "..", "src", "pages", "post", `${categoryName}.html`);
