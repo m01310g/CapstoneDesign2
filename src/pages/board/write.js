@@ -123,20 +123,7 @@ document.querySelector("#price").addEventListener("input", (event) => {
     if (!isNaN(value)) {
         event.target.value = parseInt(value, 10).toLocaleString();
     }
-})
-
-// 작성일 반환 함수
-const recordDate = () => {
-    const date = new Date();
-    const year = date.getFullYear();
-    let month = date.getMonth() + 1;
-    let day = date.getDate();
-
-    month = (month > 9 ? "" : 0) + month;
-    day = (day > 9 ? "" : 0) + day;
-
-    return `${year}년 ${month}월 ${day}일`;
-};
+});
 
 const fetchUserInfo = async () => {
     try {
@@ -181,8 +168,8 @@ const handleSubmit = async (event) => {
     const startDate = selectedDates[selectedDates.length - 1].startDate;
     const endDate = selectedDates[selectedDates.length - 1].endDate;
     const currentCapacity = 1;
-    const departureCoords = selectedCategory === "택시" ? JSON.parse(localStorage.getItem("departureCoords")) : null;
-    const destinationCoords = selectedCategory === "택시" ? JSON.parse(localStorage.getItem("destinationCoords")) : null;
+    const departureCoords = selectedCategory === "택시" ? JSON.parse(JSON.parse(localStorage.getItem("departureCoords"))) : null;
+    const destinationCoords = selectedCategory === "택시" ? JSON.parse(JSON.parse(localStorage.getItem("destinationCoords"))) : null;
     const locationCoords = selectedCategory !== "택시" ? JSON.parse(localStorage.getItem("locationCoords")) : null;
     const departure = selectedCategory === "택시" ? JSON.stringify({ address: event.target.departure.value, ...departureCoords }) : null;
     const destination = selectedCategory === "택시" ? JSON.stringify({ address: event.target.destination.value, ...destinationCoords }) : null;
@@ -240,6 +227,8 @@ const handleSubmit = async (event) => {
         user_id: loggedInUserId
     };
 
+    // console.log(postData);
+
     try {
         const response = await fetch('/api/post',{
             method: 'POST',
@@ -264,11 +253,8 @@ const handleSubmit = async (event) => {
         console.error("Error:", error);
         alert("네트워크 오류가 발생했습니다.");
     }
-
-    localStorage.removeItem("departureCoords");
-    localStorage.removeItem("destinationCoords");
-    localStorage.removeItem("locationCoords");
-    localStorage.removeItem("selectedDates");
+    
+    localStorage.clear();
 };
 
 writeFrm.addEventListener("submit", handleSubmit);
