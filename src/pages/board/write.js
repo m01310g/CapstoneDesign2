@@ -168,12 +168,12 @@ const handleSubmit = async (event) => {
     const startDate = selectedDates[selectedDates.length - 1].startDate;
     const endDate = selectedDates[selectedDates.length - 1].endDate;
     const currentCapacity = 1;
-    const departureCoords = selectedCategory === "택시" ? JSON.parse(JSON.parse(localStorage.getItem("departureCoords"))) : null;
-    const destinationCoords = selectedCategory === "택시" ? JSON.parse(JSON.parse(localStorage.getItem("destinationCoords"))) : null;
+    const departureCoords = selectedCategory === "택시" ? JSON.parse(localStorage.getItem("departureCoords")) : null;
+    const destinationCoords = selectedCategory === "택시" ? JSON.parse(localStorage.getItem("destinationCoords")) : null;
     const locationCoords = selectedCategory !== "택시" ? JSON.parse(localStorage.getItem("locationCoords")) : null;
-    const departure = selectedCategory === "택시" ? JSON.stringify({ address: event.target.departure.value, ...departureCoords }) : null;
-    const destination = selectedCategory === "택시" ? JSON.stringify({ address: event.target.destination.value, ...destinationCoords }) : null;
-    const loc = selectedCategory !== "택시" ? JSON.stringify({ address: event.target.location.value, ...locationCoords }) : null;
+    const departure = selectedCategory === "택시" ? { address: event.target.departure.value, ...departureCoords } : null;
+    const destination = selectedCategory === "택시" ? { address: event.target.destination.value, ...destinationCoords } : null;
+    const loc = selectedCategory !== "택시" ? { address: event.target.location.value, ...locationCoords } : null;
     const loggedInUserId = userInfo.userId;
 
     if (!subject) {
@@ -215,10 +215,10 @@ const handleSubmit = async (event) => {
         subject,
         content,
         category: selectedCategory,
-        subCategory: selectedSubCategory,
-        departure,
-        destination,
-        loc,
+        subCategory: selectedSubCategory || null,
+        departure: departure || null,
+        destination: destination || null,
+        loc: loc || null,
         price,
         startDate,
         endDate,

@@ -33,7 +33,6 @@ const fetchData = async () => {
         if (!response.ok) throw new Error("Network response was not ok");
 
         const postData = await response.json();
-        console.log(postData);
         // 데이터를 가져온 후 게시글 필터링 및 표시
         filterPosts(postData);
     } catch (error) {
@@ -43,7 +42,6 @@ const fetchData = async () => {
 
 // 게시글 템플릿
 const template = (objValue) => {
-    console.log(objValue);
     const currentDate = new Date();
     const startDate = parseDate(objValue.start_date);
     const endDate = parseDate(objValue.end_date);
@@ -73,7 +71,7 @@ const template = (objValue) => {
         <a class="board-link" href="/post/view?index=${objValue.post_index - 1}&category=${category}&subCategory=${selectedSubCategory}" target="_top">
             <div id="content-container">
                 <div id="subject">${objValue.title}</div>
-                <div id="route">${JSON.parse(JSON.parse(objValue.departure)).address} ➡️ ${JSON.parse(JSON.parse(objValue.destination)).address}</div>
+                <div id="route">${JSON.parse(objValue.departure).address} ➡️ ${JSON.parse(objValue.destination).address}</div>
                 <div id="date">${startDateFormatted} ~ ${endDateFormatted}</div>
                 <div id="status" class="${statusClass}">${statusText}</div>
             </div>
@@ -84,12 +82,13 @@ const template = (objValue) => {
         </a>
         <hr>        
         `;
+        // <div id="date">${startDateFormatted} ~ ${endDateFormatted}</div>
     } else {
         return `
         <a class="board-link" href="/post/view?index=${objValue.post_index - 1}&category=${category}&subCategory=${selectedSubCategory}" target="_top">
             <div id="content-container">
                 <div id="subject">${objValue.title}</div>
-                <div id="date">${startDateFormatted} ~ ${endDateFormatted}</div>
+                <div id="location">수령지: ${JSON.parse(objValue.location).address}</div>
                 <div id="status" class="${statusClass}">${statusText}</div>
             </div>
             <div id="capacity-container">
