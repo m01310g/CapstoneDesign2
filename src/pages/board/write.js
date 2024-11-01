@@ -123,20 +123,7 @@ document.querySelector("#price").addEventListener("input", (event) => {
     if (!isNaN(value)) {
         event.target.value = parseInt(value, 10).toLocaleString();
     }
-})
-
-// 작성일 반환 함수
-const recordDate = () => {
-    const date = new Date();
-    const year = date.getFullYear();
-    let month = date.getMonth() + 1;
-    let day = date.getDate();
-
-    month = (month > 9 ? "" : 0) + month;
-    day = (day > 9 ? "" : 0) + day;
-
-    return `${year}년 ${month}월 ${day}일`;
-};
+});
 
 const fetchUserInfo = async () => {
     try {
@@ -172,40 +159,56 @@ const handleSubmit = async (event) => {
     const price = parseInt(event.target.price.value.replace(/,/g, ''), 10);
     const selectedDatesStr = localStorage.getItem("selectedDates");
     const selectedDates = JSON.parse(selectedDatesStr) || [];
+    
+    if (selectedDates.length === 0) {
+        alert("모집 기한을 선택헤주세요.");
+        return;
+    }
+
     const startDate = selectedDates[selectedDates.length - 1].startDate;
     const endDate = selectedDates[selectedDates.length - 1].endDate;
     const currentCapacity = 1;
-    const departureCoords = selectedCategory === "택시" ? JSON.parse(localStorage.getItem("departureCoords")) : null;
-    const destinationCoords = selectedCategory === "택시" ? JSON.parse(localStorage.getItem("destinationCoords")) : null;
+    const departureCoords = selectedCategory === "택시" ? JSON.parse(JSON.parse(localStorage.getItem("departureCoords"))) : null;
+    const destinationCoords = selectedCategory === "택시" ? JSON.parse(JSON.parse(localStorage.getItem("destinationCoords"))) : null;
     const locationCoords = selectedCategory !== "택시" ? JSON.parse(localStorage.getItem("locationCoords")) : null;
     const departure = selectedCategory === "택시" ? JSON.stringify({ address: event.target.departure.value, ...departureCoords }) : null;
     const destination = selectedCategory === "택시" ? JSON.stringify({ address: event.target.destination.value, ...destinationCoords }) : null;
     const loc = selectedCategory !== "택시" ? JSON.stringify({ address: event.target.location.value, ...locationCoords }) : null;
     const loggedInUserId = userInfo.userId;
 
+    if (!subject) {
+        alert("제목을 작성해 주세요");
+        return;
+    } else if (!selectedCategory) {
+        alert("대분류를 선택해 주세요.");
+        return;
+    } else if (!maxCapacity) {
+        alert("모집 인원을 입력해 주세요.");
+        return;
+    } else if (!price) {
+        alert("예상 총액을 입력해 주세요.");
+        return;
+    } else if (!content) {
+        alert("내용을 입력해 주세요.");
+        return;
+    }
+
     // 대분류가 택시일 경우 출발지와 도착지 정보 가져오기
     if (selectedCategory === '택시') {
         if (!departure || !destination) {
-            alert("출발지와 도착지를 입력해주세요.");
+            alert("출발지와 도착지를 선택해 주세요.");
             return;
         }
     }
 
     if (selectedCategory === '택배' || selectedCategory === "배달") {
-        if (!selectedCategory) {
-            alert("대분류를 선택해주세요.");
-            return;
-        }
-
         if ((selectedCategory === '택배' || selectedCategory === '배달') && !selectedSubCategory) {
-            alert("소분류를 선택해주세요.");
+            alert("소분류를 선택해 주세요.");
+            return;
+        } else if (!loc) {
+            alert("수령지를 선택해 주세요");
             return;
         }
-    }
-
-    if (selectedDates.length === 0) {
-        alert("모집 기한을 선택헤주세요.");
-        return;
     }
 
     const postData = {
@@ -224,14 +227,14 @@ const handleSubmit = async (event) => {
         user_id: loggedInUserId
     };
 
+    // console.log(postData);
+
     try {
         const response = await fetch('/api/post',{
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(postData)
         });
-
-        console.log("Response: ", response);
 
         if (response.ok) {
             const result = await response.json();
@@ -250,6 +253,8 @@ const handleSubmit = async (event) => {
         console.error("Error:", error);
         alert("네트워크 오류가 발생했습니다.");
     }
+    
+    localStorage.clear();
 };
 
 writeFrm.addEventListener("submit", handleSubmit);

@@ -36,11 +36,11 @@ const renderBoardDetails = (data) => {
     capacityDiv.innerHTML = `<span class="current-capacity">${data.current_capacity}</span> / <span class="max-capacity">${data.max_capacity}</span>`;
 
     if (viewCategory === "택시") {
-        const departureText = JSON.parse(JSON.parse(data.departure)).address;
-        const destinationText = JSON.parse(JSON.parse(data.destination)).address;
+        const departureText = JSON.parse(data.departure).address;
+        const destinationText = JSON.parse(data.destination).address;
         locationDiv.innerText = `${departureText} ➡️ ${destinationText}`;
     } else {
-        const locationText = JSON.parse(JSON.parse(data.location)).address;
+        const locationText = JSON.parse(data.location).address;
         locationDiv.innerText = `수령지: ${locationText}`;
     }
 };
@@ -49,11 +49,11 @@ const modifyBtn = document.querySelector("#modify");
 
 const handleModifyBtn = (event) => {
     event.preventDefault();
-    location.href = "./modify.html?index=" + index;
+    location.href = `/post/modify?index=${index}`;
     backLink.addEventListener("click", () => {
         window.history.back();
     });
-}
+};
 
 modifyBtn.addEventListener("click", handleModifyBtn);
 
@@ -157,9 +157,6 @@ participationBtn.addEventListener("click", async (event) => {
 
     const currentCapacity = updatedData.current_capacity;
     const maxCapacity = updatedData.max_capacity;
-
-    // const currentCapacity = parseInt(capacityDiv.querySelector(".current-capacity").innerText);
-    // const maxCapacity = parseInt(capacityDiv.querySelector(".max-capacity").innerText);
 
     // 현재 인원 수 증가
     if (currentCapacity < maxCapacity) {

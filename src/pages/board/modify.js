@@ -1,10 +1,14 @@
 const modifyFrm = document.querySelector("#modifyFrm");
 const categoryBtn = document.querySelector(".category-btn");
 const subBtn = document.querySelector(".sub-btn");
-const departureInput = document.querySelector("#departure");
-const destinationInput = document.querySelector("#destination");
+const deptInput = document.querySelector("#departure");
+const destInput = document.querySelector("#destination");
 const subjectInput = document.querySelector("input[name='subject']");
 const contentTextarea = document.querySelector("textarea[name='content']");
+const locationInput = document.querySelector("#location");
+const priceInput = document.querySelector("#price");
+const locationContainer = document.querySelector("#location-map");
+const taxiMapContainer = document.querySelector("#map");
 
 const subDropDown = document.querySelector(".sub-dropdown");
 const categoryItems = document.querySelectorAll(".category-member li");
@@ -12,11 +16,8 @@ const subItems = document.querySelector(".sub-member");
 const taxiSearch = document.querySelector('.taxi-search');
 const maxCapacity = document.querySelector("#capacity");
 
-const idxObj = location.search;
-const index = location.search.split("=")[1];
-
-const boardsObj = JSON.parse(localStorage.getItem("boards"));
-const board = boardsObj[index];
+const params = new URLSearchParams(window.location.search);
+const index = parseInt(params.get("index"));
 
 const backIcon = document.querySelector("#back-icon");
 
@@ -32,6 +33,23 @@ backIcon.addEventListener("click", () => {
     window.history.back();
 });
 
+const fetchUserInfo = async () => {
+    try {
+        const response = await fetch('/api/session/user-id');
+        if (!response.ok) {
+            console.error("Response not OK: ", response)
+            alert("로그인 되어 있지 않습니다.");
+            return null;
+        }
+        const userInfo = await response.json();
+        return userInfo;
+    } catch (error) {
+        console.error('Error fetching user info: ', error);
+        window.location.href = '/';
+        return null;
+    }
+};
+
 const updateSubCategories = (category) => {
     const items = subCategories[category];
     subItems.innerHTML = ''; // 이전 항목 초기화
@@ -43,7 +61,6 @@ const updateSubCategories = (category) => {
         subItems.appendChild(li);
     });
 };
-
 
 // 카테고리 버튼 클릭 이벤트
 categoryItems.forEach(item => {
@@ -79,91 +96,203 @@ subItems.addEventListener('click', (event) => {
     }
 });
 
+let originalStartDate, originalEndDate;
+let selectedCategory, selectedSubCategory;
+let originalDepartureCoords, originalDestinationCoords, originalLocationCoords;
 
-window.onload = function() {
-    categoryBtn.innerText = board.category;
-    console.log(board);
+document.addEventListener("DOMContentLoaded", async () => {
+    try {
+        const response = await fetch(`/api/post/view/${index}`);
+        if (!response.ok) throw new Error(response.statusText);
+        const data = await response.json();
+        categoryBtn.innerText = data.category;
+    subjectInput.value = data.title;
+    contentTextarea.innerText = data.content;
+    maxCapacity.value = data.max_capacity;
+    priceInput.value = parseInt(data.price, 10).toLocaleString();
 
-    if (board.category === "택시") {
-        departureInput.value = board.departure.address;
-        destinationInput.value = board.destination.address;
+    originalStartDate = data.start_date;
+    originalEndDate = data.end_date;
+
+    selectedCategory = data.category;
+    selectedSubCategory = data.sub_category;    
+
+    if (selectedCategory === "택시") {
+        deptInput.classList.remove(HIDDEN_CLASS_NAME);
+        destInput.classList.remove(HIDDEN_CLASS_NAME);
+        locationInput.classList.add(HIDDEN_CLASS_NAME);
+        deptInput.value = JSON.parse(data.departure).address;
+        destInput.value = JSON.parse(data.destination).address;
         subDropDown.classList.add(HIDDEN_CLASS_NAME);
         document.querySelector(".taxi-search").classList.remove(HIDDEN_CLASS_NAME);
-    } else {
-        updateSubCategories(board.category);
-        subBtn.innerText = board.subCategory || "소분류 선택";
+        originalDepartureCoords = JSON.stringify({ lat: JSON.parse(data.departure).lat, lng: JSON.parse(data.departure).lng });
+    originalDestinationCoords = JSON.stringify({ lat: JSON.parse(data.destination).lat, lng: JSON.parse(data.destination).lng });
+    } else if (selectedCategory === "배달" || data.category === "택배") {
+        updateSubCategories(data.category);
+        subDropDown.classList.remove(HIDDEN_CLASS_NAME);
+        subBtn.innerText = data.sub_category || "소분류 선택";
+        deptInput.classList.add(HIDDEN_CLASS_NAME);
+        destInput.classList.add(HIDDEN_CLASS_NAME);
+        locationInput.classList.remove(HIDDEN_CLASS_NAME);
+        locationInput.value = JSON.parse(data.location).address;
+        // originalLocationCoords = JSON.stringify({ lat: JSON.parse(JSON.parse(data.location)).lat, lng: JSON.parse(JSON.parse(data.location)).lng });
+        originalLocationCoords = { lat: JSON.parse(data.location).lat, lng: JSON.parse(data.location).lng };
     }
 
-    subjectInput.value = board.subject;
-    contentTextarea.value = board.content;
-    maxCapacity.value = board.maxCapacity;
-
     $("#date-picker").daterangepicker({
-        startDate: board.startDate,
-        endDate: board.endDate,
+        startDate: data.start_date,
+        endDate: data.end_date,
         timePicker: true,
         locale: {
             format: "YYYY년 MM월 DD일 HH시 mm분"
         }
     });
-}
+    } catch (error) {
+        console.error("Fetch Error: ", error);
+    }
+});
 
-const handleModify = (event) => {
+// 예상 총액 input 쉼표 추가
+document.querySelector("#price").addEventListener("input", (event) => {
+    const value = event.target.value.replace(/,/g, '');
+
+    // input 창 비어 있는지 확인
+    if (value === '') {
+        event.target.value = '';
+        return;
+    }
+
+    if (!isNaN(value)) {
+        event.target.value = parseInt(value, 10).toLocaleString();
+    }
+});
+
+// 수정 폼 제출 이벤트 함수
+const handleModify = async (event) => {
     event.preventDefault();
 
-    try {
-        const subject = event.target.subject.value;
-        const content = event.target.content.value;
-        let departure = "";
-        let destination = "";
-
-        if (board.category === "택시") {
-            departure = event.target.departure.value;
-            destination = event.target.destination.value;
-
-            if (!departure || !destination) {
-                alert("출발지와 도착지를 입력해주세요.");
-                return;
-            }
-        }
-
-        const dateRange = $("#date-picker").data("daterangepicker");
-        const startDate = dateRange.startDate.format("YYYY년 MM월 DD일 HH시 mm분");
-        const endDate = dateRange.endDate.format("YYYY년 MM월 DD일 HH시 mm분");
-        const subCategory = document.querySelector(".sub-btn").innerText;
-        const category = document.querySelector(".category-btn");
-        const maxCapacity = event.target.capacity.value;
-        let selectedCategory = "";
-
-        if (category.innerText === "택시") {
-            selectedCategory = "taxi";
-        } else if (category.innerText === "택배") {
-            selectedCategory = "package";
-        } else if (category.innerText === "배달") {
-            selectedCategory = "delibery";
-        }
-
-        board.subject = subject;
-        board.content = content;
-        board.startDate = startDate;
-        board.endDate = endDate;
-        board.category = category.innerText;
-        board.subCategory = subCategory;
-        board.maxCapacity = maxCapacity;
-
-        if (board.category === "택시") {
-            board.departure = departure;
-            board.destination = destination;
-        }
-
-        boardsObj[index] = board;
-        localStorage.setItem("boards", JSON.stringify(boardsObj));
-
-        location.href = "./view.html?index=" + index + "&category=" + selectedCategory + "&subCategory=" + subCategory;
-    } catch(err) {
-        alert(err.message);
-        console.error(err);
+    const userInfo = await fetchUserInfo();
+    if (!userInfo) {
+        alert('로그인 정보가 없습니다. 로그인 해주세요.');
+        return;
     }
+
+    const subject = event.target.subject.value;
+    const content = event.target.content.value;
+    const maxCapacity = event.target.capacity.value;
+    const price = parseInt(event.target.price.value.replace(/,/g, ''), 10);
+
+    // localStorage에 저장된 날짜가 있는지 확인 -> 없을 경우 데이터베이스에서 불러온 값 사용
+    const selectedDatesStr = localStorage.getItem("selectedDates");
+    const selectedDates = selectedDatesStr ? JSON.parse(selectedDatesStr) || [] : null;
+
+    const startDate = selectedDates ? selectedDates[selectedDates.length - 1].startDate : originalStartDate;
+    const endDate = selectedDates ? selectedDates[selectedDates.length - 1].endDate : originalEndDate;
+
+    const currentCapacity = 1;
+
+    const departureCoords = selectedCategory === "택시" 
+                            ? (JSON.parse(localStorage.getItem("departureCoords")) 
+                            ? JSON.parse(localStorage.getItem("departureCoords")) 
+                            : originalDepartureCoords) 
+                            : null;
+    const destinationCoords = selectedCategory === "택시" 
+                            ? (JSON.parse(localStorage.getItem("destinationCoords")) 
+                            ? JSON.parse(localStorage.getItem("destinationCoords")) 
+                            : originalDestinationCoords) 
+                            : null;
+    const locationCoords = selectedCategory !== "택시" 
+                            ? (localStorage.getItem("locationCoords")
+                            ? JSON.parse(localStorage.getItem("locationCoords")) 
+                            : originalLocationCoords) 
+                            : null;
+
+    // const departureCoords = selectedCategory === "택시" ? JSON.parse(localStorage.getItem("departureCoords")) : null;
+    // const destinationCoords = selectedCategory === "택시" ? JSON.parse(localStorage.getItem("destinationCoords")) : null;
+    // const locationCoords = selectedCategory !== "택시" ? JSON.parse(localStorage.getItem("locationCoords")) : null;
+    const departure = selectedCategory === "택시" ? JSON.stringify({ address: event.target.departure.value, ...departureCoords }) : null;
+    const destination = selectedCategory === "택시" ? JSON.stringify({ address: event.target.destination.value, ...destinationCoords }) : null;
+    const loc = selectedCategory !== "택시" ? JSON.stringify({ address: event.target.location.value, ...locationCoords }) : null;
+    const loggedInUserId = userInfo.userId;
+
+    if (!subject) {
+        alert("제목을 작성해 주세요");
+        return;
+    } else if (!selectedCategory) {
+        alert("대분류를 선택해 주세요.");
+        return;
+    } else if (!maxCapacity) {
+        alert("모집 인원을 입력해 주세요.");
+        return;
+    } else if (!price) {
+        alert("예상 총액을 입력해 주세요.");
+        return;
+    } else if (!content) {
+        alert("내용을 입력해 주세요.");
+        return;
+    }
+
+    // 대분류가 택시일 경우 출발지와 도착지 정보 가져오기
+    if (selectedCategory === '택시') {
+        if (!departure || !destination) {
+            alert("출발지와 도착지를 선택해 주세요.");
+            return;
+        }
+    }
+
+    if (selectedCategory === '택배' || selectedCategory === "배달") {
+        if ((selectedCategory === '택배' || selectedCategory === '배달') && !selectedSubCategory) {
+            alert("소분류를 선택해 주세요.");
+            return;
+        } else if (!loc) {
+            alert("수령지를 선택해 주세요");
+            return;
+        }
+    }
+
+    const postData = {
+        subject,
+        content,
+        category: selectedCategory,
+        subCategory: selectedSubCategory,
+        departure,
+        destination,
+        loc,
+        price,
+        startDate,
+        endDate,
+        currentCapacity,
+        maxCapacity,
+        user_id: loggedInUserId
+    };
+
+    try {
+        const response = await fetch(`/api/post/modify/${index}`,{
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(postData)
+        });
+
+        if (response.ok) {
+            const result = await response.json();
+            console.log(result);
+
+            if (result.success) {
+                window.location.href = selectedCategory === "택시"
+                ? `/post/view?index=${result.postId - 1}&category=${selectedCategory}&subCategory=전체`
+                : `/post/view?index=${result.postId - 1}&category=${selectedCategory}&subCategory=${selectedSubCategory}`;
+            } else {
+                alert("게시물 작성 중 오류가 발생했습니다." + result.error);
+            }
+        } else {
+            alert("서버 오류: " + response.error);
+        }
+    } catch (error) {
+        console.error("Error:", error);
+        alert("네트워크 오류가 발생했습니다.");
+    }
+
+    localStorage.clear();
 };
 
 modifyFrm.addEventListener("submit", handleModify);

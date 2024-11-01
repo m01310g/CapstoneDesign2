@@ -341,12 +341,12 @@ app.post("/forgot-pw", async (req, res) => {
 });
 
 // 메인 페이지
-app.get("/home/home.html", (req, res) => {
+app.get("/home", (req, res) => {
   res.sendFile(path.join(__dirname, "..", "src", "pages", "home", "home.html"));
 });
 
 // 마이 페이지
-app.get("/my-page/my-page.html", (req, res) => {
+app.get("/my-page", (req, res) => {
   res.sendFile(path.join(__dirname, "..", "src", "pages", "my-page", "my-page.html"));
 });
 
@@ -463,6 +463,15 @@ app.get("/category", (req, res) => {
 app.get("/category/:categoryName", (req, res) => {
   const categoryName = req.params.categoryName;
 
+  
+  /* .js 파일 요청 차단
+  req.params.categoryName을 콘솔에 출력해보면 두 개가 나오는데,
+  .js 파일 요청이 함께 되면서 충돌 발생 */
+  
+  if (categoryName.endsWith(".js")) {
+    return res.status(404).send("Not found");
+  }
+
   const filePath = categoryName === "calculator"
     ? path.join(__dirname, "..", "src", "pages", "category", `${categoryName}.html`)
     : path.join(__dirname, "..", "src", "pages", "post", `${categoryName}.html`);
@@ -507,8 +516,35 @@ app.post('/api/post', async (req, res) => {
   try {
     const { subject, content, category, subCategory, departure, destination, loc, price, startDate, endDate, currentCapacity, maxCapacity, user_id } = req.body;
     
+    // 필수 필드 검증
+    if (category === "택시") {
+      if (!subject || !content || !category || !departure || !destination || !price || !startDate || !endDate || !maxCapacity) {
+        return res.status(400).json({ success: false, error: "모든 필드를 입력해 주세요." });
+      }
+    } else if (category === "택배" || category === "배달") {
+      if (!subject || !content || !category || !subCategory || !loc || !price || !startDate || !endDate || !maxCapacity) {
+        return res.status(400).json({ success: false, error: "모든 필드를 입력해 주세요." });
+      }
+    } else {
+      return res.status(400).json({ success: false, error: "유효하지 않은 카테고리입니다." });
+    }
+
     const query = "INSERT INTO post_list (title, content, category, sub_category, departure, destination, location, price, start_date, end_date, current_capacity, max_capacity, user_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    const values = [subject, content, category, subCategory, JSON.stringify(departure), JSON.stringify(destination), JSON.stringify(loc), price, startDate, endDate, currentCapacity, maxCapacity, user_id];
+    const values = [
+      subject, 
+      content, 
+      category, 
+      subCategory || null, 
+      JSON.stringify(departure || null), 
+      JSON.stringify(destination || null), 
+      JSON.stringify(loc || null), 
+      price, 
+      startDate, 
+      endDate, 
+      currentCapacity, 
+      maxCapacity, 
+      user_id
+    ];
     const result = await db.query(query, values);
     if (result[0] && result[0].insertId) {
       res.json({ success: true, postId: result[0].insertId });
@@ -574,7 +610,6 @@ app.get('/api/post/view/:id', async (req, res) => {
 app.post('/api/post/update-capacity/:id', async (req, res) => {
   const index = parseInt(req.params.id) + 1;
   const currentCapacity = req.body.current_capacity;
-  console.log(index);
 
   console.log("current capacity: ", currentCapacity);
 
@@ -584,11 +619,9 @@ app.post('/api/post/update-capacity/:id', async (req, res) => {
     const [result] = await db.query(query, [currentCapacity, index]);
 
     if (result.affectedRows === 0) {
-      console.log(`게시물 ${index}의 current_capacity 업데이트에 실패하였습니다.`);
       return res.status(404).json({ error: "게시물을 찾을 수 없습니다." });
     }
 
-    console.log("current capacity 업데이트 완료");
     res.status(200).json({ current_capacity: currentCapacity });
   } catch (error) {
     console.error('현재 인원 업데이트 중 오류 발생: ', error);
@@ -596,26 +629,55 @@ app.post('/api/post/update-capacity/:id', async (req, res) => {
   }
 });
 
-// 게시물 참가 인원 정보 가져오기
-// app.get('/api/post/get-capacity/:id', async (req, res) => {
-//   const index = req.params.id;
-//   const query = 'SELECT current_capacity, max_capacity FROM post_list WHERE post_index = ?';
+// 수정 페이지
+app.get("/post/modify", (req, res) => {
+  res.sendFile(path.join(__dirname, "..", "src", "pages", "board", "modify.html"));
+});
 
-//   try {
-//     const [result] = await db.query(query, [index]);
+// 게시물 수정 업데이트 엔드포인트
+app.put("/api/post/modify/:id", async (req, res) => {
+  const postId = parseInt(req.params.id + 1, 10);
+  const { subject, content, category, subCategory, departure, destination, loc, price, startDate, endDate, currentCapacity, maxCapacity } = req.body;
 
-//     if (result) {
-//       const currentCapacity = result[0].current_capacity;
-//       const maxCapacity = result[0].max_capacity;
+  try {
+    const query = `
+      UPDATE post_list
+      SET title = ?, content = ?, category = ?, sub_category = ?, 
+      departure = ?, destination = ?, location = ?, price = ?, 
+      start_date = ?, end_date = ?, current_capacity = ?, max_capacity = ?
+      WHERE post_index = ?
+    `;
 
-//       res.json({ current_capacity: currentCapacity, max_capacity: maxCapacity });
-//     } else {
-//       res.status(404).json({ error: "Post not found" });
-//     }
-//   } catch (error) {
-//     console.error("Database query error: ", error);
-//   }
-// });
+    const values = [
+      subject, 
+      content, 
+      category, 
+      subCategory || null, 
+      // JSON.stringify(departure || null), 
+      // JSON.stringify(destination || null), 
+      // JSON.stringify(loc || null), 
+      departure || null,
+      destination || null,
+      loc || null,
+      price, 
+      startDate, 
+      endDate, 
+      currentCapacity, 
+      parseInt(maxCapacity), 
+    ];
+
+    const [result] = await db.execute(query, [...values, postId]);
+
+    if (result.affectedRows > 0) {
+      res.json({ success: true, message: "게시글이 수정되었습니다.", postId });
+    } else {
+      res.status(404).json({ success: false, message: "해당 게시글을 찾을 수 없습니다." });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: "서버 오류가 발생했습니다." });
+  }
+});
 
 // 세션에서 유저 정보 가져오기
 app.get('/api/session/user-info', async (req, res) => {
