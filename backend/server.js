@@ -95,6 +95,8 @@ app.use(express.static(path.join(__dirname, "..", "src", "pages"))); // html파�
 app.use(express.static(path.join(__dirname, "..", "src", "pages", "login"))); // login페이지의 js로드 안되는 문제 해결
 app.use(express.static(path.join(__dirname, "..", "src", "pages", "board"))); // 게시물 관련 페이지의 js로드 안되는 문제 해결
 app.use(express.static(path.join(__dirname, "..", "src", "pages", "post"))); // 게시물 관련 페이지의 js로드 안되는 문제 해결
+app.use(express.static(path.join(__dirname, "..", "src", "pages", "notification"))); // 알림 페이지의 js로드 안되는 문제 해결
+app.use(express.static(path.join(__dirname, "..", "src", "pages", "chatting"))); // 채팅 페이지의 js로드 안되는 문제 해결
 
 // 로그인 페이지
 app.get("/", (req, res) => {
@@ -695,6 +697,13 @@ app.delete("/api/post/delete/:id", async (req, res) => {
   }
 });
 
+app.get('/notification', (req, res) => {
+  res.sendFile(path.join(__dirname, "..", "src", "pages", "notification", "Notification_page.html"));
+});
+
+app.get('/chat', (req, res) => {
+  res.sendFile(path.join(__dirname, "..", "src", "pages", "chatting", "Chat_main.html"));
+})
 
 // 사용자의 알림 가져오는 api
 app.get('/api/notifications', async (req, res) => {
