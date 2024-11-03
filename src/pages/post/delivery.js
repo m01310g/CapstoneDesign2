@@ -71,8 +71,10 @@ listItems.forEach(item => {
         // localStorage에 선택된 subCategory 저장
         localStorage.setItem("selectedSubCategory", category);
 
-        const iframeSrc = `../board/list.html?category=delivery&subCategory=${encodeURIComponent(category)}`;
+        const iframeSrc = `/post/list?category=delivery&subCategory=${encodeURIComponent(category)}`;
         iframe.src = iframeSrc;
+
+        window.location.href = "/category/delivery";
 
         setIframeAndSaveState(iframeSrc);  // 상태 저장 및 iframe 설정(뒤로 가기 용도)
     });
@@ -87,7 +89,7 @@ searchBtn.addEventListener("click", () => {
         searchInput.value = "";
         searchResult.classList.add(HIDDEN_CLASS_NAME);
 
-        const iframeSrc = `../board/list.html?category=delivery&subCategory=${subCategoryText}`;
+        const iframeSrc = `/post/list?category=delivery&subCategory=${subCategoryText}`;
         iframe.src = iframeSrc;
         setIframeAndSaveState(iframeSrc);  // 상태 저장 및 iframe 설정(뒤로 가기 용도)
 
@@ -96,7 +98,7 @@ searchBtn.addEventListener("click", () => {
 
         searchResult.innerText = `"${keyword}"(으)로 검색한 결과`;
 
-        const iframeSrc = `../board/list.html?category=delivery&subCategory=${subCategoryText}&search=${encodeURIComponent(keyword)}`;
+        const iframeSrc = `/post/list?category=delivery&subCategory=${subCategoryText}&search=${encodeURIComponent(keyword)}`;
         iframe.src = iframeSrc;
         setIframeAndSaveState(iframeSrc);  // 상태 저장 및 iframe 설정(뒤로 가기 용도)
     }

@@ -133,6 +133,7 @@ const filterPosts = (data) => {
     //     });
     // }
 
+    // 게시글 표시
     if (data.length === 0) {
         board.innerHTML = selectedSubCategory === "전체"
         ? board.innerHTML = '<div class="post">해당 카테고리의 게시글이 없습니다.</div>'

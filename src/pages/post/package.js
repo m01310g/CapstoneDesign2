@@ -87,14 +87,15 @@ listItems.forEach(item => {
 
         localStorage.setItem("selectedSubCategory", category);
 
-        const iframeSrc = `../board/list.html?category=package&subCategory=${encodeURIComponent(category)}`;
+        const iframeSrc = `/post/list?category=package&subCategory=${encodeURIComponent(category)}`;
         iframe.src = iframeSrc;
+        window.location.href = "/category/package";
 
         setIframeAndSaveState(iframeSrc);
     });
 });
 
-searchBtn.addEventListener("click", () => {
+searchBtn.addEventListener("click", function() {
     const keyword = searchInput.value.trim();   // 검색어 가져오기
     const subCategoryText = subCategory.innerText;
 
@@ -103,7 +104,7 @@ searchBtn.addEventListener("click", () => {
         searchInput.value = "";
         searchResult.classList.add(HIDDEN_CLASS_NAME);
 
-        const iframeSrc = `../board/list.html?category=package&subCategory=${subCategoryText}`;
+        const iframeSrc = `/post/list?category=package&subCategory=${subCategoryText}`;
         iframe.src = iframeSrc;
         setIframeAndSaveState(iframeSrc);  // 상태 저장 및 iframe 설정(뒤로 가기 용도)
 
@@ -112,7 +113,7 @@ searchBtn.addEventListener("click", () => {
 
         searchResult.innerText = `"${keyword}"(으)로 검색한 결과`;
 
-        const iframeSrc = `../board/list.html?category=package&subCategory=${subCategoryText}&search=${encodeURIComponent(keyword)}`;
+        const iframeSrc = `/post/list?category=package&subCategory=${subCategoryText}&search=${encodeURIComponent(keyword)}`;
         iframe.src = iframeSrc;
         setIframeAndSaveState(iframeSrc);  // 상태 저장 및 iframe 설정(뒤로 가기 용도)
     }

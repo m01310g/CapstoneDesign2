@@ -565,7 +565,7 @@ app.get('/api/post', async (req, res) => {
   let params = [category];
 
   if (subCategory !== '전체') {
-    query += ' AND subCategory = ?';
+    query += ' AND sub_category = ?';
     params.push(subCategory);
   }
   
