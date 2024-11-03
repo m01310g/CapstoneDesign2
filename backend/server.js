@@ -10,6 +10,21 @@ const app = express();
 const crypto = require("crypto");
 const port = 3000;
 
+app.use(cors());
+
+// .env의 kakao map api key 가져오기
+app.get('/api/kakao-map-key', async (req, res) => {
+  try {
+    if (process.env.KAKAO_MAP_API_KEY) {
+      res.json({ KAKAO_MAP_API_KEY: process.env.KAKAO_MAP_API_KEY });
+    } else {
+      res.status(404).json({ message: "api key not found" });
+    }
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
 const mysql = require('mysql2/promise');
 
 let db;
@@ -45,8 +60,6 @@ app.use(session({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-
-app.use(cors());
 app.use(express.static(path.join(__dirname, "..", "assets")));
 /*
 assets/img에 있는 이미지 html에서 사용 시
@@ -151,6 +164,18 @@ app.get("/sign-up/sign-up.html", (req, res) => {
   res.sendFile(path.join(__dirname, "..", "src", "pages", "sign-up", "sign-up.html"));
 });
 
+// user_info 테이블의 location 속성에 json형태로 lat(위도), lng(경도) 저장
+let lat;
+let lng;
+
+app.post("/sign-up/user-location", async (req, res) => {
+  lat = req.body.location.lat; // lat 값을 전역 변수에 할당
+  lng = req.body.location.lng; // lng 값을 전역 변수에 할당
+
+  res.status(200).json({ message: 'Location saved successfully', lat, lng });
+});
+
+
 // user id 중복 검사
 app.post("/sign-up/user-id-availability", async (req, res) => {
   const userId = req.body["user-id"];
@@ -179,6 +204,7 @@ app.post("/sign-up/user-info", async (req, res) => {
   const userEmailPost = req.body["user-email-post"];
   const checkAuthn = req.body["email-authn"];
   let userEmail;
+  const location = JSON.stringify({ lat, lng });
 
   if (authnCode !== checkAuthn) {
     return res.redirect(`/sign-up/sign-up.html?error=${encodeURIComponent('인증번호 불일치로 회원가입에 실패했습니다.')}`);
@@ -190,10 +216,10 @@ app.post("/sign-up/user-info", async (req, res) => {
     userEmail = userEmailPre;
   }
 
-  const query = "INSERT INTO user_info (user_id, user_pw, user_name, user_nickname, user_tel, user_email, user_address, user_salt) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+  const query = "INSERT INTO user_info (user_id, user_pw, user_name, user_nickname, user_tel, user_email, user_address, user_salt, location) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
   try {
-    await db.query(query, [userId, userPw, userName, userNickname, userTel, userEmail, userAddress, userSalt]);
+    await db.query(query, [userId, userPw, userName, userNickname, userTel, userEmail, userAddress, userSalt, location]);
     res.redirect('/?message=회원가입이 완료되었습니다!'); // 회원 가입 완료 시 로그인 페이지로
   } catch (err) {
     console.error("회원가입 오류:", err);
