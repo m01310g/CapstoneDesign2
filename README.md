@@ -42,7 +42,7 @@ test | 테스트 코드 추가
 chore | 빌드 업무, 패키지 매니저 수정 등
 rename | 파일/폴더명 수정 및 옮기는 작업 수행
 remove | 파일을 삭제하는 작업 수행
-docs | 문서 수
+docs | 문서 수정
 ### Folder Convention
 - 폴더 이름은 소문자로만 명명
 - 이름이 길어진다면 하이픈(-)을 사용<br>e.g. home, community-taxi...
