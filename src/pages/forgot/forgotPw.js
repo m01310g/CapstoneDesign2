@@ -22,5 +22,5 @@ $emailSelect.addEventListener("change", () => {
 });
 
 $btnClose.addEventListener("click", () => {
-  window.location.href = "../login/login.html";
+  window.location.href = "/";
 });

@@ -26,7 +26,7 @@ $emailSelect.addEventListener("change", () => {
 });
     
 $btnClose.addEventListener("click", () => {
-  window.location.href = "../login/login.html";
+  window.location.href = "/";
 });
 
 // 이메일로 인증번호 전송하면 -> 인증번호 입력 창에 입력 제한 시간 출력

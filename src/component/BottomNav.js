@@ -85,7 +85,7 @@ class BottomNav extends HTMLElement {
 
         nav.innerHTML = `
             <div id="category-icon-container">
-                <a href="../category/category.html">
+                <a href="/category">
                     <img class="category-icon" src="${icons.category.off}">
                     <div>카테고리</div>
                 </a>  
@@ -97,7 +97,7 @@ class BottomNav extends HTMLElement {
                 </a>  
             </div>
             <div id="home-icon-container">
-                <a href="../home/home.html">
+                <a href="/home">
                     <img class="home-icon" src="${icons.home.off}">
                     <div>홈</div>
                 </a>
@@ -109,7 +109,7 @@ class BottomNav extends HTMLElement {
                 </a>
             </div>
             <div id="my-page-icon-container">
-                <a href="../my-page/my-page.html">
+                <a href="/my-page">
                     <img class="my-page-icon" src="${icons.myPage.off}">
                     <div>마이</div>
                 </a>

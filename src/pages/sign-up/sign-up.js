@@ -139,7 +139,7 @@ if (errorMessage) {
 }
 
 $btnClose.addEventListener("click", () => {
-  window.location.href = "../login/login.html";
+  window.location.href = "/login";
 });
 
 // 새로운 비밀번호 입력 시, 버튼 비활성화
