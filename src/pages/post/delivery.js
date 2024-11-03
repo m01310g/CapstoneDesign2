@@ -14,7 +14,7 @@ const HIDDEN_CLASS_NAME = "hidden";
 
 const setIframeAndSaveState = (iframeSrc) => {
     iframe.src = iframeSrc;
-    history.pushState({iframeSrc}, "", iframeSrc);
+    history.pushState({iframeSrc}, "", "/category/delivery");
 }
 
 // 뒤로 가기/앞으로 가기 시 발생 이벤트

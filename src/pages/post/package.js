@@ -14,7 +14,7 @@ const HIDDEN_CLASS_NAME = "hidden";
 
 const setIframeAndSaveState = (iframeSrc) => {
     iframe.src = iframeSrc;
-    history.pushState({iframeSrc}, "", iframeSrc);
+    history.pushState({iframeSrc}, "", "/category/package");
 }
 
 // 뒤로 가기/앞으로 가기 시 발생 이벤트
@@ -89,7 +89,7 @@ listItems.forEach(item => {
 
         const iframeSrc = `/post/list?category=package&subCategory=${encodeURIComponent(category)}`;
         iframe.src = iframeSrc;
-        window.location.href = "/category/package";
+        // window.location.href = "/category/package";
 
         setIframeAndSaveState(iframeSrc);
     });
