@@ -5,24 +5,24 @@ class BottomNav extends HTMLElement {
 
         const icons = {
             category: {
-                on: '/assets/img/category-on.png',
-                off: '/assets/img/category-off.png'
+                on: '/img/category-on.png',
+                off: '/img/category-off.png'
             },
             chatting: {
-                on: '/assets/img/chatting-on.png',
-                off: '/assets/img/chatting-off.png'
+                on: '/img/chatting-on.png',
+                off: '/img/chatting-off.png'
             },
             home: {
-                on: '/assets/img/home-on.png',
-                off: '/assets/img/home-off.png'
+                on: '/img/home-on.png',
+                off: '/img/home-off.png'
             },
             notification: {
-                on: '/assets/img/notification-on.png',
-                off: '/assets/img/notification-off.png'
+                on: '/img/notification-on.png',
+                off: '/img/notification-off.png'
             },
             myPage: {
-                on: '/assets/img/my-on.png',
-                off: '/assets/img/my-off.png'
+                on: '/img/my-on.png',
+                off: '/img/my-off.png'
             }
         };
 
@@ -91,7 +91,7 @@ class BottomNav extends HTMLElement {
                 </a>  
             </div>
             <div id="chatting-icon-container">
-                <a href="#">
+                <a href="/chat">
                     <img class="chatting-icon" src="${icons.chatting.off}">
                     <div>채팅</div>
                 </a>  
@@ -103,7 +103,7 @@ class BottomNav extends HTMLElement {
                 </a>
             </div>
             <div id="notification-icon-container">
-                <a href="#">
+                <a href="/notification">
                     <img class="notification-icon" src="${icons.notification.off}">
                     <div>알림</div>
                 </a>

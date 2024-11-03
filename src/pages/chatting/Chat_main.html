@@ -4,14 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>채팅 페이지</title>
-    <link rel="stylesheet" href="chat_main.css">
+    <link rel="stylesheet" href="../../css/chat_main.css">
 </head>
 <body>
     <div class="chat-container">
         <header class="chat-header">
-            <button class="back-button">
-                <img src="https://www.flaticon.com/svg/vstatic/svg/3916/3916912.svg?token=exp=1727180557~hmac=49233a737667d37b149e080731333e35" alt="뒤로가기">
-            </button>
+
             <h2>채팅</h2>
             <button class="notification-button">
                 <img src="https://cdn-icons-png.flaticon.com/512/12328/12328821.png" alt="알림">
@@ -42,16 +40,10 @@
                 <div class="profile-pic"></div>
             </div>
         </div>
-
-        <!-- 입력 섹션 -->
-        <div class="chat-input">
-            <input type="text" placeholder="메시지를 입력하세요">
-            <button class="send-button">
-                <img src="https://cdn-icons-png.flaticon.com/512/11013/11013530.png" alt="전송">
-            </button>
-        </div>
+        <bottom-nav data-page="chatting"></bottom-nav>
     </div>
 
     <script src="Chat_main.js"></script>
+    <script src="../../component/BottomNav.js"></script>
 </body>
 </html>
