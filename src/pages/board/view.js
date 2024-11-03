@@ -73,18 +73,33 @@ if (category === "택배") {
 
 backLink.setAttribute("href", `/category/${selectedCategory}`);
 
-// // 삭제 버튼
-// const deleteBtn = document.querySelector("#delete");
-// deleteBtn.addEventListener("click", () => {
-//     boardsObj.splice(index, 1);
-//     for (let i = 0; i < boardsObj.length; i++) {
-//         boardsObj[i].index = i;
-//     }
+// 삭제 버튼
+const deleteBtn = document.querySelector("#delete");
+deleteBtn.addEventListener("click", async (event) => {
+    event.preventDefault();
+    let category;
+    if (post.category === "택배") {
+        category = "package";
+    } else if (post.category === "배달") {
+        category = "delivery";
+    } else if (post.category === "택시") {
+        category = "taxi";
+    }
 
-//     const setBoardsStr = JSON.stringify(boardsObj);
-//     localStorage.setItem("boards", setBoardsStr);
-//     location.href = `../post/${selectedCategory}.html`;
-// });
+    const confirmed = confirm("이 글을 삭제하시겠습니까?");
+    if (confirmed) {
+        const response = await fetch(`/api/post/delete/${index}`, {
+            method: "DELETE"
+        });
+        if (!response.ok) throw new Error("게시물 삭제 실패");
+        
+        window.location.href = `/category/${category}`;
+        // window.history.back();
+    } else {
+        await fetchBoardDetails();
+        await checkCapacityStatus();
+    }
+});
 
 const participationBtn = document.querySelector("#participation");
 
@@ -114,7 +129,6 @@ const checkCapacityStatus = async () => {
         const formattedPrice = `${formattedIntPart}.${decPart}`;
 
         if (currentDate < startDate) {
-            // participationBtn.innerText = "모집 예정";
             participationBtn.innerHTML = `
                 <div id="price-container">인당 <span id="price">${formattedPrice}</span>원씩 부담하면 돼요!</div>
                 <div id="participate">모집 예정</div>
@@ -123,14 +137,12 @@ const checkCapacityStatus = async () => {
             participationBtn.style.pointerEvents = "none";
             document.querySelector(".current-capacity").style.color = "grey";
         } else if ((currentCapacity >= maxCapacity) || (currentDate > endDate)) {
-            // participationBtn.innerText = "모집 완료";
-            participationBtn.innerHTML = `<div id="participate">모집 완료</div>`
+            participationBtn.innerHTML = `<div id="participate">모집 마감</div>`
             participationBtn.style.backgroundColor = "grey";
             participationBtn.style.pointerEvents = "none";
 
             document.querySelector(".current-capacity").style.color = "red";
         } else {
-            // participationBtn.innerText = "참여하기";
             participationBtn.innerHTML = `
                 <div id="price-container">인당 <span id="price">${formattedPrice}</span>원씩 부담하면 돼요!</div>
                 <div id="participate">참여하기</div>
@@ -143,9 +155,6 @@ const checkCapacityStatus = async () => {
         console.error("참여 버튼 상태 확인 중 오류 발생: ", error);
     }
 }
-
-// 로드 시 상태 확인
-checkCapacityStatus();
 
 // 참여하기 버튼 클릭 이벤트
 participationBtn.addEventListener("click", async (event) => {
@@ -161,7 +170,6 @@ participationBtn.addEventListener("click", async (event) => {
     // 현재 인원 수 증가
     if (currentCapacity < maxCapacity) {
         try {
-            console.log(currentCapacity + 1);
             const response = await fetch(`/api/post/update-capacity/${index}`, {
                 method: 'POST',
                 headers: {
@@ -188,7 +196,7 @@ participationBtn.addEventListener("click", async (event) => {
 
 document.addEventListener("DOMContentLoaded", () => {
     fetchBoardDetails().then(() => {
-        checkCapacityStatus();
+        checkCapacityStatus();    // 로드 시 상태 확인
         participationBtn.removeEventListener("click", handleParticipation);
         participationBtn.addEventListener("click", handleParticipation);
     });

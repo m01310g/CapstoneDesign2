@@ -565,7 +565,7 @@ app.get('/api/post', async (req, res) => {
   let params = [category];
 
   if (subCategory !== '전체') {
-    query += ' AND subCategory = ?';
+    query += ' AND sub_category = ?';
     params.push(subCategory);
   }
   
@@ -653,9 +653,6 @@ app.put("/api/post/modify/:id", async (req, res) => {
       content, 
       category, 
       subCategory || null, 
-      // JSON.stringify(departure || null), 
-      // JSON.stringify(destination || null), 
-      // JSON.stringify(loc || null), 
       departure || null,
       destination || null,
       loc || null,
@@ -676,6 +673,25 @@ app.put("/api/post/modify/:id", async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ success: false, message: "서버 오류가 발생했습니다." });
+  }
+});
+
+// 게시글 삭제 엔드포인트
+app.delete("/api/post/delete/:id", async (req, res) => {
+  const postId = parseInt(req.params.id) + 1;
+  const query = "DELETE FROM post_list WHERE post_index = ?";
+
+  try {
+    const [result] = await db.execute(query, [postId]);
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "게시글이 존재하지 않습니다." });
+    }
+
+    res.status(200).json({ message: "게시글이 삭제되었습니다." });
+  } catch (error) {
+    console.error("게시글 삭제 중 오류 발생: ", error);
+    res.status(500).json({ message: "게시글 삭제 중 오류가 발생했습니다." });
   }
 });
 
