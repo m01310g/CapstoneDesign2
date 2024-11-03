@@ -1,9 +1,36 @@
+window.onload = async function() {
+  let KAKAO_MAP_API_KEY;
+  try {
+    const response = await fetch("/api/kakao-map-key");
+    if (!response.ok) throw new Error('Network response was not ok');
+    const data = await response.json();
+    KAKAO_MAP_API_KEY = data.KAKAO_MAP_API_KEY;
+
+    const script = document.createElement("script");
+    script.async = true;
+    script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${KAKAO_MAP_API_KEY}&libraries=services&autoload=false`;
+    script.type = "text/javascript";
+    document.head.append(script);
+
+    script.onload = function() {
+      console.log("Kakao Maps SDK loaded successfully");
+      window.kakao.maps.load(() => {
+        // console.log("Kakao Maps SDK is ready to use.");
+        // Kakao Maps SDK가 로드된 후 execDaumPostcode 함수를 사용할 수 있도록 준비
+      });
+    }
+  } catch (error) {
+    console.error('There was a problem with fetching the API key:', error);
+  }
+};
+
 const $btnClose = document.querySelector(".btn-close");
 const $btnEmailAuthn = document.querySelector("#send-authn-btn");
 const $emailAuthn = document.querySelector("input[name='email-authn']");
 const $userPw = document.querySelector("input[name='user-pw']");
 const $userPwCheck = document.querySelector("input[name='user-pw-check']");
 const $userId = document.querySelector("input[name='user-id']");
+const $userNickname = document.querySelector("input[name='user-nickname']");
 const $formSubmitBtn = document.querySelector("input[type='submit']")
 // let authnTimer = 180; // 이메일 인증 번호 입력 제한 시간
 
@@ -38,7 +65,7 @@ document.getElementById("id-availability-check").addEventListener("click", async
     });
 
     const data = await response.json();
-    console.log(data.available);
+    // console.log(data.available);
     if (data.available) {
       // 사용 가능한 아이디
       $userId.style.borderWidth = "1.8px";
@@ -61,6 +88,45 @@ document.getElementById("id-availability-check").addEventListener("click", async
 $userId.addEventListener("input", () => {
   $userId.style.borderWidth = "1.8px";
   $userId.style.borderColor = "red";
+  $formSubmitBtn.disabled = true; // 가입 버튼 비활성화
+});
+
+document.getElementById("nickname-availability-check").addEventListener("click", async (event) => {
+  // 닉네임 중복 검사 체크
+  const checkAvailableNickname = $userNickname.value;
+
+  try {
+    const response = await fetch("/sign-up/user-nickname-availability", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ "user-nickname": checkAvailableNickname }),
+    });
+
+    const data = await response.json();
+    // console.log(data.available);
+    if (data.available) {
+      // 사용 가능한 닉네임
+      $userNickname.style.borderWidth = "1.8px";
+      $userNickname.style.borderColor = "green";
+      $formSubmitBtn.disabled = false; // 가입 버튼 활성화
+    } else {
+      // 닉네임 중복
+      $userNickname.style.borderWidth = "1.8px";
+      $userNickname.style.borderColor = "red";
+      $userNickname.value = "";
+      $userNickname.placeholder = "이미 존재하는 닉네임입니다. 다시 입력해주세요.";
+      $formSubmitBtn.disabled = true; // 가입 버튼 비활성화
+    }
+  } catch (error) {
+    console.error("Error checking nickname availability:", error);
+  }
+});
+
+$userNickname.addEventListener("input", () => {
+  $userNickname.style.borderWidth = "1.8px";
+  $userNickname.style.borderColor = "red";
   $formSubmitBtn.disabled = true; // 가입 버튼 비활성화
 });
 
@@ -195,6 +261,27 @@ function execDaumPostcode() {
       document.getElementById('user-postcode').value = data.zonecode;
       document.getElementById("user-address").value = addr;
       document.getElementById("user-detail-address").focus();
+
+      const geocoder = new kakao.maps.services.Geocoder();
+      geocoder.addressSearch(data.roadAddress, (result, status) => {
+        if (status === kakao.maps.services.Status.OK) {
+          // console.log('위도 : ' + result[0].y);
+          // console.log('경도 : ' + result[0].x);
+          fetch('/sign-up/user-location', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              location: {
+                lat: result[0].y,
+                lng: result[0].x,
+              },
+            }),
+          })
+          .catch(error => console.error('Error:', error));
+        }
+      });
     }
   }).open();
 }

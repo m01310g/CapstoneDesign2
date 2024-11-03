@@ -21,7 +21,7 @@
   width: 42.5%;
 }
 
-#user-id {
+#user-id, #user-nickname {
   width: 86%;
 }
 
@@ -62,7 +62,7 @@ select {
   cursor: pointer;
 }
 
-#send-authn-btn, #id-availability-check {
+#send-authn-btn, #id-availability-check, #nickname-availability-check {
   position: absolute;
   right: 0;
   height: 2.5rem;
