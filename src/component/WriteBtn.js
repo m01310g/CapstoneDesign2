@@ -4,7 +4,7 @@ class WriteBtn extends HTMLElement {
         super();
         const shadow = this.attachShadow({ mode: 'open' });
 
-        const icon = "/assets/img/write.png";
+        const icon = "/img/write.png";
 
         const style = document.createElement("style");
         style.textContent = `
