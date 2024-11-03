@@ -30,6 +30,7 @@ const $emailAuthn = document.querySelector("input[name='email-authn']");
 const $userPw = document.querySelector("input[name='user-pw']");
 const $userPwCheck = document.querySelector("input[name='user-pw-check']");
 const $userId = document.querySelector("input[name='user-id']");
+const $userNickname = document.querySelector("input[name='user-nickname']");
 const $formSubmitBtn = document.querySelector("input[type='submit']")
 // let authnTimer = 180; // 이메일 인증 번호 입력 제한 시간
 
@@ -64,7 +65,7 @@ document.getElementById("id-availability-check").addEventListener("click", async
     });
 
     const data = await response.json();
-    console.log(data.available);
+    // console.log(data.available);
     if (data.available) {
       // 사용 가능한 아이디
       $userId.style.borderWidth = "1.8px";
@@ -87,6 +88,45 @@ document.getElementById("id-availability-check").addEventListener("click", async
 $userId.addEventListener("input", () => {
   $userId.style.borderWidth = "1.8px";
   $userId.style.borderColor = "red";
+  $formSubmitBtn.disabled = true; // 가입 버튼 비활성화
+});
+
+document.getElementById("nickname-availability-check").addEventListener("click", async (event) => {
+  // 닉네임 중복 검사 체크
+  const checkAvailableNickname = $userNickname.value;
+
+  try {
+    const response = await fetch("/sign-up/user-nickname-availability", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ "user-nickname": checkAvailableNickname }),
+    });
+
+    const data = await response.json();
+    // console.log(data.available);
+    if (data.available) {
+      // 사용 가능한 닉네임
+      $userNickname.style.borderWidth = "1.8px";
+      $userNickname.style.borderColor = "green";
+      $formSubmitBtn.disabled = false; // 가입 버튼 활성화
+    } else {
+      // 닉네임 중복
+      $userNickname.style.borderWidth = "1.8px";
+      $userNickname.style.borderColor = "red";
+      $userNickname.value = "";
+      $userNickname.placeholder = "이미 존재하는 닉네임입니다. 다시 입력해주세요.";
+      $formSubmitBtn.disabled = true; // 가입 버튼 비활성화
+    }
+  } catch (error) {
+    console.error("Error checking nickname availability:", error);
+  }
+});
+
+$userNickname.addEventListener("input", () => {
+  $userNickname.style.borderWidth = "1.8px";
+  $userNickname.style.borderColor = "red";
   $formSubmitBtn.disabled = true; // 가입 버튼 비활성화
 });
 

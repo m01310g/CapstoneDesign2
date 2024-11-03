@@ -189,6 +189,21 @@ app.post("/sign-up/user-id-availability", async (req, res) => {
   }
 });
 
+// user nickname 중복 검사
+app.post("/sign-up/user-nickname-availability", async (req, res) => {
+  const userNickname = req.body["user-nickname"];
+  const query = "SELECT COUNT(*) AS count FROM user_info WHERE user_nickname = ?";
+
+  try {
+    const [results] = await db.query(query, [userNickname]);
+    const isAvailable = results[0].count === 0;
+    res.json({ available: isAvailable });
+  } catch (err) {
+    console.error("Database error:", err);
+    res.status(500).send("Server error");
+  }
+});
+
 // 회원가입 처리
 app.post("/sign-up/user-info", async (req, res) => {
   const userId = req.body["user-id"];
