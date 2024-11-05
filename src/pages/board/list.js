@@ -1,6 +1,7 @@
 const params = new URLSearchParams(window.location.search);
 const selectedCategory = params.get("category");
 const selectedSubCategory = params.get("subCategory") || "전체";
+const searchKeyword = params.get("search");
 
 let category = "";
 
@@ -103,48 +104,32 @@ const template = (objValue) => {
 
 // 게시글 필터링
 const filterPosts = (data) => {
-    // let filteredBoards =  selectedSubCategory === "전체"
-    // ? boardsObj.filter(board => board.category === category)
-    // : boardsObj.filter(board => board.category === category && board.subCategory === selectedSubCategory); // 필터링
+    let filteredData = data.filter(item => {
+        return selectedCategory !== "전체"
+            ? item.category === category
+            : item.category === category && item.sub_category === selectedSubCategory;
+    });
 
-    // const searchKeyword = params.get("search") || "";
+    if (searchKeyword) {
+        filteredData = filteredData.filter(item => item.title.includes(searchKeyword));
+    }
 
-    // 검색 키워드로 필터링
-    // if (searchKeyword) {
-    //     filteredBoards = filteredBoards.filter(board => board.subject.includes(searchKeyword));
-    // }
-
-    data.sort((a, b) => b.post_index - a.post_index);
+    filteredData.sort((a, b) => b.post_index - a.post_index);
 
     const board = document.querySelector(".board");
     board.innerHTML = "";   // 기존 게시글 목록 초기화
 
     // 게시글 표시
-    // if (filteredBoards.length === 0) {
-    //     if (searchKeyword) {
-    //         board.innerHTML = `<div class="post">"${searchKeyword}"에 대한 검색 결과가 없습니다.</div>`;
-    //     } else {
-    //         board.innerHTML = '<div class="post">해당 카테고리의 게시글이 없습니다.</div>';
-    //     }
-    // } else {
-    //     filteredBoards.forEach((objValue) => {
-    //         const index = boardsObj.findIndex(board => board === objValue);
-    //         board.innerHTML += template(index, objValue);
-    //     });
-    // }
-
-    // 게시글 표시
-    if (data.length === 0) {
+    if (filteredData.length === 0) {
         board.innerHTML = selectedSubCategory === "전체"
         ? board.innerHTML = '<div class="post">해당 카테고리의 게시글이 없습니다.</div>'
         : board.innerHTML = `<div class="post">${selectedSubCategory}에 대한 게시글이 없습니다.</div>`;
     } else {
-        data.forEach((objValue, index) => {
+        filteredData.forEach((objValue, index) => {
             board.innerHTML += template(objValue);
         });
     }
 };
 
+// 첫 화면 로딩 시 전체 게시글 표시
 document.addEventListener("DOMContentLoaded", fetchData);
-// // 첫 화면 로딩 시 전체 게시글 표시
-// filterBoards("");

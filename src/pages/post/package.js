@@ -89,6 +89,7 @@ listItems.forEach(item => {
 
         const iframeSrc = `/post/list?category=package&subCategory=${encodeURIComponent(category)}`;
         iframe.src = iframeSrc;
+
         // window.location.href = "/category/package";
 
         setIframeAndSaveState(iframeSrc);

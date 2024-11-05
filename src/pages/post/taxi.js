@@ -21,37 +21,47 @@ const getCurrentPosition = () => {
     });
 }
 
-window.onload = function() {
-    const script = document.createElement("script");
-    script.async = true;
-    script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=8ad1ff2123df52c86b9eb96675331a8b&libraries=services&autoload=false`;
-    script.type = "text/javascript";
-    document.head.append(script);
+window.onload = async function() {
+    let KAKAO_MAP_API_KEY;
+    try {
+        const response = await fetch("/api/kakao-map-key");
+        if (!response.ok) throw new Error('Network response was not ok');
+        const data = await response.json();
+        KAKAO_MAP_API_KEY = data.KAKAO_MAP_API_KEY;
 
+        const script = document.createElement("script");
+        script.async = true;
+        script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${KAKAO_MAP_API_KEY}&libraries=services&autoload=false`;
+        script.type = "text/javascript";
+        document.head.append(script);
     
-    script.onload = function() {
-        console.log("Kakao Maps SDK loaded successfully");
-
-        window.kakao.maps.load(() => {
-            if (typeof kakao === 'undefined' || typeof kakao.maps === 'undefined') {
-                console.error("Kakao Maps SDK is not loaded properly");
-                return;
-            }
-
-            getCurrentPosition()
-            .then(position => {
-                const latlng = new kakao.maps.LatLng(position.coords.latitude, position.coords.longitude);
-                initMap(latlng);
-            })
-            .catch(err => {
-                console.error("Unable to retrieve your location: ", err);
-                // 기본 위치로 초기화(서울 중심)
-                const defualtLatLng = new kakao.maps.LatLng(37.5665, 126.9780);
-                initMap(defualtLatLng);
+        
+        script.onload = function() {
+            console.log("Kakao Maps SDK loaded successfully");
+    
+            window.kakao.maps.load(() => {
+                if (typeof kakao === 'undefined' || typeof kakao.maps === 'undefined') {
+                    console.error("Kakao Maps SDK is not loaded properly");
+                    return;
+                }
+    
+                getCurrentPosition()
+                .then(position => {
+                    const latlng = new kakao.maps.LatLng(position.coords.latitude, position.coords.longitude);
+                    initMap(latlng);
+                })
+                .catch(err => {
+                    console.error("Unable to retrieve your location: ", err);
+                    // 기본 위치로 초기화(서울 중심)
+                    const defualtLatLng = new kakao.maps.LatLng(37.5665, 126.9780);
+                    initMap(defualtLatLng);
+                });
             });
-        });
+        }
+    } catch (error) {
+        console.error('There was a problem with fetching API key: ', error);
     }
-}
+};
 
 // 지도 초기화
 function initMap(latlng) {
