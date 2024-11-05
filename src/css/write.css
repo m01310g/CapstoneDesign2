@@ -133,7 +133,7 @@ div > div > div {
     border-radius: 1rem;
     box-sizing: border-box;
     cursor: pointer;
-    background: url("../../assets/img/arrow-down.png") no-repeat center right 1rem rgba(190, 190, 190, 0.692);
+    background: url("/img/arrow-down.png") no-repeat center right 1rem rgba(190, 190, 190, 0.692);
     background-size: 1.125rem 1.125rem;
     font-size: 1.125rem;
     font-weight: bold;
@@ -141,7 +141,7 @@ div > div > div {
 
 .category-btn.on,
 .sub-btn.on {
-    background: url("../../assets/img/arrow-up.png") no-repeat center right 1rem rgba(190, 190, 190, 0.692);
+    background: url("/img/arrow-up.png") no-repeat center right 1rem rgba(190, 190, 190, 0.692);
     background-size: 1.125rem 1.125rem;
 }
 

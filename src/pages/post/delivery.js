@@ -74,7 +74,7 @@ listItems.forEach(item => {
         const iframeSrc = `/post/list?category=delivery&subCategory=${encodeURIComponent(category)}`;
         iframe.src = iframeSrc;
 
-        window.location.href = "/category/delivery";
+        // window.location.href = "/category/delivery";
 
         setIframeAndSaveState(iframeSrc);  // 상태 저장 및 iframe 설정(뒤로 가기 용도)
     });
