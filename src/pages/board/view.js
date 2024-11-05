@@ -59,15 +59,14 @@ modifyBtn.addEventListener("click", handleModifyBtn);
 
 // 뒤로 가기 버튼
 const backLink = document.querySelector("#back-link");
-const category = document.querySelector("#category").innerText;
 
 let selectedCategory = "";
 
-if (category === "택배") {
+if (viewCategory === "택배") {
     selectedCategory = "package";
-} else if (category === "배달") {
+} else if (viewCategory === "배달") {
     selectedCategory = "delivery";
-} else if (category === "택시") {
+} else if (viewCategory === "택시") {
     selectedCategory = "taxi";
 }
 
