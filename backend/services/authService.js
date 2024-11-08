@@ -114,18 +114,6 @@ exports.emailAuth = async (req, res) => {
   }
 };
 
-// // user_info 테이블의 location 속성에 json형태로 lat(위도), lng(경도) 저장
-// let lat;
-// let lng;
-
-// exports.saveLocation = async (req, res) => {
-//   lat = req.body.location.lat; // lat 값을 전역 변수에 할당
-//   lng = req.body.location.lng; // lng 값을 전역 변수에 할당
-
-//   res.status(200).json({ message: 'Location saved successfully', lat, lng });
-// };
-
-// user id 중복 검사
 exports.checkId = async (req, res) => {
   const userId = req.body["user-id"];
   const query = "SELECT COUNT(*) AS count FROM user_info WHERE user_id = ?";
@@ -175,10 +163,6 @@ exports.myInfoChange = async (req, res) => {
     updates.push("user_tel = ?");
     values.push(userTel);
   }
-  // if (userAddress) {
-  //   updates.push("user_address = ?");
-  //   values.push(userAddress);
-  // }
 
   // 업데이트할 필드가 없으면 바로 리턴
   if (updates.length === 0) {

@@ -55,16 +55,16 @@ input[name="forgot-id-user-email-pre"] {
   border-radius: 5px;
 }
 
-#forgot-id-form select {
+input[name="forgot-id-user-email-post"] {
   position: absolute;
   right: 0;
-  /* left: 43.5%; */
   width: 49.5%;
   height: 2.5rem;
   padding: 0 6px;
+  background-color: #ececec;
   border: 1px solid rgb(62, 62, 62);
   border-radius: 5px;
-  cursor: pointer;
+  cursor: default;
 }
 
 #forgot-id-form input[type="submit"] {
