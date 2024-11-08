@@ -6,7 +6,7 @@ router.post("/login", authService.login);
 router.get("/logout", authService.logout);
 router.post("/sign-up/user-info", authService.signUp);
 router.post("/send-authn", authService.emailAuth);
-router.post("/sign-up/user-location", authService.saveLocation);
+// router.post("/sign-up/user-location", authService.saveLocation);
 router.post("/sign-up/user-id-availability", authService.checkId);
 router.post("/sign-up/user-nickname-availability", authService.checkNickname);
 router.post("/my-info-change", authService.myInfoChange);
