@@ -6,6 +6,7 @@ const session = require("express-session");
 const FileStore = require("session-file-store")(session);
 const path = require("path");
 const cors = require("cors");
+const axios = require("axios"); // Axios 추가
 const app = express();
 const port = 3000;
 
@@ -17,7 +18,7 @@ app.get('/api/kakao-map-key', async (req, res) => {
     if (process.env.KAKAO_MAP_API_KEY) {
       res.json({ KAKAO_MAP_API_KEY: process.env.KAKAO_MAP_API_KEY });
     } else {
-      res.status(404).json({ message: "api key not found" });
+      res.status(404).json({ message: "API key not found" });
     }
   } catch (err) {
     res.status(500).json({ message: "Server error" });
@@ -41,6 +42,7 @@ app.use(session({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// 정적 파일 경로 설정
 app.use(express.static(path.join(__dirname, "..", "src")));
 app.use(express.static(path.join(__dirname, "..", "src", "pages"))); // html파일에 연결된 js로드 안되는 문제 해결
 app.use(express.static(path.join(__dirname, "..", "src", "pages", "login"))); // login 페이지의 js로드 안되는 문제 해결
@@ -51,13 +53,17 @@ app.use(express.static(path.join(__dirname, "..", "src", "pages", "notification"
 app.use(express.static(path.join(__dirname, "..", "src", "pages", "chatting"))); // 채팅 페이지의 js로드 안되는 문제 해결
 app.use(express.static(path.join(__dirname, "..", "src", "pages", "category"))); // 카테고리 페이지의 js로드 안되는 문제 해결
 app.use(express.static(path.join(__dirname, "..", "src", "pages", "my-page"))); // 마이 페이지의 js로드 안되는 문제 해결
+app.use(express.static(path.join(__dirname, "..", "src", "pages", "point-charge")));
+app.use(express.static(path.join(__dirname, "..", "src", "pages", "point-exchange"))); 
 
+// 라우터 설정
 const authRouter = require('./routes/auth');
 const forgotRouter = require('./routes/forgot');
 const postRouter = require('./routes/post');
 const pageRouter = require('./routes/pageRouter');
 const notificationRouter = require('./routes/notification');
 const chatRouter = require('./routes/chat');
+const pointRouter = require('./routes/point');
 
 app.use('/', pageRouter);
 app.use('/', authRouter);
@@ -65,6 +71,7 @@ app.use('/', forgotRouter);
 app.use('/', postRouter);
 app.use('/', notificationRouter);
 app.use('/', chatRouter);
+app.use('/', pointRouter);
 
 /*
 assets/img에 있는 이미지 html에서 사용 시
