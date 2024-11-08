@@ -142,6 +142,68 @@ const fetchUserInfo = async () => {
     }
 };
 
+const options = {
+    "departure": [
+        { value: "3공학관",  text: "3공학관"},
+        { value: "기숙사", text: "기숙사"},
+        { value: "기흥역", text: "기흥역" },
+        { value: "채플관", text: "채플관" },
+    ],
+    "destination": [
+        { value: "3공학관",  text: "3공학관"},
+        { value: "기숙사", text: "기숙사"},
+        { value: "기흥역", text: "기흥역" },
+        { value: "채플관", text: "채플관" },
+    ]
+}
+
+const updateOptions = (selectElement, otherSelect, otherValue) => {
+    selectElement.innerHTML = `<option value="none" selected disabled hidden>${selectElement.id === "departure" ? "출발지 선택" : "도착지 선택"}</option>`;
+
+    if (selectElement.id === "departure" && otherValue === "기흥역") {
+        options["departure"].forEach(option => {
+            if (option.value !== "기흥역") {
+                const optElement = document.createElement("option");
+                optElement.value = option.value;
+                optElement.text = option.text;
+                selectElement.appendChild(optElement);
+            }
+        });
+    } else if (selectElement.id === "destination" && ["3공학관", "기숙사", "채플관"].includes(otherValue)) {
+        // selectElement.innerHTML = `<option value="기흥역" selected disabled>기흥역</option>`;
+        const optElement = document.createElement("option");
+        optElement.value = "기흥역";
+        optElement.text = "기흥역";
+        optElement.selected = true;
+        selectElement.appendChild(optElement);
+    } else {
+        options[selectElement.id].forEach(option => {
+            if (option.value !== otherValue) {
+                const optElement = document.createElement("option");
+                optElement.value = option.value;
+                optElement.text = option.text;
+                selectElement.appendChild(optElement);
+            }
+        });
+    }
+};
+
+taxiDeparture.addEventListener("change", (event) => {
+    updateOptions(taxiDestination, taxiDeparture, event.target.value);
+});
+
+taxiDestination.addEventListener("change", (event) => {
+    updateOptions(taxiDestination, taxiDeparture, event.target.value);
+});
+
+updateOptions(taxiDeparture, taxiDestination, taxiDeparture.value);
+updateOptions(taxiDestination, taxiDeparture, taxiDeparture.value)
+
+// 페이지 새로고침 시 localStorage 비우기
+window.addEventListener("beforeunload", () => {
+    localStorage.clear();
+})
+
 const writeFrm = document.querySelector("#writeFrm");
 
 const handleSubmit = async (event) => {
@@ -168,12 +230,16 @@ const handleSubmit = async (event) => {
     const startDate = selectedDates[selectedDates.length - 1].startDate;
     const endDate = selectedDates[selectedDates.length - 1].endDate;
     const currentCapacity = 1;
-    const departureCoords = selectedCategory === "택시" ? JSON.parse(localStorage.getItem("departureCoords")) : null;
-    const destinationCoords = selectedCategory === "택시" ? JSON.parse(localStorage.getItem("destinationCoords")) : null;
-    const locationCoords = selectedCategory !== "택시" ? JSON.parse(localStorage.getItem("locationCoords")) : null;
-    const departure = selectedCategory === "택시" ? { address: event.target.departure.value, ...departureCoords } : null;
-    const destination = selectedCategory === "택시" ? { address: event.target.destination.value, ...destinationCoords } : null;
-    const loc = selectedCategory !== "택시" ? { address: event.target.location.value, ...locationCoords } : null;
+    // const departureCoords = selectedCategory === "택시" ? JSON.parse(localStorage.getItem("departureCoords")) : null;
+    // const destinationCoords = selectedCategory === "택시" ? JSON.parse(localStorage.getItem("destinationCoords")) : null;
+    // const locationCoords = selectedCategory !== "택시" ? JSON.parse(localStorage.getItem("locationCoords")) : null;
+    // const departure = selectedCategory === "택시" ? { address: event.target.departure.value, ...departureCoords } : null;
+    // const destination = selectedCategory === "택시" ? { address: event.target.destination.value, ...destinationCoords } : null;
+    // const loc = selectedCategory !== "택시" ? { address: event.target.location.value, ...locationCoords } : null;
+    const departure = selectedCategory === "택시" ? event.target.departure.value : null;
+    const destination = selectedCategory === "택시" ? event.target.destination.value : null;
+    const loc = selectedCategory !== "택시" ? event.target.location.value : null;
+
     const loggedInUserId = userInfo.userId;
 
     if (!subject) {
@@ -227,32 +293,32 @@ const handleSubmit = async (event) => {
         user_id: loggedInUserId
     };
 
-    // console.log(postData);
+    console.log(postData);
 
-    try {
-        const response = await fetch('/api/post',{
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(postData)
-        });
+    // try {
+    //     const response = await fetch('/api/post',{
+    //         method: 'POST',
+    //         headers: { 'Content-Type': 'application/json' },
+    //         body: JSON.stringify(postData)
+    //     });
 
-        if (response.ok) {
-            const result = await response.json();
+    //     if (response.ok) {
+    //         const result = await response.json();
 
-            if (result.success) {
-                window.location.href = selectedCategory === "택시"
-                ? `/post/view?index=${result.postId - 1}&category=${selectedCategory}&subCategory=전체`
-                : `/post/view?index=${result.postId - 1}&category=${selectedCategory}&subCategory=${selectedSubCategory}`;
-            } else {
-                alert("게시물 작성 중 오류가 발생했습니다." + result.error);
-            }
-        } else {
-            alert("서버 오류: " + response.error);
-        }
-    } catch (error) {
-        console.error("Error:", error);
-        alert("네트워크 오류가 발생했습니다.");
-    }
+    //         if (result.success) {
+    //             window.location.href = selectedCategory === "택시"
+    //             ? `/post/view?index=${result.postId - 1}&category=${selectedCategory}&subCategory=전체`
+    //             : `/post/view?index=${result.postId - 1}&category=${selectedCategory}&subCategory=${selectedSubCategory}`;
+    //         } else {
+    //             alert("게시물 작성 중 오류가 발생했습니다." + result.error);
+    //         }
+    //     } else {
+    //         alert("서버 오류: " + response.error);
+    //     }
+    // } catch (error) {
+    //     console.error("Error:", error);
+    //     alert("네트워크 오류가 발생했습니다.");
+    // }
     
     localStorage.clear();
 };
