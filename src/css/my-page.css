@@ -92,6 +92,6 @@ a:active {
   font-weight: 600 ;
 }
 
-#penalty-count {
+#penalty-count-container {
   color: red;
 }

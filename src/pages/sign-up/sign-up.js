@@ -1,29 +1,3 @@
-window.onload = async function() {
-  let KAKAO_MAP_API_KEY;
-  try {
-    const response = await fetch("/api/kakao-map-key");
-    if (!response.ok) throw new Error('Network response was not ok');
-    const data = await response.json();
-    KAKAO_MAP_API_KEY = data.KAKAO_MAP_API_KEY;
-
-    const script = document.createElement("script");
-    script.async = true;
-    script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${KAKAO_MAP_API_KEY}&libraries=services&autoload=false`;
-    script.type = "text/javascript";
-    document.head.append(script);
-
-    script.onload = function() {
-      console.log("Kakao Maps SDK loaded successfully");
-      window.kakao.maps.load(() => {
-        // console.log("Kakao Maps SDK is ready to use.");
-        // Kakao Maps SDK가 로드된 후 execDaumPostcode 함수를 사용할 수 있도록 준비
-      });
-    }
-  } catch (error) {
-    console.error('There was a problem with fetching the API key:', error);
-  }
-};
-
 const $btnClose = document.querySelector(".btn-close");
 const $btnEmailAuthn = document.querySelector("#send-authn-btn");
 const $emailAuthn = document.querySelector("input[name='email-authn']");
@@ -32,24 +6,6 @@ const $userPwCheck = document.querySelector("input[name='user-pw-check']");
 const $userId = document.querySelector("input[name='user-id']");
 const $userNickname = document.querySelector("input[name='user-nickname']");
 const $formSubmitBtn = document.querySelector("input[type='submit']")
-// let authnTimer = 180; // 이메일 인증 번호 입력 제한 시간
-
-document.addEventListener("DOMContentLoaded", () => {
-  // 이메일 도메인 직접 입력 시
-  const $emailSelect = document.querySelector("select[name='user-email-post']");
-  const $emailInput = document.querySelector("#user-email");
-
-  $emailSelect.addEventListener("change", () => {
-    if ($emailSelect.value === "email-typing") {
-      $emailInput.value = "";
-      $emailInput.placeholder = 'Ex) userEmail@mju.ac.kr';
-      $emailInput.focus();
-      $emailSelect.style.display = "none";
-      $emailSelect.value= "";
-      $emailInput.style.width = "86%";
-    }
-  });
-});
 
 document.getElementById("id-availability-check").addEventListener("click", async (event) => {
   // id 중복 검사 체크
@@ -124,6 +80,7 @@ document.getElementById("nickname-availability-check").addEventListener("click",
   }
 });
 
+// 닉네임 중복 검사 통과 후 input value 바꾸면 다시 제출 버튼 비활성화
 $userNickname.addEventListener("input", () => {
   $userNickname.style.borderWidth = "1.8px";
   $userNickname.style.borderColor = "red";
@@ -139,7 +96,7 @@ if (errorMessage) {
 }
 
 $btnClose.addEventListener("click", () => {
-  window.location.href = "/login";
+  window.location.href = "/";
 });
 
 // 새로운 비밀번호 입력 시, 버튼 비활성화
@@ -184,28 +141,17 @@ const insertHyphen = (t) => {
     .replace(/(\-{1,2})$/g, "");
 };
 
-// 이메일로 인증번호 전송하면 -> 인증번호 입력 창에 입력 제한 시간 출력
-// $btnEmailAuthn.addEventListener("click", () => {
-//   const authnIntervalId = setInterval(() => {
-//     $emailAuthn.value = `${Math.floor(authnTimer / 60)}:${String(authnTimer % 60).padStart(2, "0")}`;
-//     authnTimer--;
-//     if(authnTimer === 0) {
-//       clearInterval(authnIntervalId);
-//       $emailAuthn.value = "인증번호 만료";
-//     }
-//   }, 1000);
-// });
 $btnEmailAuthn.addEventListener("click", () => {
   document.querySelector("#email-authn-container").style.display = "block";
   const authnForEmailPre = document.querySelector("#user-email").value;
-  const authnForEmailPost = document.querySelector("select[name='user-email-post']").value;
-  let fullEmail;
-  if (authnForEmailPost === "email-typing") {
-    // 직접 입력 선택 시
-    fullEmail = authnForEmailPre; // authnForEmailPre 값만 사용
-  } else {
-    fullEmail = `${authnForEmailPre}${authnForEmailPost}`; // authnForEmailPre와 authnForEmailPost 결합
-  }
+  const authnForEmailPost = document.querySelector("input[name='user-email-post']").value;
+  const fullEmail = `${authnForEmailPre}${authnForEmailPost}`;
+  // if (authnForEmailPost === "email-typing") {
+  //   // 직접 입력 선택 시
+  //   fullEmail = authnForEmailPre; // authnForEmailPre 값만 사용
+  // } else {
+  //   fullEmail = `${authnForEmailPre}${authnForEmailPost}`; // authnForEmailPre와 authnForEmailPost 결합
+  // }
 
   fetch('/send-authn', {
     method: 'POST', // POST 요청
@@ -227,61 +173,3 @@ $btnEmailAuthn.addEventListener("click", () => {
     console.error('문제가 발생했습니다:', error); // 에러 처리
   });
 });
-
-function execDaumPostcode() {
-  new daum.Postcode({
-    oncomplete: function(data) {
-      var addr = '';
-      var extraAddr = '';
-
-      if (data.userSelectedType === 'R') {
-          addr = data.roadAddress;
-      } else {
-          addr = data.jibunAddress;
-      }
-
-      if(data.userSelectedType === 'R'){
-          if(data.bname !== '' && /[동|로|가]$/g.test(data.bname)){
-              extraAddr += data.bname;
-          }
-
-          if(data.buildingName !== '' && data.apartment === 'Y'){
-              extraAddr += (extraAddr !== '' ? ', ' + data.buildingName : data.buildingName);
-          }
-
-          if(extraAddr !== ''){
-              extraAddr = ' (' + extraAddr + ')';
-          }
-          document.getElementById("user-extra-address").value = extraAddr;
-        
-      } else {
-          document.getElementById("user-extra-address").value = '';
-      }
-
-      document.getElementById('user-postcode').value = data.zonecode;
-      document.getElementById("user-address").value = addr;
-      document.getElementById("user-detail-address").focus();
-
-      const geocoder = new kakao.maps.services.Geocoder();
-      geocoder.addressSearch(data.roadAddress, (result, status) => {
-        if (status === kakao.maps.services.Status.OK) {
-          // console.log('위도 : ' + result[0].y);
-          // console.log('경도 : ' + result[0].x);
-          fetch('/sign-up/user-location', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              location: {
-                lat: result[0].y,
-                lng: result[0].x,
-              },
-            }),
-          })
-          .catch(error => console.error('Error:', error));
-        }
-      });
-    }
-  }).open();
-}
