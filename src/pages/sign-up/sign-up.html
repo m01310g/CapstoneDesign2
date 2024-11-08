@@ -52,29 +52,12 @@
               <label for="user-email">이메일</label>
               <br>
               <input id="user-email" type="text" name="user-email-pre" required>
-              <select name="user-email-post">
-                <option value="@daum.net">@daum.net</option>
-                <option value="@gamil.com">@gmail.com</option>
-                <option value="@hotmail.com">@hotmail.com</option>
-                <option value="@naver.com" selected>@naver.com</option>
-                <option value="@outlook.com">@outlook.com</option>
-                <option value="email-typing">-직접 입력-</option>
-              </select>
-              <button id="send-authn-btn">전송</button>
+              <input type="text" name="user-email-post" id="user-email-post" readonly value="@mju.ac.kr">
+              <button type="button" id="send-authn-btn">전송</button>
             </div>
             <div id="email-authn-container">
               <label for="email-authn">인증번호</label>
               <input type="text" name="email-authn" pattern=".{1,4}" required>
-            </div>
-            <div id="address-container">
-              <label>주소</label>
-              <br>
-              <input type="text" id="user-postcode" placeholder="우편번호" style="width: 49.6%" readonly required>
-              <input type="button" id="address-btn" onclick="execDaumPostcode()" value="찾기" style="height: 2.5rem; width: 13%; background-color: #fff; cursor: pointer;">
-              <br>
-              <input type="text" name="user-address" id="user-address" placeholder="주소" readonly required>
-              <input type="text" id="user-detail-address" placeholder="상세주소" required>
-              <input type="text" id="user-extra-address" placeholder="참고항목" readonly>
             </div>
             <input type="submit" value="가입하기" disabled>
           </form>
@@ -82,6 +65,5 @@
       </div>
     </div>
     <script src="/sign-up.js"></script>
-    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
   </body>
 </html>

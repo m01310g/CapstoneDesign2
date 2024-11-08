@@ -33,33 +33,16 @@ input {
   border-radius: 5px;
 }
 
-/* input[name="user-id"],
-input[name="user-pw"],
-input[name="user-pw-check"],
-input[name="user-name"],
-input[name="user-nickname"],
-input[name="user-tel"],
-input[name="email-authn"],
-input[value="가입하기"],
-#user-detail-address,
-#user-detail-address,
-#user-extra-address {
-  width: 100%;
-  height: 2.5rem;
-  padding: 0 6px;
-  border: 1px solid rgb(62, 62, 62);
-  border-radius: 5px;
-} */
-
-select {
+#user-email-post {
   position: absolute;
   left: 43.5%;
   width: 42.5%;
   height: 2.5rem;
   padding: 0 6px;
+  background-color: #ececec;
   border: 1px solid rgb(62, 62, 62);
   border-radius: 5px;
-  cursor: pointer;
+  cursor: default;
 }
 
 #send-authn-btn, #id-availability-check, #nickname-availability-check {

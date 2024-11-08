@@ -11,19 +11,6 @@ const port = 3000;
 
 app.use(cors());
 
-// .env의 kakao map api key 가져오기
-app.get('/api/kakao-map-key', async (req, res) => {
-  try {
-    if (process.env.KAKAO_MAP_API_KEY) {
-      res.json({ KAKAO_MAP_API_KEY: process.env.KAKAO_MAP_API_KEY });
-    } else {
-      res.status(404).json({ message: "api key not found" });
-    }
-  } catch (err) {
-    res.status(500).json({ message: "Server error" });
-  }
-});
-
 // 세션 설정
 app.use(session({
   secret: process.env.SESSION_KEY, // 키값 숨길 것
@@ -51,6 +38,7 @@ app.use(express.static(path.join(__dirname, "..", "src", "pages", "notification"
 app.use(express.static(path.join(__dirname, "..", "src", "pages", "chatting"))); // 채팅 페이지의 js로드 안되는 문제 해결
 app.use(express.static(path.join(__dirname, "..", "src", "pages", "category"))); // 카테고리 페이지의 js로드 안되는 문제 해결
 app.use(express.static(path.join(__dirname, "..", "src", "pages", "my-page"))); // 마이 페이지의 js로드 안되는 문제 해결
+app.use(express.static(path.join(__dirname, "..", "src", "pages", "sign-up"))); // 회원가입 페이지의 js로드 안되는 문제 해결
 
 const authRouter = require('./routes/auth');
 const forgotRouter = require('./routes/forgot');

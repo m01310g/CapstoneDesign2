@@ -51,14 +51,14 @@ exports.signUp = async (req, res) => {
   const userName = req.body["user-name"];
   const userNickname = req.body["user-nickname"];
   const userTel = req.body["user-tel"];
-  const userAddress = req.body["user-address"];
+  // const userAddress = req.body["user-address"];
   const userSalt = crypto.randomBytes(16).toString('base64');
   const userPw = crypto.createHash("sha256").update(req.body["user-pw"] + userSalt).digest("hex");
   const userEmailPre = req.body["user-email-pre"];
   const userEmailPost = req.body["user-email-post"];
   const checkAuthn = req.body["email-authn"];
   let userEmail;
-  const location = JSON.stringify({ lat, lng });
+  // const location = JSON.stringify({ lat, lng });
 
   if (authnCode !== checkAuthn) {
     return res.redirect(`/sign-up?error=${encodeURIComponent('인증번호 불일치로 회원가입에 실패했습니다.')}`);
@@ -70,10 +70,10 @@ exports.signUp = async (req, res) => {
     userEmail = userEmailPre;
   }
 
-  const query = "INSERT INTO user_info (user_id, user_pw, user_name, user_nickname, user_tel, user_email, user_address, user_salt, location) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+  const query = "INSERT INTO user_info (user_id, user_pw, user_name, user_nickname, user_tel, user_email, user_salt) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
   try {
-    await db.query(query, [userId, userPw, userName, userNickname, userTel, userEmail, userAddress, userSalt, location]);
+    await db.query(query, [userId, userPw, userName, userNickname, userTel, userEmail, userSalt]);
     res.redirect('/?message=회원가입이 완료되었습니다!'); // 회원 가입 완료 시 로그인 페이지로
   } catch (err) {
     console.error("회원가입 오류:", err);
@@ -114,18 +114,6 @@ exports.emailAuth = async (req, res) => {
   }
 };
 
-// user_info 테이블의 location 속성에 json형태로 lat(위도), lng(경도) 저장
-let lat;
-let lng;
-
-exports.saveLocation = async (req, res) => {
-  lat = req.body.location.lat; // lat 값을 전역 변수에 할당
-  lng = req.body.location.lng; // lng 값을 전역 변수에 할당
-
-  res.status(200).json({ message: 'Location saved successfully', lat, lng });
-};
-
-// user id 중복 검사
 exports.checkId = async (req, res) => {
   const userId = req.body["user-id"];
   const query = "SELECT COUNT(*) AS count FROM user_info WHERE user_id = ?";
@@ -159,7 +147,7 @@ exports.checkNickname = async (req, res) => {
 exports.myInfoChange = async (req, res) => {
   const userNickname = req.body["user-nickname"];
   const userTel = req.body["user-tel"];
-  const userAddress = req.body["user-address"];
+  // const userAddress = req.body["user-address"];
   const userId = req.session.userId;
 
   // 업데이트할 필드와 값을 저장할 배열
@@ -174,10 +162,6 @@ exports.myInfoChange = async (req, res) => {
   if (userTel) {
     updates.push("user_tel = ?");
     values.push(userTel);
-  }
-  if (userAddress) {
-    updates.push("user_address = ?");
-    values.push(userAddress);
   }
 
   // 업데이트할 필드가 없으면 바로 리턴
@@ -275,7 +259,7 @@ exports.getSessionUserId = async (req, res) => {
 exports.getSessionUserInfo = async (req, res) => {
   if (req.session.isLogined) {
     // 로그인 상태라면
-    const query = 'SELECT user_nickname, user_address, user_point FROM user_info WHERE user_id = ?';
+    const query = 'SELECT user_nickname, user_point, user_penalty FROM user_info WHERE user_id = ?';
 
     try {
       const [result] = await db.query(query, [req.session.userId]);
@@ -283,14 +267,14 @@ exports.getSessionUserInfo = async (req, res) => {
       if (result.length > 0) {
         // result[0]은 user_info 테이블에서 user_id에 대응되는 데이터 row
         const userNickname = result[0].user_nickname; 
-        const userAddress = result[0].user_address.split(" ")[1]; // 경기 수원시 ~~ 값을 -> 수원시만 할당되도록
         const userPoint = result[0].user_point;
+        const userPenalty = result[0].user_penalty;
 
         // JSON 형태로 응답
         res.json({
           userNickname,
-          userAddress,
-          userPoint
+          userPoint,
+          userPenalty
         });
       } else {
         res.status(404).json({ message: "User not found" });
