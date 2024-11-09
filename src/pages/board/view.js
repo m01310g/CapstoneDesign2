@@ -14,6 +14,7 @@ const fetchBoardDetails = async () => {
         }
         const data = await response.json();
         renderBoardDetails(data);
+        return data;
     } catch (error) {
         console.error("게시물 정보를 가져오는 중 오류 발생: ", error);
     }
@@ -36,11 +37,11 @@ const renderBoardDetails = (data) => {
     capacityDiv.innerHTML = `<span class="current-capacity">${data.current_capacity}</span> / <span class="max-capacity">${data.max_capacity}</span>`;
 
     if (viewCategory === "택시") {
-        const departureText = JSON.parse(data.departure).address;
-        const destinationText = JSON.parse(data.destination).address;
+        const departureText = data.departure.replace(/"/g,"");
+        const destinationText = data.destination.replace(/"/g,"");
         locationDiv.innerText = `${departureText} ➡️ ${destinationText}`;
     } else {
-        const locationText = JSON.parse(data.location).address;
+        const locationText = data.location.replace(/"/g,"");
         locationDiv.innerText = `수령지: ${locationText}`;
     }
 };

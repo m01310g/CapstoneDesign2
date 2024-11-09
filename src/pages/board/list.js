@@ -72,7 +72,7 @@ const template = (objValue) => {
         <a class="board-link" href="/post/view?index=${objValue.post_index - 1}&category=${category}&subCategory=${selectedSubCategory}" target="_top">
             <div id="content-container">
                 <div id="subject">${objValue.title}</div>
-                <div id="route">${JSON.parse(objValue.departure).address} ➡️ ${JSON.parse(objValue.destination).address}</div>
+                <div id="route">${objValue.departure.replace(/"/g,"")} ➡️ ${objValue.destination.replace(/"/g,"")}</div>
                 <div id="date">${startDateFormatted} ~ ${endDateFormatted}</div>
                 <div id="status" class="${statusClass}">${statusText}</div>
             </div>
@@ -89,7 +89,7 @@ const template = (objValue) => {
         <a class="board-link" href="/post/view?index=${objValue.post_index - 1}&category=${category}&subCategory=${selectedSubCategory}" target="_top">
             <div id="content-container">
                 <div id="subject">${objValue.title}</div>
-                <div id="location">수령지: ${JSON.parse(objValue.location).address}</div>
+                <div id="location">수령지: ${objValue.location.replace(/"/g,"")}</div>
                 <div id="status" class="${statusClass}">${statusText}</div>
             </div>
             <div id="capacity-container">

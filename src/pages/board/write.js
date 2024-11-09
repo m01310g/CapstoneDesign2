@@ -187,17 +187,18 @@ const updateOptions = (selectElement, otherSelect, otherValue) => {
         });
     }
 };
+if (selectedCategory === "택시") {
+    taxiDeparture.addEventListener("change", (event) => {
+        updateOptions(taxiDestination, taxiDeparture, event.target.value);
+    });
 
-taxiDeparture.addEventListener("change", (event) => {
-    updateOptions(taxiDestination, taxiDeparture, event.target.value);
-});
+    taxiDestination.addEventListener("change", (event) => {
+        updateOptions(taxiDestination, taxiDeparture, event.target.value);
+    });
 
-taxiDestination.addEventListener("change", (event) => {
-    updateOptions(taxiDestination, taxiDeparture, event.target.value);
-});
-
-updateOptions(taxiDeparture, taxiDestination, taxiDeparture.value);
-updateOptions(taxiDestination, taxiDeparture, taxiDeparture.value)
+    updateOptions(taxiDeparture, taxiDestination, taxiDeparture.value);
+    updateOptions(taxiDestination, taxiDeparture, taxiDeparture.value);
+}
 
 // 페이지 새로고침 시 localStorage 비우기
 window.addEventListener("beforeunload", () => {
@@ -255,8 +256,8 @@ const handleSubmit = async (event) => {
 
     // 대분류가 택시일 경우 출발지와 도착지 정보 가져오기
     if (selectedCategory === '택시') {
-        if (destination === "none") {
-            alert("도착지를 선택해 주세요.");
+        if (departure === "none" || destination === "none") {
+            alert("출발지와 도착지를 선택해 주세요.");
             return;
         }
     }
