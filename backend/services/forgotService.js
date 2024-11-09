@@ -90,13 +90,7 @@ exports.forgotPw = async (req, res) => {
     const userId = req.body["forgot-pw-user-id"];
     const userEmailPre = req.body["forgot-pw-user-email-pre"];
     const userEmailPost = req.body["forgot-pw-user-email-post"];
-    let userEmail;
-
-    if (userEmailPost) {
-        userEmail = `${userEmailPre}${userEmailPost}`;
-    } else {
-        userEmail = userEmailPre;
-    }
+    const userEmail = `${userEmailPre}${userEmailPost}`;
 
     const query = 'SELECT user_salt FROM user_info WHERE user_name = ? AND user_email = ? AND user_id = ?';
 
