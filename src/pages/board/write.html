@@ -43,12 +43,10 @@
             <form id="writeFrm">
             <!-- 소분류 선택 -> 택시 선택 시 출발지/목적지 검색 -->
                 <div class="taxi-search hidden">
-                    <!-- <input type="text" placeholder="출발지" id="departure">
-                    <input type="text" placeholder="도착지" id="destination"> -->
                     <select name="departure" id="departure" required>
                         <option value="none" selected disabled hidden>출발지 선택</option>
                         <option value="3공학관">3공학관</option>
-                        <option value="기숙사">기숙사</option>                        <option value="station">기흥역</option>
+                        <option value="기숙사">기숙사</option>
                         <option value="기흥역">기흥역</option>
                         <option value="채플관">채플관</option>
                     </select>
@@ -68,7 +66,7 @@
                 </div>
                 <div id="price-location-container">
                     <input type="text" id="price" name="price" min="1000" placeholder="예상 총액 입력">
-                    <input type="text" id="location" class="hidden" name="location" placeholder="수령지 선택">
+                    <input type="text" id="location" class="hidden" name="location" placeholder="수령지 입력">
                 </div>
                 <div id="location-map" class="hidden"></div>
                 <div>

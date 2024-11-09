@@ -286,7 +286,6 @@ ul li button {
     font-size: 1.1rem;
     margin-top: 0.3rem;
     width: 47.5%;
-    cursor: pointer;
 }
 
 #location:focus {
