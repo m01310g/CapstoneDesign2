@@ -293,7 +293,8 @@ ul li button {
     outline: none;
 }
 
-select {
+#departure,
+#destination {
     width: 48%;
     appearance: none;
     -webkit-appearance: none;
@@ -305,4 +306,9 @@ select {
     border-color: grey;
     background-color: none;
     font-size: 0.8rem;
+}
+
+#departure,
+#destination:focus {
+    outline: none;
 }
