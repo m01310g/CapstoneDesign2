@@ -45,7 +45,6 @@ exports.checkParticipation = async (req, res) => {
 };
 
 exports.updateParticipateStatus = async (req, res) => {
-    console.log(req.params);
     const postId = parseInt(req.params.postId) + 1;
     const userId = req.params.userId;
 
