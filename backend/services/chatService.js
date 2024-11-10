@@ -45,14 +45,15 @@ exports.checkParticipation = async (req, res) => {
 };
 
 exports.updateParticipateStatus = async (req, res) => {
+    console.log(req.params);
     const postId = parseInt(req.params.postId) + 1;
-    console.log(postId);
     const userId = req.params.userId;
 
     const checkQuery = "SELECT * FROM participations WHERE post_id = ? AND user_id = ?";
 
     try {
-        const [existingParticipation] = await db.query(checkQuery, [postId, userId])
+        const [existingParticipation] = await db.query(checkQuery, [postId, userId]);
+        console.log(existingParticipation);
         if (existingParticipation.length > 0) {
             return res.status(400).json({ participated: true });
         }
