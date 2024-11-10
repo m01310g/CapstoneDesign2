@@ -106,47 +106,43 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (!response.ok) throw new Error(response.statusText);
         const data = await response.json();
         categoryBtn.innerText = data.category;
-    subjectInput.value = data.title;
-    contentTextarea.innerText = data.content;
-    maxCapacity.value = data.max_capacity;
-    priceInput.value = parseInt(data.price, 10).toLocaleString();
+        subjectInput.value = data.title;
+        contentTextarea.innerText = data.content;
+        maxCapacity.value = data.max_capacity;
+        priceInput.value = parseInt(data.price, 10).toLocaleString();
 
-    originalStartDate = data.start_date;
-    originalEndDate = data.end_date;
+        originalStartDate = data.start_date;
+        originalEndDate = data.end_date;
 
-    selectedCategory = data.category;
-    selectedSubCategory = data.sub_category;    
+        selectedCategory = data.category;
+        selectedSubCategory = data.sub_category;    
 
-    if (selectedCategory === "택시") {
-        deptInput.classList.remove(HIDDEN_CLASS_NAME);
-        destInput.classList.remove(HIDDEN_CLASS_NAME);
-        locationInput.classList.add(HIDDEN_CLASS_NAME);
-        deptInput.value = JSON.parse(data.departure).address;
-        destInput.value = JSON.parse(data.destination).address;
-        subDropDown.classList.add(HIDDEN_CLASS_NAME);
-        document.querySelector(".taxi-search").classList.remove(HIDDEN_CLASS_NAME);
-        originalDepartureCoords = JSON.stringify({ lat: JSON.parse(data.departure).lat, lng: JSON.parse(data.departure).lng });
-    originalDestinationCoords = JSON.stringify({ lat: JSON.parse(data.destination).lat, lng: JSON.parse(data.destination).lng });
-    } else if (selectedCategory === "배달" || data.category === "택배") {
-        updateSubCategories(data.category);
-        subDropDown.classList.remove(HIDDEN_CLASS_NAME);
-        subBtn.innerText = data.sub_category || "소분류 선택";
-        deptInput.classList.add(HIDDEN_CLASS_NAME);
-        destInput.classList.add(HIDDEN_CLASS_NAME);
-        locationInput.classList.remove(HIDDEN_CLASS_NAME);
-        locationInput.value = JSON.parse(data.location).address;
-        // originalLocationCoords = JSON.stringify({ lat: JSON.parse(JSON.parse(data.location)).lat, lng: JSON.parse(JSON.parse(data.location)).lng });
-        originalLocationCoords = { lat: JSON.parse(data.location).lat, lng: JSON.parse(data.location).lng };
-    }
-
-    $("#date-picker").daterangepicker({
-        startDate: data.start_date,
-        endDate: data.end_date,
-        timePicker: true,
-        locale: {
-            format: "YYYY년 MM월 DD일 HH시 mm분"
+        if (selectedCategory === "택시") {
+            deptInput.classList.remove(HIDDEN_CLASS_NAME);
+            destInput.classList.remove(HIDDEN_CLASS_NAME);
+            locationInput.classList.add(HIDDEN_CLASS_NAME);
+            deptInput.value = data.departure.replace(/"/g,"");
+            destInput.value = data.destination.replace(/"/g,"");
+            subDropDown.classList.add(HIDDEN_CLASS_NAME);
+            document.querySelector(".taxi-search").classList.remove(HIDDEN_CLASS_NAME);
+        } else if (selectedCategory === "배달" || data.category === "택배") {
+            updateSubCategories(data.category);
+            subDropDown.classList.remove(HIDDEN_CLASS_NAME);
+            subBtn.innerText = data.sub_category || "소분류 선택";
+            deptInput.classList.add(HIDDEN_CLASS_NAME);
+            destInput.classList.add(HIDDEN_CLASS_NAME);
+            locationInput.classList.remove(HIDDEN_CLASS_NAME);
+            locationInput.value = data.location.replace(/"/g,"");
         }
-    });
+
+        $("#date-picker").daterangepicker({
+            startDate: data.start_date,
+            endDate: data.end_date,
+            timePicker: true,
+            locale: {
+                format: "YYYY년 MM월 DD일 HH시 mm분"
+            }
+        });
     } catch (error) {
         console.error("Fetch Error: ", error);
     }
@@ -167,6 +163,81 @@ document.querySelector("#price").addEventListener("input", (event) => {
     }
 });
 
+const options = {
+    "departure": [
+        { value: "3공학관",  text: "3공학관"},
+        { value: "기숙사", text: "기숙사"},
+        { value: "기흥역", text: "기흥역" },
+        { value: "채플관", text: "채플관" },
+    ],
+    "destination": [
+        { value: "3공학관",  text: "3공학관"},
+        { value: "기숙사", text: "기숙사"},
+        { value: "기흥역", text: "기흥역" },
+        { value: "채플관", text: "채플관" },
+    ]
+}
+
+const updateOptions = (selectElement, otherSelect, otherValue) => {
+    selectElement.innerHTML = `<option value="none" selected disabled hidden>${selectElement.id === "departure" ? "출발지 선택" : "도착지 선택"}</option>`;
+
+    if (selectElement.id === "departure" && otherValue === "기흥역") {
+        options["departure"].forEach(option => {
+            if (option.value !== "기흥역") {
+                const optElement = document.createElement("option");
+                optElement.value = option.value;
+                optElement.text = option.text;
+                selectElement.appendChild(optElement);
+            }
+        });
+    } else if (selectElement.id === "destination" && ["3공학관", "기숙사", "채플관"].includes(otherValue)) {
+        // selectElement.innerHTML = `<option value="기흥역" selected disabled>기흥역</option>`;
+        const optElement = document.createElement("option");
+        optElement.value = "기흥역";
+        optElement.text = "기흥역";
+        optElement.selected = true;
+        selectElement.appendChild(optElement);
+    } else {
+        options[selectElement.id].forEach(option => {
+            if (option.value !== otherValue) {
+                const optElement = document.createElement("option");
+                optElement.value = option.value;
+                optElement.text = option.text;
+                selectElement.appendChild(optElement);
+            }
+        });
+    }
+};
+
+deptInput.addEventListener("change", (event) => {
+    updateOptions(destInput, deptInput, event.target.value);
+});
+
+destInput.addEventListener("change", (event) => {
+    updateOptions(destInput, deptInput, event.target.value);
+});
+
+updateOptions(deptInput, destInput, deptInput.value);
+updateOptions(destInput, deptInput, deptInput.value);
+
+// 페이지 새로고침 시 localStorage 비우기
+window.addEventListener("beforeunload", () => {
+    localStorage.clear();
+});
+
+// 게시물 정보 로드
+const loadCurrentCapacity = async (postId) => {
+    const response = await fetch(`/api/post/view/${postId}`);
+    const data = await response.json();
+
+    if (data) {
+        return data.current_capacity;
+    } else {
+        alert(data.message || "데이터를 불러오는 데 실패했습니다.");
+        return null;
+    }
+};
+
 // 수정 폼 제출 이벤트 함수
 const handleModify = async (event) => {
     event.preventDefault();
@@ -176,6 +247,10 @@ const handleModify = async (event) => {
         alert('로그인 정보가 없습니다. 로그인 해주세요.');
         return;
     }
+
+    const params = new URLSearchParams(window.location.search);
+    const postId = parseInt(params.get("index"));
+    const currentCapacity = await loadCurrentCapacity(postId);
 
     const subject = event.target.subject.value;
     const content = event.target.content.value;
@@ -189,30 +264,9 @@ const handleModify = async (event) => {
     const startDate = selectedDates ? selectedDates[selectedDates.length - 1].startDate : originalStartDate;
     const endDate = selectedDates ? selectedDates[selectedDates.length - 1].endDate : originalEndDate;
 
-    const currentCapacity = 1;
-
-    const departureCoords = selectedCategory === "택시" 
-                            ? (JSON.parse(localStorage.getItem("departureCoords")) 
-                            ? JSON.parse(localStorage.getItem("departureCoords")) 
-                            : originalDepartureCoords) 
-                            : null;
-    const destinationCoords = selectedCategory === "택시" 
-                            ? (JSON.parse(localStorage.getItem("destinationCoords")) 
-                            ? JSON.parse(localStorage.getItem("destinationCoords")) 
-                            : originalDestinationCoords) 
-                            : null;
-    const locationCoords = selectedCategory !== "택시" 
-                            ? (localStorage.getItem("locationCoords")
-                            ? JSON.parse(localStorage.getItem("locationCoords")) 
-                            : originalLocationCoords) 
-                            : null;
-
-    // const departureCoords = selectedCategory === "택시" ? JSON.parse(localStorage.getItem("departureCoords")) : null;
-    // const destinationCoords = selectedCategory === "택시" ? JSON.parse(localStorage.getItem("destinationCoords")) : null;
-    // const locationCoords = selectedCategory !== "택시" ? JSON.parse(localStorage.getItem("locationCoords")) : null;
-    const departure = selectedCategory === "택시" ? JSON.stringify({ address: event.target.departure.value, ...departureCoords }) : null;
-    const destination = selectedCategory === "택시" ? JSON.stringify({ address: event.target.destination.value, ...destinationCoords }) : null;
-    const loc = selectedCategory !== "택시" ? JSON.stringify({ address: event.target.location.value, ...locationCoords }) : null;
+    const departure = selectedCategory === "택시" ? event.target.departure.value : null;
+    const destination = selectedCategory === "택시" ? event.target.destination.value : null;
+    const loc = selectedCategory !== "택시" ? event.target.location.value : null;
     const loggedInUserId = userInfo.userId;
 
     if (!subject) {
@@ -234,7 +288,7 @@ const handleModify = async (event) => {
 
     // 대분류가 택시일 경우 출발지와 도착지 정보 가져오기
     if (selectedCategory === '택시') {
-        if (!departure || !destination) {
+        if (departure === "none" || destination === "none") {
             alert("출발지와 도착지를 선택해 주세요.");
             return;
         }
@@ -250,6 +304,11 @@ const handleModify = async (event) => {
         }
     }
 
+    if (currentCapacity > maxCapacity) {
+        alert("현재 인원이 모집 인원보다 많을 수 없습니다. 다시 입력해주세요.");
+        return;
+    }
+
     const postData = {
         subject,
         content,
@@ -261,7 +320,6 @@ const handleModify = async (event) => {
         price,
         startDate,
         endDate,
-        currentCapacity,
         maxCapacity,
         user_id: loggedInUserId
     };
@@ -275,7 +333,6 @@ const handleModify = async (event) => {
 
         if (response.ok) {
             const result = await response.json();
-            console.log(result);
 
             if (result.success) {
                 window.location.href = selectedCategory === "택시"
