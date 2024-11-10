@@ -5,7 +5,7 @@ const $userPw = document.querySelector("input[name='user-pw']");
 const $userPwCheck = document.querySelector("input[name='user-pw-check']");
 const $userId = document.querySelector("input[name='user-id']");
 const $userNickname = document.querySelector("input[name='user-nickname']");
-const $formSubmitBtn = document.querySelector("input[type='submit']")
+const $formSubmitBtn = document.querySelector("input[type='submit']");
 
 document.getElementById("id-availability-check").addEventListener("click", async (event) => {
   // id 중복 검사 체크

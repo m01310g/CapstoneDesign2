@@ -22,22 +22,13 @@
           <div>
             <label for="user-nickname">닉네임</label>
             <br>
-            <input type="text" name="user-nickname">
+            <input type="text" name="user-nickname" id="user-nickname">
+            <button type="button" id="nickname-availability-check">검사</button>
           </div>
           <div>
             <label for="user-tel">전화번호</label>
             <br>
             <input type="text" name="user-tel" oninput="insertHyphen(this)" maxlength="13">
-          </div>
-          <div id="address-container">
-            <label>주소</label>
-            <br>
-            <input type="text" id="user-postcode" placeholder="우편번호" style="width: 49.6%" readonly>
-            <input type="button" id="address-btn" onclick="execDaumPostcode()" value="찾기" style="height: 2.5rem; width: 13%; background-color: #fff; cursor: pointer;">
-            <br>
-            <input type="text" name="user-address" id="user-address" placeholder="주소" readonly>
-            <input type="text" id="user-detail-address" placeholder="상세주소">
-            <input type="text" id="user-extra-address" placeholder="참고항목" readonly>
           </div>
           <input type="submit" value="수정">
         </form>
@@ -45,6 +36,5 @@
     </div>
   </div>
   <script src="/my-info-change.js"></script>
-  <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 </body>
 </html>
