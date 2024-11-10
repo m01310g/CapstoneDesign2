@@ -56,6 +56,7 @@ app.use(express.static(path.join(__dirname, "..", "src", "pages", "my-page"))); 
 app.use(express.static(path.join(__dirname, "..", "src", "pages", "point-charge")));
 app.use(express.static(path.join(__dirname, "..", "src", "pages", "point-exchange"))); 
 app.use(express.static(path.join(__dirname, "..", "src", "pages", "sign-up"))); // 회원가입 페이지의 js로드 안되는 문제 해결
+app.use(express.static(path.join(__dirname, "..", "src", "pages", "chatting")));
 
 // 라우터 설정
 const authRouter = require('./routes/auth');

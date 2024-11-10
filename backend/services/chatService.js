@@ -26,3 +26,46 @@ exports.sendMessage = async (req, res) => {
         res.status(500).json({ message: '서버 오류가 발생했습니다.' });
     }
 };
+
+exports.checkParticipation = async (req, res) => {
+    const postId = parseInt(req.params.postId) + 1;
+    const { userId } = req.query;
+    const query = "SELECT * FROM participations WHERE post_id = ? AND user_id = ?"
+    try {
+        const [rows] = await db.query(query, [postId, userId]);
+        if (rows.length > 0) {
+            return res.json({ participated: true });
+        } else {
+            return res.json({ participated: false });
+        }
+    } catch (error) {
+        console.error("Error checking pariticipation: ", error);
+        res.status(500).send("Internal Server Error");
+    }
+};
+
+exports.updateParticipateStatus = async (req, res) => {
+    const postId = parseInt(req.params.postId) + 1;
+    console.log(postId);
+    const userId = req.params.userId;
+
+    const checkQuery = "SELECT * FROM participations WHERE post_id = ? AND user_id = ?";
+
+    try {
+        const [existingParticipation] = await db.query(checkQuery, [postId, userId])
+        if (existingParticipation.length > 0) {
+            return res.status(400).json({ participated: true });
+        }
+
+        const insertQuery = "INSERT INTO participations (user_id, post_id) VALUES (?, ?)";
+        const [result] = await db.query(insertQuery, [userId, postId]);
+        if (result.affectedRows > 0) {
+            res.status(201).send("Particiption added");
+        } else {
+            res.status(400).send("Failed to add participation");
+        }
+    } catch (error) {
+        console.error("Error adding participation: ", error);
+        res.status(500).send("Internal Server Error");
+    }
+};

@@ -104,8 +104,12 @@ router.get('/notification', (req, res) => {
 });
 
 // 채팅 페이지
-router.get('/chat', (req, res) => {
+router.get('/chat/main', (req, res) => {
     res.sendFile(path.join(__dirname, "../../src/pages/chatting/Chat_main.html"));
+})
+
+router.get('/chat', (req, res) => {
+    res.sendFile(path.join(__dirname, "../../src/pages/chatting/Chat_in.html"));
 });
 
 module.exports = router;
