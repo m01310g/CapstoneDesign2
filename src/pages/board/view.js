@@ -251,7 +251,7 @@ const handleParticipation = async (event) => {
                 throw new Error("Failed to update capacity");
             }
 
-            await fetch(`/api/post/update-participation-status/${index}/${userId}`, {
+            await fetch(`/api/chat/update-participation-status/${index}/${userId}`, {
                 method: 'POST'
             });
 
