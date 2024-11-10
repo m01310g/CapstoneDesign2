@@ -51,9 +51,28 @@ window.onload = function() {
       .catch(error => console.error('Error fetching session data:', error));
 };
 
+const fetchUserInfo = async () => {
+    try {
+        const response = await fetch('/api/session/user-id');
+        if (!response.ok) {
+            console.error("Response not OK: ", response)
+            alert("로그인 되어 있지 않습니다.");
+            return null;
+        }
+        const userInfo = await response.json();
+        return userInfo;
+    } catch (error) {
+        console.error('Error fetching user info: ', error);
+        window.location.href = '/';
+        return null;
+    }
+};
+
 // 충전하기 버튼 클릭 시 카카오페이 결제 요청
 async function chargePoint() {
     const selectedAmount = parseInt(localStorage.getItem('selectedAmount')) || 0;
+    const userInfo = await fetchUserInfo();
+    const userId = userInfo.userId;
 
     if (selectedAmount <= 0) {
         alert('충전하실 금액을 선택하거나 입력해주세요.');
@@ -69,7 +88,8 @@ async function chargePoint() {
             body: JSON.stringify({
                 item_name: '포인트 충전',
                 quantity: 1,
-                total_amount: selectedAmount
+                total_amount: selectedAmount,
+                userId: userId
             })
         });
 
