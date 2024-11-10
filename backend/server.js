@@ -39,6 +39,7 @@ app.use(express.static(path.join(__dirname, "..", "src", "pages", "chatting")));
 app.use(express.static(path.join(__dirname, "..", "src", "pages", "category"))); // 카테고리 페이지의 js로드 안되는 문제 해결
 app.use(express.static(path.join(__dirname, "..", "src", "pages", "my-page"))); // 마이 페이지의 js로드 안되는 문제 해결
 app.use(express.static(path.join(__dirname, "..", "src", "pages", "sign-up"))); // 회원가입 페이지의 js로드 안되는 문제 해결
+app.use(express.static(path.join(__dirname, "..", "src", "pages", "my-info-change"))); // 회원 정보 및 비밀번호 변경 페이지의 js로드 안되는 문제 해결
 
 const authRouter = require('./routes/auth');
 const forgotRouter = require('./routes/forgot');
