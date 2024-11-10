@@ -5,6 +5,13 @@ const message = urlParams.get('message');
 // 회원 정보 변경 성공 시
 if (message) {
   alert(message);
+
+  // URL에서 'message' 파라미터 제거
+  urlParams.delete('message');
+  const newUrl = window.location.pathname + '?' + urlParams.toString();
+  
+  // 브라우저의 URL을 변경 (페이지 리로드 없음)
+  window.history.replaceState({}, '', newUrl);
 }
 
 // 페이지 로드 시 세션 데이터를 요청

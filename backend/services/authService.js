@@ -225,7 +225,7 @@ exports.changePw = async (req, res) => {
       return res.redirect('/my-page?message=변경이 완료되었습니다.');
     } else {
       // 현재 비밀번호가 일치하지 않는 경우
-      return res.status(400).send("Current password is incorrect");
+      return res.redirect('/change-pw?message=현재 비밀번호와 일치하지 않습니다.');
     }
   } catch (err) {
     console.error("Error processing request: ", err);
