@@ -187,19 +187,6 @@ ul li button {
     width: 100%;
 }
 
-.taxi-search input {
-    width: 100%;
-    height: 3rem;
-    font-size: 1.125rem;
-    border: none;
-    border-bottom: 0.1rem solid grey;
-    cursor: pointer;
-}
-
-.taxi-search input:focus {
-    outline: none;
-}
-
 #date-picker {
     width: 100%;
     padding: 1rem;

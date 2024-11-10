@@ -5,7 +5,6 @@ exports.writePost = async (req, res) => {
   try {
     const { title, content, category, sub_category, departure, destination, location, price, start_date, end_date, current_capacity, max_capacity, user_id } = req.body;
 
-    console.log(title)
     // 필수 필드 검증
     if (category === "택시") {
         if (!title || !content || !category || !departure || !destination || !price || !start_date || !end_date || !max_capacity) {
@@ -37,7 +36,7 @@ exports.writePost = async (req, res) => {
     ];
 
     const result = await db.query(query, values);
-    
+
     if (result[0] && result[0].insertId) {
       const postId = result[0].insertId;
       await db.query("INSERT INTO participations (post_id, user_id) VALUES (?, ?)", [postId, user_id]);

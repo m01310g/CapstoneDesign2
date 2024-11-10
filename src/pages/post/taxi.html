@@ -16,21 +16,24 @@
                 </a>
                 <h1>택시 게시판</h1>
             </div>
-            <div class="search-container">
-                <input class="departure" id="departure" type="text" placeholder="출발지 입력"></input>
+            <div class="taxi-search">
+                <select name="departure" id="departure" required>
+                    <option value="none" selected disabled hidden>출발지 선택</option>
+                    <option value="3공학관">3공학관</option>
+                    <option value="기숙사">기숙사</option>
+                    <option value="기흥역">기흥역</option>
+                    <option value="채플관">채플관</option>
+                </select>
+                <select name="destination" id="destination"required>
+                    <option value="none" selected disabled hidden>도착지 선택</option>
+                    <option value="3eng">3공학관</option>
+                    <option value="기숙사">기숙사</option>
+                    <option value="기흥역">기흥역</option>
+                    <option value="채플관">채플관</option>
+                </select>
             </div>
-            <div class="search-container">
-                <input class="destination" id="destination" type="text" placeholder="도착지 입력"></input>
-                <button class="search-btn">
-                    <img class="serach-img" src="/img/search.png">
-                </button>
-            </div>
-            <div id="map" class="hidden"></div>
             <div class="list-frame">
                 <iframe src="/post/list?category=taxi"></iframe>
-            </div>
-            <div>
-                <button id="confirm-btn" class="hidden"></button>
             </div>
             <write-btn></write-btn>
             <bottom-nav data-page="category"></bottom-nav>

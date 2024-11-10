@@ -200,3 +200,23 @@ iframe {
     height: 65vh;
     margin-bottom: 1rem;
 }
+
+#departure,
+#destination {
+    width: 48%;
+    appearance: none;
+    -webkit-appearance: none;
+    height: 3rem;
+    padding: 1rem;
+    display: inline-block;
+    margin-right: 0.2rem;
+    border-radius: 1rem;
+    border-color: grey;
+    background-color: none;
+    font-size: 0.8rem;
+}
+
+#departure,
+#destination:focus {
+    outline: none;
+}
