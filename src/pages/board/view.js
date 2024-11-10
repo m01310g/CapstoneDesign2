@@ -1,6 +1,6 @@
 // 쿼리스트링의 객체 불러오기
 const params = new URLSearchParams(window.location.search);
-const index = params.get("index");
+const index = parseInt(params.get("index"));
 const viewCategory = params.get("category");
 
 let post;
@@ -14,6 +14,7 @@ const fetchBoardDetails = async () => {
         }
         const data = await response.json();
         renderBoardDetails(data);
+        return data;
     } catch (error) {
         console.error("게시물 정보를 가져오는 중 오류 발생: ", error);
     }
@@ -36,11 +37,11 @@ const renderBoardDetails = (data) => {
     capacityDiv.innerHTML = `<span class="current-capacity">${data.current_capacity}</span> / <span class="max-capacity">${data.max_capacity}</span>`;
 
     if (viewCategory === "택시") {
-        const departureText = JSON.parse(data.departure).address;
-        const destinationText = JSON.parse(data.destination).address;
+        const departureText = data.departure.replace(/"/g,"");
+        const destinationText = data.destination.replace(/"/g,"");
         locationDiv.innerText = `${departureText} ➡️ ${destinationText}`;
     } else {
-        const locationText = JSON.parse(data.location).address;
+        const locationText = data.location.replace(/"/g,"");
         locationDiv.innerText = `수령지: ${locationText}`;
     }
 };
@@ -168,28 +169,28 @@ participationBtn.addEventListener("click", async (event) => {
 
     // 현재 인원 수 증가
     if (currentCapacity < maxCapacity) {
-        try {
-            const response = await fetch(`/api/post/update-capacity/${index}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ current_capacity: currentCapacity + 1 })
-            });
+        // try {
+        //     const response = await fetch(`/api/post/update-capacity/${index}`, {
+        //         method: 'POST',
+        //         headers: {
+        //             'Content-Type': 'application/json'
+        //         },
+        //         body: JSON.stringify({ current_capacity: currentCapacity + 1 })
+        //     });
 
-            if (!response.ok) {
-                throw new Error("Failed to update capacity");
-            }
+        //     if (!response.ok) {
+        //         throw new Error("Failed to update capacity");
+        //     }
 
-            const updatedPost = await response.json();
-            // UI 업데이트
-            capacityDiv.innerHTML = `<span class="current-capacity">${updatedPost.current_capacity}</span> / ${maxCapacity}`;
+        //     const updatedPost = await response.json();
+        //     // UI 업데이트
+        //     capacityDiv.innerHTML = `<span class="current-capacity">${updatedPost.current_capacity}</span> / ${maxCapacity}`;
 
-            // 상태 업데이트
-            checkCapacityStatus();
-        } catch (error) {
-            console.error("참여하기 버튼 클릭 오류: ", error);
-        }
+        //     // 상태 업데이트
+        //     checkCapacityStatus();
+        // } catch (error) {
+        //     console.error("참여하기 버튼 클릭 오류: ", error);
+        // }
     }
 });
 
@@ -201,9 +202,35 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
+const fetchUserInfo = async () => {
+    try {
+        const response = await fetch('/api/session/user-id');
+        if (!response.ok) {
+            console.error("Response not OK: ", response)
+            alert("로그인 되어 있지 않습니다.");
+            return null;
+        }
+        const userInfo = await response.json();
+        return userInfo.userId;
+    } catch (error) {
+        console.error('Error fetching user info: ', error);
+        window.location.href = '/';
+        return null;
+    }
+};
+
 const handleParticipation = async (event) => {
     event.preventDefault();
     const capacityDiv = document.querySelector("#capacity");
+
+    const userId = await fetchUserInfo();
+    const response = await fetch(`/api/chat/check-participation/${index}?userId=${userId}`);
+    const data = await response.json();
+
+    // 이미 참여 상태인 경우, 더 진행하지 않음
+    if (data.participated) {
+        window.location.href = `/chat?index=${index}`;
+    };
 
     const updatedData = await fetchBoardDetails();
 
@@ -212,7 +239,7 @@ const handleParticipation = async (event) => {
 
     if (currentCapacity < maxCapacity) {
         try {
-            const response = await fetch(`/api/post/update-capacity/${index}`, {
+            const updateCapacityResponse = await fetch(`/api/post/update-capacity/${index}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -220,16 +247,22 @@ const handleParticipation = async (event) => {
                 body: JSON.stringify({ current_capacity: currentCapacity + 1 })
             });
 
-            if (!response.ok) {
+            if (!updateCapacityResponse.ok) {
                 throw new Error("Failed to update capacity");
             }
 
-            const updatedPost = await response.json();
+            await fetch(`/api/post/update-participation-status/${index}/${userId}`, {
+                method: 'POST'
+            });
+
+            const updatedPost = await updateCapacityResponse.json();
             // UI 업데이트
             capacityDiv.innerHTML = `<span class="current-capacity">${updatedPost.current_capacity}</span> / ${maxCapacity}`;
 
             // 상태 업데이트
             checkCapacityStatus();
+
+            window.location.href = `/chat?index=${index}`;
         } catch (error) {
             console.error("참여하기 버튼 클릭 오류: ", error);
         }

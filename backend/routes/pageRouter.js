@@ -38,6 +38,23 @@ router.get("/category", (req, res) => {
     res.sendFile(path.join(__dirname, "../../src/pages/category/category.html"));
 });
 
+// 포인트 충전
+router.get("/point-charge", (req, res) => {
+    res.sendFile(path.join(__dirname, "../../src/pages/point-charge/point-charge.html"));
+});
+
+
+// 포인트 환전
+router.get("/point-exchange", (req, res) => {
+    res.sendFile(path.join(__dirname, "../../src/pages/point-exchange/point-exchange.html"));
+});
+
+// 충전 성공
+router.get("/point-charge/success", (req, res) => {
+    res.sendFile(path.join(__dirname, "../../src/pages/point-charge/charge-success.html"));
+});
+
+
 // 카테고리 별 라우팅
 router.get("/category/:categoryName", (req, res) => {
     const categoryName = req.params.categoryName;
@@ -87,8 +104,12 @@ router.get('/notification', (req, res) => {
 });
 
 // 채팅 페이지
-router.get('/chat', (req, res) => {
+router.get('/chat/main', (req, res) => {
     res.sendFile(path.join(__dirname, "../../src/pages/chatting/Chat_main.html"));
+})
+
+router.get('/chat', (req, res) => {
+    res.sendFile(path.join(__dirname, "../../src/pages/chatting/Chat_in.html"));
 });
 
 module.exports = router;

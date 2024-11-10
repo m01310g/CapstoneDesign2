@@ -2,8 +2,8 @@ const db = require('../config/db');
 
 // 게시물 작성 api
 exports.writePost = async (req, res) => {
-    try {
-        const { subject, content, category, subCategory, departure, destination, loc, price, startDate, endDate, currentCapacity, maxCapacity, user_id } = req.body;
+  try {
+    const { subject, content, category, subCategory, departure, destination, loc, price, startDate, endDate, currentCapacity, maxCapacity, user_id } = req.body;
 
     // 필수 필드 검증
     if (category === "택시") {
@@ -24,9 +24,9 @@ exports.writePost = async (req, res) => {
         content, 
         category, 
         subCategory || null, 
-        JSON.stringify(departure || null), 
-        JSON.stringify(destination || null), 
-        JSON.stringify(loc || null), 
+        departure || null, 
+        destination || null, 
+        loc || null, 
         price, 
         startDate, 
         endDate, 
@@ -36,14 +36,16 @@ exports.writePost = async (req, res) => {
     ];
     const result = await db.query(query, values);
     if (result[0] && result[0].insertId) {
-        res.json({ success: true, postId: result[0].insertId });
+      const postId = result[0].insertId;
+      await db.query("INSERT INTO participations (post_id, user_id) VALUES (?, ?)", [postId, user_id]);
+      res.json({ success: true, postId: postId });
     } else {
-        res.json({ success: false, error: "게시물 작성 실패" });
+      res.json({ success: false, error: "게시물 작성 실패" });
     }
-    } catch (error) {
+  } catch (error) {
     console.error("DB 오류: ", error);
     res.status(500).json({ success: false, error: "DB 처리 중 오류 발생" });
-    }
+  }
 };
 
 // 게시물 목록 반환
@@ -112,7 +114,7 @@ exports.returnPostById = async (req, res) => {
 
 // 게시물 수정 업데이트 엔드포인트
 exports.modifyPost = async (req, res) => {
-    const postId = parseInt(req.params.id + 1, 10);
+    const postId = parseInt(req.params.id, 10) + 1;
     const { subject, content, category, subCategory, departure, destination, loc, price, startDate, endDate, currentCapacity, maxCapacity } = req.body;
   
     try {
@@ -120,7 +122,7 @@ exports.modifyPost = async (req, res) => {
         UPDATE post_list
         SET title = ?, content = ?, category = ?, sub_category = ?, 
         departure = ?, destination = ?, location = ?, price = ?, 
-        start_date = ?, end_date = ?, current_capacity = ?, max_capacity = ?
+        start_date = ?, end_date = ?, max_capacity = ?
         WHERE post_index = ?
       `;
   
@@ -135,7 +137,6 @@ exports.modifyPost = async (req, res) => {
         price, 
         startDate, 
         endDate, 
-        currentCapacity, 
         parseInt(maxCapacity), 
       ];
   
