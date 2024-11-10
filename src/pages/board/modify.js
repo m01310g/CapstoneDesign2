@@ -178,47 +178,51 @@ const options = {
     ]
 }
 
-const updateOptions = (selectElement, otherSelect, otherValue) => {
-    selectElement.innerHTML = `<option value="none" selected disabled hidden>${selectElement.id === "departure" ? "출발지 선택" : "도착지 선택"}</option>`;
+const updateOptions = () => {
+    const departureValue = deptInput.value;
+    
+    deptInput.innerHTML = `<option value="none" selected disabled hidden>출발지 선택</option>`;
 
-    if (selectElement.id === "departure" && otherValue === "기흥역") {
-        options["departure"].forEach(option => {
+    options.departure.forEach(option => {
+        const optElement = document.createElement("option");
+        optElement.value = option.value;
+        optElement.text = option.text;
+        deptInput.appendChild(optElement);
+    });
+
+    if (departureValue) {
+        deptInput.value = departureValue;
+    }
+
+    destInput.innerHTML = `<option value="none" selected disabled hidden>도착지 선택</option>`;
+
+    if (departureValue === "기흥역") {
+        options.destination.forEach(option => {
             if (option.value !== "기흥역") {
                 const optElement = document.createElement("option");
                 optElement.value = option.value;
                 optElement.text = option.text;
-                selectElement.appendChild(optElement);
+                destInput.appendChild(optElement);
             }
         });
-    } else if (selectElement.id === "destination" && ["3공학관", "기숙사", "채플관"].includes(otherValue)) {
-        // selectElement.innerHTML = `<option value="기흥역" selected disabled>기흥역</option>`;
+    } else if (["3공학관", "기숙사", "채플관"].includes(departureValue)) {
         const optElement = document.createElement("option");
         optElement.value = "기흥역";
         optElement.text = "기흥역";
         optElement.selected = true;
-        selectElement.appendChild(optElement);
+        destInput.appendChild(optElement);
     } else {
-        options[selectElement.id].forEach(option => {
-            if (option.value !== otherValue) {
-                const optElement = document.createElement("option");
-                optElement.value = option.value;
-                optElement.text = option.text;
-                selectElement.appendChild(optElement);
-            }
+        options.departure.forEach(option => {
+            const optElement = document.createElement("option");
+            optElement.value = option.value;
+            optElement.text = option.text;
+            destInput.appendChild(optElement);
         });
     }
 };
 
-deptInput.addEventListener("change", (event) => {
-    updateOptions(destInput, deptInput, event.target.value);
-});
-
-destInput.addEventListener("change", (event) => {
-    updateOptions(destInput, deptInput, event.target.value);
-});
-
-updateOptions(deptInput, destInput, deptInput.value);
-updateOptions(destInput, deptInput, deptInput.value);
+deptInput.addEventListener("change", updateOptions);
+updateOptions();
 
 // 페이지 새로고침 시 localStorage 비우기
 window.addEventListener("beforeunload", () => {

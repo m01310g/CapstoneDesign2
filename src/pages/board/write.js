@@ -157,48 +157,51 @@ const options = {
     ]
 }
 
-const updateOptions = (selectElement, otherSelect, otherValue) => {
-    selectElement.innerHTML = `<option value="none" selected disabled hidden>${selectElement.id === "departure" ? "출발지 선택" : "도착지 선택"}</option>`;
+const updateOptions = () => {
+    const departureValue = taxiDeparture.value;
+    
+    taxiDeparture.innerHTML = `<option value="none" selected disabled hidden>출발지 선택</option>`;
 
-    if (selectElement.id === "departure" && otherValue === "기흥역") {
-        options["departure"].forEach(option => {
+    options.departure.forEach(option => {
+        const optElement = document.createElement("option");
+        optElement.value = option.value;
+        optElement.text = option.text;
+        taxiDeparture.appendChild(optElement);
+    });
+
+    if (departureValue) {
+        taxiDeparture.value = departureValue;
+    }
+
+    taxiDestination.innerHTML = `<option value="none" selected disabled hidden>도착지 선택</option>`;
+
+    if (departureValue === "기흥역") {
+        options.destination.forEach(option => {
             if (option.value !== "기흥역") {
                 const optElement = document.createElement("option");
                 optElement.value = option.value;
                 optElement.text = option.text;
-                selectElement.appendChild(optElement);
+                taxiDestination.appendChild(optElement);
             }
         });
-    } else if (selectElement.id === "destination" && ["3공학관", "기숙사", "채플관"].includes(otherValue)) {
-        // selectElement.innerHTML = `<option value="기흥역" selected disabled>기흥역</option>`;
+    } else if (["3공학관", "기숙사", "채플관"].includes(departureValue)) {
         const optElement = document.createElement("option");
         optElement.value = "기흥역";
         optElement.text = "기흥역";
         optElement.selected = true;
-        selectElement.appendChild(optElement);
+        taxiDestination.appendChild(optElement);
     } else {
-        options[selectElement.id].forEach(option => {
-            if (option.value !== otherValue) {
-                const optElement = document.createElement("option");
-                optElement.value = option.value;
-                optElement.text = option.text;
-                selectElement.appendChild(optElement);
-            }
+        options.departure.forEach(option => {
+            const optElement = document.createElement("option");
+            optElement.value = option.value;
+            optElement.text = option.text;
+            taxiDestination.appendChild(optElement);
         });
     }
 };
 
-taxiDeparture.addEventListener("change", (event) => {
-    updateOptions(taxiDestination, taxiDeparture, event.target.value);
-});
-
-taxiDestination.addEventListener("change", (event) => {
-    updateOptions(taxiDestination, taxiDeparture, event.target.value);
-});
-
-updateOptions(taxiDeparture, taxiDestination, taxiDeparture.value);
-updateOptions(taxiDestination, taxiDeparture, taxiDeparture.value);
-
+taxiDeparture.addEventListener("change", updateOptions);
+updateOptions();
 
 // 페이지 새로고침 시 localStorage 비우기
 window.addEventListener("beforeunload", () => {
@@ -217,13 +220,9 @@ const handleSubmit = async (event) => {
     }
 
     const subject = event.target.subject.value;
-    console.log(subject);
     const content = event.target.content.value;
-    console.log(content);
     const maxCapacity = event.target.capacity.value;
-    console.log(maxCapacity);
     const price = parseInt(event.target.price.value.replace(/,/g, ''), 10);
-    console.log(price);
     const selectedDatesStr = localStorage.getItem("selectedDates");
     const selectedDates = JSON.parse(selectedDatesStr) || [];
     
@@ -233,20 +232,13 @@ const handleSubmit = async (event) => {
     }
 
     const startDate = selectedDates[selectedDates.length - 1].startDate;
-    console.log(startDate);
     const endDate = selectedDates[selectedDates.length - 1].endDate;
-    console.log(endDate);
     const currentCapacity = 1;
-    console.log(currentCapacity);
     const departure = selectedCategory === "택시" ? event.target.departure.value : null;
-    console.log(departure);
     const destination = selectedCategory === "택시" ? event.target.destination.value : null;
-    console.log(destination);
     const loc = selectedCategory !== "택시" ? event.target.location.value : null;
-    console.log(loc);
 
     const loggedInUserId = userInfo.userId;
-    console.log(loggedInUserId);
 
     if (!subject) {
         alert("제목을 작성해 주세요");
@@ -298,8 +290,6 @@ const handleSubmit = async (event) => {
         max_capacity: parseInt(maxCapacity),
         user_id: loggedInUserId
     };
-
-    console.log(postData);
 
     try {
         const response = await fetch('/api/post',{
