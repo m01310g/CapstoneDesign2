@@ -21,7 +21,7 @@ document.getElementById("id-availability-check").addEventListener("click", async
     });
 
     const data = await response.json();
-    // console.log(data.available);
+
     if (data.available) {
       // 사용 가능한 아이디
       $userId.style.borderWidth = "1.8px";
@@ -99,11 +99,25 @@ $btnClose.addEventListener("click", () => {
   window.location.href = "/";
 });
 
-// 새로운 비밀번호 입력 시, 버튼 비활성화
+const passwordReg = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()])[A-Za-z\d!@#$%^&*()]{8,64}$/;
+
+// 비밀번호 입력 시, 버튼 비활성화
 $userPw.addEventListener("input", () => {
   $userPwCheck.style.borderWidth = "1.8px";
-  // 새로운 비밀번호가 비어 있으면 버튼 비활성화
+  if (passwordReg.test($userPw.value)) {
+    $userPw.style.borderWidth = "1.8px";
+    $userPw.style.borderColor = "green";
+  } else {
+    // 정규식 만족 못 하면
+    $userPw.style.borderWidth = "1.8px";
+    $userPw.style.borderColor = "red";
+    $formSubmitBtn.disabled = true; // 가입 버튼 비활성화
+  }
+
+  // 비밀번호가 비어 있으면 버튼 비활성화
   if ($userPw.value === "") {
+    $userPw.style.borderWidth = "1px";
+    $userPw.style.borderColor = "black";
     $formSubmitBtn.disabled = true;
   } else {
     checkPasswords(); // 비밀번호 확인 함수 호출
@@ -146,12 +160,6 @@ $btnEmailAuthn.addEventListener("click", () => {
   const authnForEmailPre = document.querySelector("#user-email").value;
   const authnForEmailPost = document.querySelector("input[name='user-email-post']").value;
   const fullEmail = `${authnForEmailPre}${authnForEmailPost}`;
-  // if (authnForEmailPost === "email-typing") {
-  //   // 직접 입력 선택 시
-  //   fullEmail = authnForEmailPre; // authnForEmailPre 값만 사용
-  // } else {
-  //   fullEmail = `${authnForEmailPre}${authnForEmailPost}`; // authnForEmailPre와 authnForEmailPost 결합
-  // }
 
   fetch('/send-authn', {
     method: 'POST', // POST 요청
@@ -172,4 +180,13 @@ $btnEmailAuthn.addEventListener("click", () => {
   .catch((error) => {
     console.error('문제가 발생했습니다:', error); // 에러 처리
   });
+});
+
+document.querySelector("#sign-up-form").addEventListener("submit", (event) => {
+  if ($userId.style.borderColor === "red" || $userPw.style.borderColor === "red" || $userPwCheck.style.borderColor === "red" || $userNickname.style.borderColor === "red") {
+    alert("회원가입에 실패했습니다.\n양식에 맞춰 회원가입을 진행해 주세요.");
+    event.preventDefault();
+    location.reload(); // 페이지 리로드
+    return;
+  }
 });
