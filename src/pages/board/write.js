@@ -27,6 +27,28 @@ const subCategories = {
     '배달': ['다이어트식', '분식', '야식', '양식', '일식', '중식', '한식']
 };
 
+const fetchUserInfo = async () => {
+    try {
+        const response = await fetch('/api/session/user-id');
+        if (!response.ok) {
+            console.error("Response not OK: ", response)
+            alert("로그인 되어 있지 않습니다.");
+            window.location.href = '/';
+            return null;
+        }
+        const userInfo = await response.json();
+        return userInfo;
+    } catch (error) {
+        console.error('Error fetching user info: ', error);
+        window.location.href = '/';
+        return null;
+    }
+};
+
+window.onload = async () => {
+    await fetchUserInfo();
+};
+
 // 이전 페이지로 돌아가기
 backIcon.addEventListener("click", () => {
     window.history.back();
@@ -125,23 +147,6 @@ document.querySelector("#price").addEventListener("input", (event) => {
     }
 });
 
-const fetchUserInfo = async () => {
-    try {
-        const response = await fetch('/api/session/user-id');
-        if (!response.ok) {
-            console.error("Response not OK: ", response)
-            alert("로그인 되어 있지 않습니다.");
-            return null;
-        }
-        const userInfo = await response.json();
-        return userInfo;
-    } catch (error) {
-        console.error('Error fetching user info: ', error);
-        window.location.href = '/';
-        return null;
-    }
-};
-
 const options = {
     "departure": [
         { value: "3공학관",  text: "3공학관"},
@@ -215,7 +220,6 @@ const handleSubmit = async (event) => {
 
     const userInfo = await fetchUserInfo();
     if (!userInfo) {
-        alert('로그인 정보가 없습니다. 로그인 해주세요.');
         return;
     }
 
