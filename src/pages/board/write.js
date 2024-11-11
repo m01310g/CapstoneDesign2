@@ -307,8 +307,8 @@ const handleSubmit = async (event) => {
 
             if (result.success) {
                 window.location.href = selectedCategory === "택시"
-                ? `/post/view?index=${result.postId - 1}&category=${selectedCategory}&subCategory=전체`
-                : `/post/view?index=${result.postId - 1}&category=${selectedCategory}&subCategory=${selectedSubCategory}`;
+                ? `/post/view?index=${result.postId - 1}&category=${encodeURIComponent(selectedCategory)}&subCategory=${encodeURIComponent("전체")}`
+                : `/post/view?index=${result.postId - 1}&category=${encodeURIComponent(selectedCategory)}&subCategory=${encodeURIComponent(selectedSubCategory)}`;
             } else {
                 alert("게시물 작성 중 오류가 발생했습니다." + result.error);
             }

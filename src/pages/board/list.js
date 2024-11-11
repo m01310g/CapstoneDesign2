@@ -13,6 +13,10 @@ if (selectedCategory === "delivery") {
     category = "택시";
 }
 
+const encodeToBase64 = (str) => {
+    return btoa(encodeURIComponent(str));
+}
+
 // YYYY년 MM월 DD일 HH시 mm분을 Date 객체로 변환
 const parseDate = (dateStr) => {
     const dateParts = dateStr.match(/(\d{4})년 (\d{2})월 (\d{2})일 (\d{2})시 (\d{2})분/);
@@ -30,7 +34,7 @@ const formatDate = (dateStr) => {
 
 const fetchData = async () => {
     try {
-        const response = await fetch(`/api/post?category=${category}&subCategory=${selectedSubCategory}`);
+        const response = await fetch(`/api/post?category=${encodeToBase64(category)}&subCategory=${encodeToBase64(selectedSubCategory)}`);
         if (!response.ok) throw new Error("Network response was not ok");
 
         const postData = await response.json();
@@ -69,7 +73,7 @@ const template = (objValue) => {
 
     if (category === "택시") {
         return `
-        <a class="board-link" href="/post/view?index=${objValue.post_index - 1}&category=${category}&subCategory=${selectedSubCategory}" target="_top">
+        <a class="board-link" href="/post/view?index=${objValue.post_index - 1}&category=${encodeToBase64(category)}&subCategory=${encodeToBase64(selectedSubCategory)}" target="_top">
             <div id="content-container">
                 <div id="subject">${objValue.title}</div>
                 <div id="route">${objValue.departure.replace(/"/g,"")} ➡️ ${objValue.destination.replace(/"/g,"")}</div>
@@ -86,7 +90,7 @@ const template = (objValue) => {
         // <div id="date">${startDateFormatted} ~ ${endDateFormatted}</div>
     } else {
         return `
-        <a class="board-link" href="/post/view?index=${objValue.post_index - 1}&category=${category}&subCategory=${selectedSubCategory}" target="_top">
+        <a class="board-link" href="/post/view?index=${objValue.post_index - 1}&category=${encodeToBase64(category)}&subCategory=${encodeToBase64(selectedSubCategory)}" target="_top">
             <div id="content-container">
                 <div id="subject">${objValue.title}</div>
                 <div id="location">수령지: ${objValue.location.replace(/"/g,"")}</div>
