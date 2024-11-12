@@ -1,7 +1,11 @@
+const decodeFromBase64 = (str) => {
+    return decodeURIComponent(atob(str));
+};
+
 // 쿼리스트링의 객체 불러오기
 const params = new URLSearchParams(window.location.search);
 const index = parseInt(params.get("index"));
-const viewCategory = params.get("category");
+const viewCategory = decodeFromBase64(params.get("category"));
 
 let post;
 
@@ -40,7 +44,6 @@ const renderBoardDetails = (data) => {
 
     subjectDiv.innerText = data.title;
     categoryDiv.innerText = data.category;
-    console.log(data.start_date);
     dateDiv.innerText = `${formatDate(data.start_date)} \n~ ${formatDate(data.end_date)}`;
     contentDiv.innerText = data.content;
     capacityDiv.innerHTML = `<span class="current-capacity">${data.current_capacity}</span> / <span class="max-capacity">${data.max_capacity}</span>`;
@@ -51,7 +54,7 @@ const renderBoardDetails = (data) => {
         locationDiv.innerText = `${departureText} ➡️ ${destinationText}`;
     } else {
         const locationText = data.location.replace(/"/g,"");
-        locationDiv.innerText = `수령지: ${locationText}`;
+        console.log(locationText);
     }
 };
 
