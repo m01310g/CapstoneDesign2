@@ -20,6 +20,14 @@ const fetchBoardDetails = async () => {
     }
 };
 
+const formatDate = (dateString) => {
+    const dateParts = dateString.match(/(\d{4})년 (\d{2})월 (\d{2})일 (\d{2})시 (\d{2})분/);
+    if (!dateParts) return null;
+
+    const [_, year, month, day, hour, minute] = dateParts;
+    return `${month}월 ${day}일 ${hour}시 ${minute}분`;
+}
+
 // 게시물 정보 DOM에 렌더링
 const renderBoardDetails = (data) => {
     post = data;
@@ -32,7 +40,8 @@ const renderBoardDetails = (data) => {
 
     subjectDiv.innerText = data.title;
     categoryDiv.innerText = data.category;
-    dateDiv.innerText = `${data.start_date} ~ ${data.end_date}`;
+    console.log(data.start_date);
+    dateDiv.innerText = `${formatDate(data.start_date)} \n~ ${formatDate(data.end_date)}`;
     contentDiv.innerText = data.content;
     capacityDiv.innerHTML = `<span class="current-capacity">${data.current_capacity}</span> / <span class="max-capacity">${data.max_capacity}</span>`;
 
@@ -154,45 +163,7 @@ const checkCapacityStatus = async () => {
     } catch (error) {
         console.error("참여 버튼 상태 확인 중 오류 발생: ", error);
     }
-}
-
-// 참여하기 버튼 클릭 이벤트
-participationBtn.addEventListener("click", async (event) => {
-    event.preventDefault();
-    const capacityDiv = document.querySelector("#capacity");
-
-    const response = await fetch(`/api/post/view/${index}`);
-    const updatedData = await response.json();
-
-    const currentCapacity = updatedData.current_capacity;
-    const maxCapacity = updatedData.max_capacity;
-
-    // 현재 인원 수 증가
-    if (currentCapacity < maxCapacity) {
-        // try {
-        //     const response = await fetch(`/api/post/update-capacity/${index}`, {
-        //         method: 'POST',
-        //         headers: {
-        //             'Content-Type': 'application/json'
-        //         },
-        //         body: JSON.stringify({ current_capacity: currentCapacity + 1 })
-        //     });
-
-        //     if (!response.ok) {
-        //         throw new Error("Failed to update capacity");
-        //     }
-
-        //     const updatedPost = await response.json();
-        //     // UI 업데이트
-        //     capacityDiv.innerHTML = `<span class="current-capacity">${updatedPost.current_capacity}</span> / ${maxCapacity}`;
-
-        //     // 상태 업데이트
-        //     checkCapacityStatus();
-        // } catch (error) {
-        //     console.error("참여하기 버튼 클릭 오류: ", error);
-        // }
-    }
-});
+};
 
 document.addEventListener("DOMContentLoaded", () => {
     fetchBoardDetails().then(() => {

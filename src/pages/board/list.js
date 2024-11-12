@@ -30,7 +30,7 @@ const parseDate = (dateStr) => {
 };
 
 const formatDate = (dateStr) => {
-    const match = dateStr.match(/\d{2}월 \d{2}일 \d{2}시 \d{2}분/);
+    const match = dateStr.match(/\d{2}시 \d{2}분/);
     return match ? match[0] : '';
 };
 
