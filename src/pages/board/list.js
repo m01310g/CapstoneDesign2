@@ -2,6 +2,8 @@ const params = new URLSearchParams(window.location.search);
 const selectedCategory = params.get("category");
 const selectedSubCategory = params.get("subCategory") || "전체";
 const searchKeyword = params.get("search");
+const departureKeyword = params.get("departure");
+const destinationKeyword = params.get("destination");
 
 let category = "";
 
@@ -34,7 +36,9 @@ const formatDate = (dateStr) => {
 
 const fetchData = async () => {
     try {
-        const response = await fetch(`/api/post?category=${encodeToBase64(category)}&subCategory=${encodeToBase64(selectedSubCategory)}`);
+        const response = await fetch(
+            `/api/post?category=${encodeToBase64(category)}&subCategory=${encodeToBase64(selectedSubCategory)}`
+        );
         if (!response.ok) throw new Error("Network response was not ok");
 
         const postData = await response.json();
@@ -116,6 +120,14 @@ const filterPosts = (data) => {
 
     if (searchKeyword) {
         filteredData = filteredData.filter(item => item.title.includes(searchKeyword));
+    }
+
+    if (departureKeyword) {
+        filteredData = filteredData.filter(item => item.departure.includes(departureKeyword));
+    }
+
+    if (destinationKeyword) {
+        filteredData = filteredData.filter(item => item.destination.includes(destinationKeyword));
     }
 
     filteredData.sort((a, b) => b.post_index - a.post_index);
