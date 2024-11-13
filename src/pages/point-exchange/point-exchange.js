@@ -1,35 +1,93 @@
 const exchangeButton = document.getElementById('exchangeButton');
 const inputField = document.getElementById('inputField');
 
+// 숫자에 콤마 추가
 const formatNumberWithCommas = (number) => {
     return new Intl.NumberFormat('en-US').format(number);
 };
 
-exchangeButton.addEventListener('click', () => {
-    // Check if the input field is currently hidden
+// 환전 버튼 클릭 시, 입력란 표시 또는 환전 요청 실행
+exchangeButton.addEventListener('click', async () => {
     if (inputField.style.display === 'none' || inputField.style.display === '') {
-        inputField.style.display = 'block'; // Show the input field
-        inputField.focus(); // Set focus to the input field for better user experience
-        exchangeButton.textContent = '확인'; // Change button text to '확인'
+        inputField.style.display = 'block';
+        inputField.focus();
+        exchangeButton.textContent = '확인';
     } else {
         const amount = inputField.value.replace(/,/g, '');
         if (amount) {
-            const formattedAmount = formatNumberWithCommas(amount); 
-            alert(`환전할 금액: ${formattedAmount}원`); 
-            location.reload(); // Reload the page
+            localStorage.setItem('selectedAmount', amount); // 입력된 금액을 localStorage에 저장
+            await exchangePoint(); // 환전 요청 실행
+            location.reload(); // 페이지 새로고침
         } else {
             alert('환전할 금액을 입력하세요.');
         }
     }
 });
 
-// 페이지 로드 시 세션 데이터를 요청
-window.onload = function() {
-    fetch('/api/session/user-info') // API 엔드포인트에 요청
-      .then(response => response.json())
-      .then(data => {
-        // 받은 데이터로 HTML 내용 변경
-        document.querySelector("#available-point h5").textContent = `${data.userPoint.toLocaleString()}${" 포인트"}`;
-      })
-      .catch(error => console.error('Error fetching session data:', error));
+// 페이지 로드 시 세션 데이터 요청
+window.onload = async function() {
+    try {
+        const response = await fetch('/api/session/user-info');
+        const data = await response.json();
+        document.querySelector("#available-point h5").textContent = `${data.userPoint.toLocaleString()} 포인트`;
+    } catch (error) {
+        console.error('세션 데이터 요청 오류:', error);
+    }
 };
+
+// 카카오페이 환불 요청
+const exchangePoint = async (userId, selectedAmount) => {
+    if (selectedAmount <= 0) {
+        alert('환전할 금액을 입력하세요.');
+        return;
+    }
+
+    try {
+        const response = await fetch('/exchange', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ userId, selectedAmount })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            alert(`송금 완료: ${data.message}`);
+        } else {
+            alert(data.message || '송금 요청에 실패했습니다.');
+        }
+    } catch (error) {
+        console.error('송금 요청 오류:', error);
+        alert('송금 요청 중 오류가 발생했습니다.');
+    }
+}
+
+// 사용자의 아이디를 가져오는 비동기 함수
+const fetchUserId = async () => {
+    const response = await fetch('/api/session/user-id');
+    return response.json();
+}
+
+const fetchUserInfo = async () => {
+    const response = await fetch('/api/session/user-info');
+    return response.json();
+}
+
+// 환전 버튼 클릭 이벤트 리스너
+document.getElementById('exchangeButton').addEventListener('click', async () => {
+    const selectedAmount = parseInt(localStorage.getItem('selectedAmount')) || 0;
+    const getUserId = await fetchUserId();
+    const userId = getUserId.userId;
+    const getUserInfo = await fetchUserInfo();
+    const userPoint = getUserInfo.userPoint;
+
+    if (selectedAmount > 0) {
+        exchangePoint(userId, selectedAmount);
+    } else if (userPoint < selectedAmount) {
+        alert("환전할 금액이 충전되어 있는 금액보다 많을 수 없습니다. 다시 입력해 주세요.");
+    } else {
+        alert("유효한 금액을 입력하세요.");
+    }
+});

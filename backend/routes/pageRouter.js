@@ -54,6 +54,12 @@ router.get("/point-charge/success", (req, res) => {
     res.sendFile(path.join(__dirname, "../../src/pages/point-charge/charge-success.html"));
 });
 
+// 환전 성공
+router.get("/point-exchange/success", (req, res) => {
+    res.sendFile(path.join(__dirname, "../../src/pages/point-exchange/exchange-success.html"));
+});
+
+
 
 // 카테고리 별 라우팅
 router.get("/category/:categoryName", (req, res) => {

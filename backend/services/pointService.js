@@ -80,3 +80,39 @@ exports.success = async (req, res) => {
         res.status(500).json({ message: '결제 승인에 실패했습니다.' });
     }
 };
+
+// 환불 요청 (exchange 엔드포인트)
+exports.exchange = async (req, res) => {
+    const { userId, exchange_amount } = req.body; // 환불할 userId와 금액
+
+    if (!userId || !exchange_amount) {
+        return res.status(400).json({ message: '유효하지 않은 요청입니다.' });
+    }
+
+    try {
+        // 카카오페이 송금 API 호출
+        const response = await fetch('https://kapi.kakao.com/v1/payment/send', {
+            method: 'POST',
+            headers: {
+                'Authorization': `KakaaoAK ${process.env.KAKAO_ADMIN_KEY}`,  // 카카오 API 인증 토큰
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                partner_order_id: `order_test_${userId}`,  // 테스트용 주문번호
+                partner_user_id: `test_user_${userId}`,     // 테스트용 사용자 ID
+                amount: exchange_amount                              // 송금할 금액
+            })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            return res.status(200).json({ message: '송금 요청이 성공적으로 완료되었습니다.', data });
+        } else {
+            return res.status(500).json({ message: '송금 요청 실패', error: data });
+        }
+    } catch (error) {
+        console.error('송금 요청 오류:', error);
+        res.status(500).json({ message: '송금 요청 중 오류가 발생했습니다.', error });
+    }
+};
