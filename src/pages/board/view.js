@@ -1,11 +1,13 @@
-const decodeFromBase64 = (str) => {
-    return decodeURIComponent(atob(str));
-};
+const base64ToUtf8 = (str) => {
+    return decodeURIComponent(Array.prototype.map.call(atob(str), (c) => {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+}
 
 // 쿼리스트링의 객체 불러오기
 const params = new URLSearchParams(window.location.search);
 const index = parseInt(params.get("index"));
-const viewCategory = decodeFromBase64(params.get("category"));
+const viewCategory = base64ToUtf8(params.get("category"));
 
 let post;
 
