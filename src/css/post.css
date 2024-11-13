@@ -113,7 +113,7 @@ div > div > div {
 }
 
 .search-result {
-    margin: 0.5rem 0 0.5rem 1rem;
+    margin: 1rem 0 0.5rem 1.5rem;
 }
 
 button > img {
@@ -216,7 +216,11 @@ iframe {
     font-size: 0.8rem;
 }
 
-#departure,
+#departure:focus,
 #destination:focus {
     outline: none;
+}
+
+.taxi-search {
+    margin: 0 1rem 0.5rem 1rem;
 }

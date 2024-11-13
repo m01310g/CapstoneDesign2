@@ -1,5 +1,9 @@
 const db = require('../config/db');
 
+const decodeFromBase64 = (str) => {
+  return decodeURIComponent(Buffer.from(str, 'base64').toString('utf-8'));
+}
+
 // 게시물 작성 api
 exports.writePost = async (req, res) => {
   try {
@@ -52,23 +56,25 @@ exports.writePost = async (req, res) => {
 
 // 게시물 목록 반환
 exports.returnPost = async (req, res) => {
-    const { category, subCategory } = req.query;
+  // const { category, subCategory } = req.query;
+  const category = decodeFromBase64(req.query.category);
+  const subCategory = decodeFromBase64(req.query.subCategory);
+
+  let query = `SELECT * FROM post_list WHERE category = ?`;
+  let params = [category];
+
+  if (subCategory !== '전체') {
+    query += ' AND sub_category = ?';
+    params.push(subCategory);
+  }
   
-    let query = `SELECT * FROM post_list WHERE category = ?`;
-    let params = [category];
-  
-    if (subCategory !== '전체') {
-      query += ' AND sub_category = ?';
-      params.push(subCategory);
-    }
-    
-    try {
-      const [result] = await db.query(query, params);
-      res.json(result);
-    } catch (err) {
-      console.error(err);
-      return res.status(500).send("Database query error");
-    }
+  try {
+    const [result] = await db.query(query, params);
+    res.json(result);
+  } catch (err) {
+    console.error(err);
+    return res.status(500).send("Database query error");
+  }
 };
 
 // 참여 버튼 클릭시 게시물의 current_capacity 업데이트하는 엔드포인트

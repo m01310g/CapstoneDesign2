@@ -43,6 +43,7 @@ a > img {
 #date {
     font-size: 1rem;
     color: grey;
+    width: 50%;
 }
 
 #content {

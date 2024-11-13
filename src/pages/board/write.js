@@ -27,6 +27,28 @@ const subCategories = {
     '배달': ['다이어트식', '분식', '야식', '양식', '일식', '중식', '한식']
 };
 
+const fetchUserInfo = async () => {
+    try {
+        const response = await fetch('/api/session/user-id');
+        if (!response.ok) {
+            console.error("Response not OK: ", response)
+            alert("로그인 되어 있지 않습니다.");
+            window.location.href = '/';
+            return null;
+        }
+        const userInfo = await response.json();
+        return userInfo;
+    } catch (error) {
+        console.error('Error fetching user info: ', error);
+        window.location.href = '/';
+        return null;
+    }
+};
+
+window.onload = async () => {
+    await fetchUserInfo();
+};
+
 // 이전 페이지로 돌아가기
 backIcon.addEventListener("click", () => {
     window.history.back();
@@ -125,23 +147,6 @@ document.querySelector("#price").addEventListener("input", (event) => {
     }
 });
 
-const fetchUserInfo = async () => {
-    try {
-        const response = await fetch('/api/session/user-id');
-        if (!response.ok) {
-            console.error("Response not OK: ", response)
-            alert("로그인 되어 있지 않습니다.");
-            return null;
-        }
-        const userInfo = await response.json();
-        return userInfo;
-    } catch (error) {
-        console.error('Error fetching user info: ', error);
-        window.location.href = '/';
-        return null;
-    }
-};
-
 const options = {
     "departure": [
         { value: "3공학관",  text: "3공학관"},
@@ -204,9 +209,15 @@ taxiDeparture.addEventListener("change", updateOptions);
 updateOptions();
 
 // 페이지 새로고침 시 localStorage 비우기
-window.addEventListener("beforeunload", () => {
+window.addEventListener("unload", () => {
     localStorage.clear();
 });
+
+const utf8ToBase64 = (str) => {
+    return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (match, p1) => {
+        return String.fromCharCode('0x' + p1);
+    }));
+}
 
 const writeFrm = document.querySelector("#writeFrm");
 
@@ -215,7 +226,6 @@ const handleSubmit = async (event) => {
 
     const userInfo = await fetchUserInfo();
     if (!userInfo) {
-        alert('로그인 정보가 없습니다. 로그인 해주세요.');
         return;
     }
 
@@ -223,9 +233,24 @@ const handleSubmit = async (event) => {
     const content = event.target.content.value;
     const maxCapacity = event.target.capacity.value;
     const price = parseInt(event.target.price.value.replace(/,/g, ''), 10);
+
     const selectedDatesStr = localStorage.getItem("selectedDates");
-    const selectedDates = JSON.parse(selectedDatesStr) || [];
-    
+    console.log(JSON.parse(selectedDatesStr));
+
+    console.log("selectedDatesStr: ", selectedDatesStr);
+
+    const selectedDates = JSON.parse(selectedDatesStr);
+    console.log("selectedDates: ", selectedDates);
+
+    // let selectedDates;
+    // try {
+    //     selectedDates = JSON.parse(selectedDatesStr);
+    //     console.log("selectedDates:", selectedDates); // 정상적으로 파싱된 값 출력
+    // } catch (error) {
+    //     console.error("Error parsing JSON:", error); // JSON 파싱 오류 출력
+    // }
+    // localStorage.clear();
+
     if (selectedDates.length === 0) {
         alert("모집 기한을 선택헤주세요.");
         return;
@@ -291,6 +316,8 @@ const handleSubmit = async (event) => {
         user_id: loggedInUserId
     };
 
+    console.log(postData);
+
     try {
         const response = await fetch('/api/post',{
             method: 'POST',
@@ -303,8 +330,8 @@ const handleSubmit = async (event) => {
 
             if (result.success) {
                 window.location.href = selectedCategory === "택시"
-                ? `/post/view?index=${result.postId - 1}&category=${selectedCategory}&subCategory=전체`
-                : `/post/view?index=${result.postId - 1}&category=${selectedCategory}&subCategory=${selectedSubCategory}`;
+                ? `/post/view?index=${result.postId - 1}&category=${utf8ToBase64(selectedCategory)}&subCategory=${utf8ToBase64("전체")}`
+                : `/post/view?index=${result.postId - 1}&category=${utf8ToBase64(selectedCategory)}&subCategory=${utf8ToBase64(selectedSubCategory)}`;
             } else {
                 alert("게시물 작성 중 오류가 발생했습니다." + result.error);
             }
@@ -315,8 +342,10 @@ const handleSubmit = async (event) => {
         console.error("Error:", error);
         alert("네트워크 오류가 발생했습니다.");
     }
-    
-    localStorage.clear();
 };
 
-writeFrm.addEventListener("submit", handleSubmit);
+writeFrm.addEventListener("submit", async (event)=> {
+    event.preventDefault();
+    await handleSubmit(event);
+    localStorage.removeItem("selectedDates");
+});

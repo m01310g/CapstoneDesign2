@@ -1,5 +1,11 @@
 const dept = document.querySelector("#departure");
 const dest = document.querySelector("#destination");
+const iframe = document.querySelector("iframe");
+
+window.onload = () => {
+    updateOptions();
+    updateIframeSrc();
+};
 
 const options = {
     "departure": [
@@ -14,12 +20,23 @@ const options = {
         { value: "기흥역", text: "기흥역" },
         { value: "채플관", text: "채플관" },
     ]
-}
+};
+
+const updateIframeSrc = () => {
+    let iframeSrc = `/post/list?category=taxi&subCategory=${encodeURIComponent("전체")}`;
+    if (dept.value !== "none") {
+        iframeSrc = iframeSrc + `&departure=${encodeURIComponent(dept.value)}`;
+    }
+    if (dest.value !== "none") {
+        iframeSrc = iframeSrc + `&destination=${encodeURIComponent(dest.value)}`;
+    }
+    iframe.src = iframeSrc;
+};
 
 const updateOptions = () => {
     const departureValue = dept.value;
     
-    dept.innerHTML = `<option value="none" selected disabled hidden>출발지 선택</option>`;
+    dept.innerHTML = `<option value="none" selected>출발지 전체</option>`;
 
     options.departure.forEach(option => {
         const optElement = document.createElement("option");
@@ -32,7 +49,7 @@ const updateOptions = () => {
         dept.value = departureValue;
     }
 
-    dest.innerHTML = `<option value="none" selected disabled hidden>도착지 선택</option>`;
+    dest.innerHTML = `<option value="none" selected>도착지 전체</option>`;
 
     if (departureValue === "기흥역") {
         options.destination.forEach(option => {
@@ -60,4 +77,5 @@ const updateOptions = () => {
 };
 
 dept.addEventListener("change", updateOptions);
-updateOptions();
+dept.addEventListener("change", updateIframeSrc);
+dest.addEventListener("change", updateIframeSrc);

@@ -2,6 +2,8 @@ const params = new URLSearchParams(window.location.search);
 const selectedCategory = params.get("category");
 const selectedSubCategory = params.get("subCategory") || "전체";
 const searchKeyword = params.get("search");
+const departureKeyword = params.get("departure");
+const destinationKeyword = params.get("destination");
 
 let category = "";
 
@@ -11,6 +13,12 @@ if (selectedCategory === "delivery") {
     category = "택배";
 } else if (selectedCategory === "taxi") {
     category = "택시";
+}
+
+const utf8ToBase64 = (str) => {
+    return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (match, p1) => {
+        return String.fromCharCode('0x' + p1);
+    }));
 }
 
 // YYYY년 MM월 DD일 HH시 mm분을 Date 객체로 변환
@@ -24,13 +32,15 @@ const parseDate = (dateStr) => {
 };
 
 const formatDate = (dateStr) => {
-    const match = dateStr.match(/\d{2}월 \d{2}일 \d{2}시 \d{2}분/);
+    const match = dateStr.match(/\d{2}시 \d{2}분/);
     return match ? match[0] : '';
 };
 
 const fetchData = async () => {
     try {
-        const response = await fetch(`/api/post?category=${category}&subCategory=${selectedSubCategory}`);
+        const response = await fetch(
+            `/api/post?category=${utf8ToBase64(category)}&subCategory=${utf8ToBase64(selectedSubCategory)}`
+        );
         if (!response.ok) throw new Error("Network response was not ok");
 
         const postData = await response.json();
@@ -69,7 +79,7 @@ const template = (objValue) => {
 
     if (category === "택시") {
         return `
-        <a class="board-link" href="/post/view?index=${objValue.post_index - 1}&category=${category}&subCategory=${selectedSubCategory}" target="_top">
+        <a class="board-link" href="/post/view?index=${objValue.post_index - 1}&category=${utf8ToBase64(category)}&subCategory=${utf8ToBase64(selectedSubCategory)}" target="_top">
             <div id="content-container">
                 <div id="subject">${objValue.title}</div>
                 <div id="route">${objValue.departure.replace(/"/g,"")} ➡️ ${objValue.destination.replace(/"/g,"")}</div>
@@ -86,7 +96,7 @@ const template = (objValue) => {
         // <div id="date">${startDateFormatted} ~ ${endDateFormatted}</div>
     } else {
         return `
-        <a class="board-link" href="/post/view?index=${objValue.post_index - 1}&category=${category}&subCategory=${selectedSubCategory}" target="_top">
+        <a class="board-link" href="/post/view?index=${objValue.post_index - 1}&category=${utf8ToBase64(category)}&subCategory=${utf8ToBase64(selectedSubCategory)}" target="_top">
             <div id="content-container">
                 <div id="subject">${objValue.title}</div>
                 <div id="location">수령지: ${objValue.location.replace(/"/g,"")}</div>
@@ -112,6 +122,14 @@ const filterPosts = (data) => {
 
     if (searchKeyword) {
         filteredData = filteredData.filter(item => item.title.includes(searchKeyword));
+    }
+
+    if (departureKeyword) {
+        filteredData = filteredData.filter(item => item.departure.includes(departureKeyword));
+    }
+
+    if (destinationKeyword) {
+        filteredData = filteredData.filter(item => item.destination.includes(destinationKeyword));
     }
 
     filteredData.sort((a, b) => b.post_index - a.post_index);
