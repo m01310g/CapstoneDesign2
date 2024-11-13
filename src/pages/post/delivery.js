@@ -77,6 +77,7 @@ listItems.forEach(item => {
         // window.location.href = "/category/delivery";
 
         setIframeAndSaveState(iframeSrc);  // 상태 저장 및 iframe 설정(뒤로 가기 용도)
+        localStorage.clear();
     });
 });
 

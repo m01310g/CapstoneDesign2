@@ -52,7 +52,21 @@ a:active {
   font-weight: 600;
 }
 
-#my-info-change-form input {
+#user-nickname {
+  width: 86%;
+}
+
+#nickname-availability-check {
+  position: absolute;
+  right: 0;
+  height: 2.5rem;
+  width: 13%;
+  background-color: #fff;
+  border: 1px solid rgb(62, 62, 62);
+  border-radius: 5px;
+}
+
+input {
   width: 100%;
   height: 2.5rem;
   padding: 0 6px;
@@ -60,17 +74,6 @@ a:active {
   border-radius: 5px;
 }
 
-#address-container input {
-  margin-bottom: 0.4rem;
-}
-
-#user-detail-address, #user-extra-address {
-  width: 49.6% !important;
-}
-#user-extra-address {
-  position: absolute;
-  right: 0;
-}
 
 #my-info-change-form input[type="submit"] {
   margin-top: 1.75rem;

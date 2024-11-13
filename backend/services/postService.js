@@ -1,17 +1,21 @@
 const db = require('../config/db');
 
+const decodeFromBase64 = (str) => {
+  return decodeURIComponent(Buffer.from(str, 'base64').toString('utf-8'));
+}
+
 // 게시물 작성 api
 exports.writePost = async (req, res) => {
-    try {
-        const { subject, content, category, subCategory, departure, destination, loc, price, startDate, endDate, currentCapacity, maxCapacity, user_id } = req.body;
+  try {
+    const { title, content, category, sub_category, departure, destination, location, price, start_date, end_date, current_capacity, max_capacity, user_id } = req.body;
 
     // 필수 필드 검증
     if (category === "택시") {
-        if (!subject || !content || !category || !departure || !destination || !price || !startDate || !endDate || !maxCapacity) {
+        if (!title || !content || !category || !departure || !destination || !price || !start_date || !end_date || !max_capacity) {
         return res.status(400).json({ success: false, error: "모든 필드를 입력해 주세요." });
         }
     } else if (category === "택배" || category === "배달") {
-        if (!subject || !content || !category || !subCategory || !loc || !price || !startDate || !endDate || !maxCapacity) {
+        if (!title || !content || !category || !sub_category || !location || !price || !start_date || !end_date || !max_capacity) {
         return res.status(400).json({ success: false, error: "모든 필드를 입력해 주세요." });
         }
     } else {
@@ -20,51 +24,57 @@ exports.writePost = async (req, res) => {
 
     const query = "INSERT INTO post_list (title, content, category, sub_category, departure, destination, location, price, start_date, end_date, current_capacity, max_capacity, user_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     const values = [
-        subject, 
+        title, 
         content, 
         category, 
-        subCategory || null, 
+        sub_category || null, 
         departure || null, 
         destination || null, 
-        loc || null, 
+        location || null, 
         price, 
-        startDate, 
-        endDate, 
-        currentCapacity, 
-        maxCapacity, 
+        start_date, 
+        end_date, 
+        current_capacity, 
+        max_capacity, 
         user_id
     ];
+
     const result = await db.query(query, values);
+
     if (result[0] && result[0].insertId) {
-      res.json({ success: true, postId: result[0].insertId });
+      const postId = result[0].insertId;
+      await db.query("INSERT INTO participations (post_id, user_id) VALUES (?, ?)", [postId, user_id]);
+      res.json({ success: true, postId: postId });
     } else {
       res.json({ success: false, error: "게시물 작성 실패" });
     }
-    } catch (error) {
-      console.error("DB 오류: ", error);
-      res.status(500).json({ success: false, error: "DB 처리 중 오류 발생" });
-    }
+  } catch (error) {
+    console.error("DB 오류: ", error);
+    res.status(500).json({ success: false, error: "DB 처리 중 오류 발생" });
+  }
 };
 
 // 게시물 목록 반환
 exports.returnPost = async (req, res) => {
-    const { category, subCategory } = req.query;
+  // const { category, subCategory } = req.query;
+  const category = decodeFromBase64(req.query.category);
+  const subCategory = decodeFromBase64(req.query.subCategory);
+
+  let query = `SELECT * FROM post_list WHERE category = ?`;
+  let params = [category];
+
+  if (subCategory !== '전체') {
+    query += ' AND sub_category = ?';
+    params.push(subCategory);
+  }
   
-    let query = `SELECT * FROM post_list WHERE category = ?`;
-    let params = [category];
-  
-    if (subCategory !== '전체') {
-      query += ' AND sub_category = ?';
-      params.push(subCategory);
-    }
-    
-    try {
-      const [result] = await db.query(query, params);
-      res.json(result);
-    } catch (err) {
-      console.error(err);
-      return res.status(500).send("Database query error");
-    }
+  try {
+    const [result] = await db.query(query, params);
+    res.json(result);
+  } catch (err) {
+    console.error(err);
+    return res.status(500).send("Database query error");
+  }
 };
 
 // 참여 버튼 클릭시 게시물의 current_capacity 업데이트하는 엔드포인트
@@ -113,7 +123,7 @@ exports.returnPostById = async (req, res) => {
 // 게시물 수정 업데이트 엔드포인트
 exports.modifyPost = async (req, res) => {
     const postId = parseInt(req.params.id, 10) + 1;
-    const { subject, content, category, subCategory, departure, destination, loc, price, startDate, endDate, currentCapacity, maxCapacity } = req.body;
+    const { subject, content, category, subCategory, departure, destination, loc, price, startDate, endDate, maxCapacity } = req.body;
   
     try {
       const query = `
@@ -135,7 +145,7 @@ exports.modifyPost = async (req, res) => {
         price, 
         startDate, 
         endDate, 
-        parseInt(maxCapacity), 
+        parseInt(maxCapacity)
       ];
   
       const [result] = await db.execute(query, [...values, postId]);

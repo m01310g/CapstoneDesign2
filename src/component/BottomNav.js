@@ -91,7 +91,7 @@ class BottomNav extends HTMLElement {
                 </a>  
             </div>
             <div id="chatting-icon-container">
-                <a href="/chat">
+                <a href="/chat/main">
                     <img class="chatting-icon" src="${icons.chatting.off}">
                     <div>채팅</div>
                 </a>  
