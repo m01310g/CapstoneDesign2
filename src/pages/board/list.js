@@ -93,7 +93,6 @@ const template = (objValue) => {
         </a>
         <hr>        
         `;
-        // <div id="date">${startDateFormatted} ~ ${endDateFormatted}</div>
     } else {
         return `
         <a class="board-link" href="/post/view?index=${objValue.post_index - 1}&category=${utf8ToBase64(category)}&subCategory=${utf8ToBase64(selectedSubCategory)}" target="_top">
