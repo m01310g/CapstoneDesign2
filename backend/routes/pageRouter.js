@@ -5,6 +5,10 @@ const db = require('../config/db');
 
 // 로그인 페이지
 router.get("/", (req, res) => {
+    if (req.session.isLogined) {
+        // 이미 로그인 상태면 다시 사이트 접속해도 login페이지가 아니라 home으로
+        res.redirect("/home");
+    }    
     res.sendFile(path.join(__dirname, "../../src/pages/login/login.html"));
 });
 
