@@ -221,6 +221,12 @@ const updateOptions = () => {
     }
 };
 
+const utf8ToBase64 = (str) => {
+    return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (match, p1) => {
+        return String.fromCharCode('0x' + p1);
+    }));
+}
+
 deptInput.addEventListener("change", updateOptions);
 updateOptions();
 
@@ -340,8 +346,8 @@ const handleModify = async (event) => {
 
             if (result.success) {
                 window.location.href = selectedCategory === "택시"
-                ? `/post/view?index=${result.postId - 1}&category=${selectedCategory}&subCategory=전체`
-                : `/post/view?index=${result.postId - 1}&category=${selectedCategory}&subCategory=${selectedSubCategory}`;
+                ? `/post/view?index=${result.postId - 1}&category=${utf8ToBase64(selectedCategory)}&subCategory=${utf8ToBase64("전체")}`
+                : `/post/view?index=${result.postId - 1}&category=${utf8ToBase64(selectedCategory)}&subCategory=${utf8ToBase64(selectedSubCategory)}`;
             } else {
                 alert("게시물 작성 중 오류가 발생했습니다." + result.error);
             }
