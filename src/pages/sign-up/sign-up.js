@@ -95,9 +95,9 @@ if (errorMessage) {
   alert(errorMessage);
 }
 
-$btnClose.addEventListener("click", () => {
-  window.location.href = "/";
-});
+// $btnClose.addEventListener("click", () => {
+//   window.location.href = "/";
+// });
 
 const passwordReg = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()])[A-Za-z\d!@#$%^&*()]{8,64}$/;
 

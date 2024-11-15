@@ -12,6 +12,11 @@ router.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "../../src/pages/login/login.html"));
 });
 
+// 이용 약관 페이지
+router.get("/terms-of-service", (req, res) => {
+    res.sendFile(path.join(__dirname, "../../src/pages/sign-up/terms-of-service.html"));
+});
+
 // 회원 가입 페이지
 router.get("/sign-up", (req, res) => {
     res.sendFile(path.join(__dirname, "../../src/pages/sign-up/sign-up.html"));
