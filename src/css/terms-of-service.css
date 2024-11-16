@@ -131,3 +131,9 @@ input[type='checkbox'] {
   max-height: 14rem; /* 모달 창 높이 */
   padding-right: 10px;
 }
+
+@media screen and (max-width: 430px) {
+  #modal-content {
+    max-width: 22rem; /* 모달 창 너비 */
+  }
+}
