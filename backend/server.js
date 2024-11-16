@@ -1,17 +1,25 @@
 const dotenv = require("dotenv");
 dotenv.config();
 
+const db = require('./config/db');
 const express = require("express");
+const http = require("http");
+const socketIo = require("socket.io");
 const session = require("express-session");
 const FileStore = require("session-file-store")(session);
 const path = require("path");
 const cors = require("cors");
 const axios = require("axios"); // Axios 추가
 const app = express();
+
+const server = http.createServer(app);
+const io = socketIo(server);
+app.set('socketio', io);
 const port = 3000;
 
 app.use(cors());
-
+app.use(express.json());
+app.use(express.urlencoded({ extended: true })); 
 // .env의 kakao map api key 가져오기
 app.get('/api/kakao-map-key', async (req, res) => {
   try {
@@ -30,13 +38,90 @@ app.use(session({
   secret: process.env.SESSION_KEY, // 키값 숨길 것
   resave: false,
   saveUninitialized: true,
-  store: new FileStore(),
+  store: new FileStore({
+    path: './sessions',
+    retries: 2,
+    ttl: 3600,
+  }),
   cookie: {
     maxAge: 1000 * 60 * 60 * 3, // 3시간 유지
     secure: false, // true: https에서만 동작
     httpOnly: true
   }
 }));
+
+
+
+
+
+
+app.use(express.static(path.join(__dirname, "public")));
+
+// 현재 활성화 된 채팅방 관리
+let activeChats = {};  
+
+
+app.post('/create-chat-room', async (req, res) => {
+  const userId = req.session.userId; // 세션에서 사용자 ID 가져오기
+  const { roomName } = req.body; // 
+
+  try {
+    // 사용자 ID나 채팅방 이름이 없으면 에러 응답
+    if (!userId || !roomName) {
+      return res.status(400).json({ error: 'User ID and room name are required' });
+    }
+
+    // 채팅방 생성 함수 호출
+    const chatRoom = await createChatRoom(userId, roomName); 
+
+    // 생성된 채팅방 정보를 클라이언트에 응답
+    res.status(201).json(chatRoom);
+  } catch (error) {
+    // 오류가 발생하면 에러 메시지 반환
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// 채팅방 생성 함수 (예시)
+async function createChatRoom(userId, roomName) {
+  if (!roomName) {
+    throw new Error('Room name is required');
+  }
+
+  // DB에 채팅방을 삽입하는 코드
+  const result = await db.query('INSERT INTO chat_rooms (userId, roomName) VALUES (?, ?)', [userId, roomName]);
+
+  if (!result) {
+    throw new Error('Failed to create chat room');
+  }
+
+  return { userId, roomName, createdAt: new Date() }; // 채팅방 생성 후 반환
+}
+
+
+io.on("connection", (socket) => {
+  console.log("A user connected: " + socket.id);
+
+  // 채팅방 입장
+  socket.on("joiRoom", (roomId) => {
+    socket.join(roomId);
+    console.log(`User joined chat: ${roomId}`);
+  });
+
+  // 채팅 메시지 전송
+  socket.on("sendMessage", (data) => {
+    // 해당 채팅방에 메시지 전송
+    io.to(data.roomId).emit("message", {
+      user: 'User',
+      message: data.message
+    }); 
+  });
+
+  // 채팅방 나갈 때
+  socket.on("disconnect", () => {
+    console.log("User disconnected");
+  });
+});
 
 // body parser: 아래 코드 2줄 없으면 form 제출 시 오류 발생
 app.use(express.json());
