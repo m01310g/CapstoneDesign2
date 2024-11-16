@@ -133,3 +133,26 @@ body, html {
 .chat-item:hover, .chat-item:active {
     background-color: #f0f0f0;
 }
+
+.create-room-btn {
+    position: fixed;
+    bottom: 20px; /* 버튼을 화면 하단에 위치 */
+    left: 50%;
+    transform: translateX(-50%); /* 중앙 정렬 */
+    z-index: 1000; /* 버튼이 다른 요소 위에 보이도록 */
+}
+
+.create-room-btn button {
+    padding: 12px 20px;
+    background-color: rgb(209, 206, 24);
+    color: white;
+    border: none;
+    border-radius: 25px;
+    font-size: 16px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.create-room-btn button:hover {
+    background-color: rgb(46, 130, 219);
+}
