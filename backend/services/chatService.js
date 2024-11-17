@@ -1,6 +1,46 @@
 const db = require('../config/db');
 const axios = require('axios');
 
+// 현재 활성화 된 채팅방 관리
+let activeChats = {};  
+
+// 채팅방 생성 함수 (예시)
+const createChatRoom = async (userId, roomName) => {
+    if (!roomName) {
+        throw new Error('Room name is required');
+    }
+
+    // DB에 채팅방을 삽입하는 코드
+    const result = await db.query('INSERT INTO chat_rooms (userId, roomName) VALUES (?, ?)', [userId, roomName]);
+
+    if (!result) {
+        throw new Error('Failed to create chat room');
+    }
+
+    return { userId, roomName, createdAt: new Date() }; // 채팅방 생성 후 반환
+}
+
+exports.createChatRoom = async (req, res) => {
+    const userId = req.session.userId; // 세션에서 사용자 ID 가져오기
+    const { roomName } = req.body; // 
+
+    try {
+    // 사용자 ID나 채팅방 이름이 없으면 에러 응답
+    if (!userId || !roomName) {
+        return res.status(400).json({ error: 'User ID and room name are required' });
+    }
+
+    // 채팅방 생성 함수 호출
+    const chatRoom = await createChatRoom(userId, roomName); 
+
+    // 생성된 채팅방 정보를 클라이언트에 응답
+    res.status(201).json(chatRoom);
+    } catch (error) {
+    // 오류가 발생하면 에러 메시지 반환
+    res.status(500).json({ error: error.message });
+    }
+};
+
 // 채팅 메세지 가져오는 api
 exports.getChatMessage = async (req, res) => {
     const chatId = req.params.chatId;
@@ -81,31 +121,31 @@ exports.updateParticipateStatus = async (req, res) => {
     }
 };
 
-exports.createChatRoom = async (req, res) => {
-    const { roomName } = req.body;
+// exports.createChatRoom = async (req, res) => {
+//     const { roomName } = req.body;
 
-    if (!roomName) {
-        return res.status(400).json({ success: false, message: '채팅방 이름이 필요합니다.' });
-    }
+//     if (!roomName) {
+//         return res.status(400).json({ success: false, message: '채팅방 이름이 필요합니다.' });
+//     }
 
-    try {
-        // Insert new chat room into the database
-        const [result] = await db.query(
-            'INSERT INTO chat_rooms (room_name, created_by, participant_ids) VALUES (?, ?, ?)',
-            [roomName, 'system', '', JSON.stringify([])] // Assume 'system' as the creator for now
-        );
+//     try {
+//         // Insert new chat room into the database
+//         const [result] = await db.query(
+//             'INSERT INTO chat_rooms (room_name, created_by, participant_ids) VALUES (?, ?, ?)',
+//             [roomName, 'system', '', JSON.stringify([])] // Assume 'system' as the creator for now
+//         );
 
-        if (result.affectedRows > 0) {
-            const newRoomId = result.insertId;
-            res.json({ success: true, room_id: newRoomId });
-        } else {
-            res.status(500).json({ success: false, message: '채팅방 생성 실패' });
-        }
-    } catch (error) {
-        console.error('채팅방 생성 오류:', error);
-        res.status(500).json({ success: false, message: '서버 오류가 발생했습니다.' });
-    }
-};
+//         if (result.affectedRows > 0) {
+//             const newRoomId = result.insertId;
+//             res.json({ success: true, room_id: newRoomId });
+//         } else {
+//             res.status(500).json({ success: false, message: '채팅방 생성 실패' });
+//         }
+//     } catch (error) {
+//         console.error('채팅방 생성 오류:', error);
+//         res.status(500).json({ success: false, message: '서버 오류가 발생했습니다.' });
+//     }
+// };
 
 // 채팅방 목록 가져오기
 exports.getChatRooms = async (req, res) => {

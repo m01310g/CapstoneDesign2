@@ -2,7 +2,7 @@ document.getElementById('create-room-btn').addEventListener('click', async () =>
   const roomName = prompt('채팅방 이름을 입력하세요');
   if (roomName) {
     try {
-      const response = await fetch('/chat/create-room', {
+      const response = await fetch('/api/chat/create-room', {
           method: 'POST',
           headers: {
               'Content-Type': 'application/json',
