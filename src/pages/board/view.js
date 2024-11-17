@@ -206,6 +206,7 @@ const handleParticipation = async (event) => {
     // 이미 참여 상태인 경우, 더 진행하지 않음
     if (data.participated) {
         window.location.href = `/chat?index=${index}`;
+        return;
     };
 
     const updatedData = await fetchBoardDetails();
@@ -225,6 +226,12 @@ const handleParticipation = async (event) => {
 
             if (!updateCapacityResponse.ok) {
                 throw new Error("Failed to update capacity");
+            }
+
+            if (userId !== updatedData.userId) {
+                await fetch(`/api/chat/create-room/${index}/${userId}`, {
+                    method: 'POST'
+                });
             }
 
             await fetch(`/api/chat/update-participation-status/${index}/${userId}`, {
