@@ -328,6 +328,14 @@ const handleSubmit = async (event) => {
         if (response.ok) {
             const result = await response.json();
 
+            await fetch('/api/chat/create-room', {
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                method: 'POST',
+                body: JSON.stringify({ postId: result.postId, userId: loggedInUserId })
+            });
+
             if (result.success) {
                 window.location.href = selectedCategory === "택시"
                 ? `/post/view?index=${result.postId - 1}&category=${utf8ToBase64(selectedCategory)}&subCategory=${utf8ToBase64("전체")}`

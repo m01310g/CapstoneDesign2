@@ -7,7 +7,7 @@ module.exports = (server) => {
         console.log("A user connected: " + socket.id);
         
         // 채팅방 입장
-        socket.on("joiRoom", (roomId) => {
+        socket.on("joinRoom", (roomId) => {
             socket.join(roomId);
             console.log(`User joined chat: ${roomId}`);
         });
@@ -15,16 +15,18 @@ module.exports = (server) => {
         // 채팅 메시지 전송
         socket.on("sendMessage", (data) => {
             // 해당 채팅방에 메시지 전송
-            io.to(data.roomId).emit("message", {
-            user: 'User',
-            message: data.message
-            }); 
+            // io.to(data.roomId).emit("message", {
+            // user: 'User',
+            // message: data.message
+            // }); 
+            console.log('받은 메시지: ', data);
+            io.to(data.roomId).emit('receiveMessage', data);
         });
         
         // 채팅방 나갈 때
         socket.on("disconnect", () => {
             console.log("User disconnected");
         });
-        });
+    });
     return io;
 }

@@ -11,18 +11,18 @@
         <!-- 채팅방 헤더 -->
         <header class="chat-header">
             <button class="back-button" onclick="window.history.back();">
-                <img src="https://www.flaticon.com/svg/vstatic/svg/3916/3916912.svg?token=exp=1727180557~hmac=49233a737667d37b149e080731333e35" alt="뒤로가기">
+                <img src="/img/back-icon.png" alt="뒤로가기">
             </button>
             <h2 class="chat-title" id="chatTitle">채팅방</h2>
             <div class="user-info">
                 <img src="https://cdn-icons-png.flaticon.com/512/5264/5264565.png" alt="User Icon" class="user-icon">
-                <span class="user-count" id="userCount">2</span>
+                <span class="user-count" id="userCount"></span>
             </div>
         </header>
 
         <!-- 채팅 메시지 영역 -->
         <div class="chat-area" id="chatArea">
-            <div class="message message-received">안녕하세요! 치킨 엔빵 때문에 연락드렸어요</div>
+            <!-- <div class="message message-received">안녕하세요! 치킨 엔빵 때문에 연락드렸어요</div> -->
         </div>
 
         <!-- 채팅 입력 영역 -->
@@ -36,19 +36,7 @@
             </button>
         </div>
     </div>
-
-    <script>
-        // URL 파라미터에서 room_id 값 추출
-        const urlParams = new URLSearchParams(window.location.search);
-        const roomId = urlParams.get('room_id');
-        const chatTitle = document.getElementById('chatTitle');
-        const userCount = document.getElementById('userCount');
-
-        // URL 파라미터 값에 따라 채팅방 설정
-        if (roomId) {
-            chatTitle.textContent = `채팅방 ${roomId}`; // 예시로 roomId를 제목으로 사용
-            userCount.textContent = '3'; // 사용자 수 예시 (나중에 서버에서 동적으로 변경)
-        }
-    </script>
+    <script src="https://cdn.socket.io/4.7.1/socket.io.min.js"></script>
+    <script src="/Chat_in.js"></script>
 </body>
 </html>

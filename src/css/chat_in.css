@@ -64,11 +64,14 @@ body, html {
 
 /* 채팅 메시지 영역 */
 .chat-area {
-    flex: 1;
+    /* flex: 1;
     flex-direction: column;
     padding: 10px;
     background-color: #f9f9f9;
-    overflow-y: auto;
+    overflow-y: auto; */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
 }
 
 .message {
@@ -85,8 +88,17 @@ body, html {
 .message-received {
     background-color: #f7b500;
     align-self: flex-start;
-    margin: 10px 0 10px 10px;
-    padding: 10px;
+    margin: 0.4rem 0 0.4rem 0.8rem;
+    padding: 0.8rem;
+    border-radius: 15px;
+    max-width: 60%;
+}
+
+.message-sended {
+    background-color: lightgray;
+    align-self: flex-end;
+    margin: 0.4rem 0.8rem 0.4rem 0.8rem;
+    padding: 0.8rem;
     border-radius: 15px;
     max-width: 60%;
 }
@@ -98,7 +110,12 @@ body, html {
     padding: 10px;
     background-color: #f0f0f0;
     border-top: 1px solid #ddd;
-    position: relative;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    z-index: 100;
 }
 
 .chat-input {

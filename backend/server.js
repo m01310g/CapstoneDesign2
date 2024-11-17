@@ -99,6 +99,6 @@ assets/img에 있는 이미지 html에서 사용 시
 */
 app.use(express.static(path.join(__dirname, "..", "assets")));
 
-app.listen(port, () => {
+server.listen(port, () => {
   console.log("http://localhost:3000");
 });

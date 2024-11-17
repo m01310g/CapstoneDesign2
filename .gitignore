@@ -2,3 +2,4 @@
 node_modules
 apikey.js
 .DS_Store
+sessions
