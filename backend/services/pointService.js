@@ -80,3 +80,31 @@ exports.success = async (req, res) => {
         res.status(500).json({ message: '결제 승인에 실패했습니다.' });
     }
 };
+
+exports.exchange = async (req, res) => {
+    const userId = req.body.userId;
+    const selectedAmount = parseInt(req.body.selectedAmount);
+    console.log(userId, selectedAmount);
+
+    if (!userId || !selectedAmount || selectedAmount <= 0) {
+        return res.status(400).json({ message: '유효하지 않은 요청입니다.' });
+    }
+
+    try {
+        // 현재 사용자의 보유 포인트 확인
+        const [user] = await db.query('SELECT user_point FROM user_info WHERE user_id = ?', [userId]);
+        if (!user || user.user_point < selectedAmount) {
+            return res.status(400).json({ message: '포인트가 부족합니다.' });
+        }
+
+        // 포인트 차감
+        // const newPointBalance = user.user_point - selectedAmount;
+        await db.query('UPDATE user_info SET user_point = user_point - ? WHERE user_id = ?', [selectedAmount, userId]);
+
+        // 성공 응답 반환
+        res.status(200).json({ message: '환전이 성공적으로 완료되었습니다.', newPointBalance: user.user_point });
+    } catch (error) {
+        console.error('환전 요청 오류:', error);
+        res.status(500).json({ message: '환전 요청 중 오류가 발생했습니다.', error });
+    }
+};
