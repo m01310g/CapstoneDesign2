@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="../../css/style.css"/>
     <link rel="stylesheet" href="../../css/point.css"/>
 </head>
-<body></body>
+<body>
     <div class="body-container">
       <div class="box-body">
         <header class="page-header">
@@ -16,29 +16,46 @@
 
         <h1>포인트 환전하기</h1>
 
-            <div id="point-info">
+        <div id="point-info">
+            <div id="available-point">
+                <div>보유 포인트</div>
                 <div id="available-point">
-                    <div>나의 포인트</div>
-                    <div id="available-point">
-                      <h3>보유 포인트</h3>
-                      <h5>0 포인트</h5>
-                  </div>
+                    <h5>0 포인트</h5>
                 </div>
             </div>
+        </div>
 
-            <div class="exchange-container">
-              <input type="number" id="inputField" placeholder="원하는 금액을 입력하세요" style="display: none;" />
-              <button id="exchangeButton">환전하기</button>
-          </div>
-          
-          
+        <div class="exchange-container">
+            <div class="account-container">
+                <select id="bankSelect" style="display: inline-block;">
+                    <option value="">은행 선택</option>
+                    <option value="kbank">KBank</option>
+                    <option value="hana">하나은행</option>
+                    <option value="shinhan">신한은행</option>
+                    <option value="kb">국민은행</option>
+                    <option value="woori">우리은행</option>
+                    <option value="nh">농협은행</option>
+                    <option value="ibk">IBK기업은행</option>
+                    <option value="sc">SC제일은행</option>
+                    <option value="citibank">한국씨티은행</option>
+                    <option value="daegu">대구은행</option>
+                    <option value="busan">부산은행</option>
+                    <option value="jeju">제주은행</option>
+                    <option value="kakao">카카오뱅크</option>
+                    <option value="toss">토스뱅크</option>
+                    <option value="suhyup">수협은행</option>
+                    <option value="kfcu">신협</option>
+                    <option value="mg">새마을금고</option>
+                    <option value="kfcc">산림조합중앙회</option>
+                </select>
+                <input type="number" id="accountField" placeholder="계좌번호를 입력하세요" style="display: inline-block;" />
+            </div>
+            <input type="number" id="inputField" placeholder="원하는 금액을 입력하세요" style="display: block;" />
+            <button id="exchangeButton">환전하기</button>
+        </div>
 
         <bottom-nav data-page="myPage"></bottom-nav>
-          </a>
-        </div>
-      </nav>
     </div>
-  </div>
 </body>
 <script src="/point-exchange.js"></script>
 <script src="../../component/BottomNav.js"></script>

@@ -81,38 +81,30 @@ exports.success = async (req, res) => {
     }
 };
 
-// 환불 요청 (exchange 엔드포인트)
 exports.exchange = async (req, res) => {
-    const { userId, exchange_amount } = req.body; // 환불할 userId와 금액
+    const userId = req.body.userId;
+    const selectedAmount = parseInt(req.body.selectedAmount);
+    console.log(userId, selectedAmount);
 
-    if (!userId || !exchange_amount) {
+    if (!userId || !selectedAmount || selectedAmount <= 0) {
         return res.status(400).json({ message: '유효하지 않은 요청입니다.' });
     }
 
     try {
-        // 카카오페이 송금 API 호출
-        const response = await fetch('https://kapi.kakao.com/v1/payment/send', {
-            method: 'POST',
-            headers: {
-                'Authorization': `KakaaoAK ${process.env.KAKAO_ADMIN_KEY}`,  // 카카오 API 인증 토큰
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                partner_order_id: `order_test_${userId}`,  // 테스트용 주문번호
-                partner_user_id: `test_user_${userId}`,     // 테스트용 사용자 ID
-                amount: exchange_amount                              // 송금할 금액
-            })
-        });
-
-        const data = await response.json();
-
-        if (data.success) {
-            return res.status(200).json({ message: '송금 요청이 성공적으로 완료되었습니다.', data });
-        } else {
-            return res.status(500).json({ message: '송금 요청 실패', error: data });
+        // 현재 사용자의 보유 포인트 확인
+        const [user] = await db.query('SELECT user_point FROM user_info WHERE user_id = ?', [userId]);
+        if (!user || user.user_point < selectedAmount) {
+            return res.status(400).json({ message: '포인트가 부족합니다.' });
         }
+
+        // 포인트 차감
+        // const newPointBalance = user.user_point - selectedAmount;
+        await db.query('UPDATE user_info SET user_point = user_point - ? WHERE user_id = ?', [selectedAmount, userId]);
+
+        // 성공 응답 반환
+        res.status(200).json({ message: '환전이 성공적으로 완료되었습니다.', newPointBalance: user.user_point });
     } catch (error) {
-        console.error('송금 요청 오류:', error);
-        res.status(500).json({ message: '송금 요청 중 오류가 발생했습니다.', error });
+        console.error('환전 요청 오류:', error);
+        res.status(500).json({ message: '환전 요청 중 오류가 발생했습니다.', error });
     }
 };

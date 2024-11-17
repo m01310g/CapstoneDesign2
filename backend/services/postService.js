@@ -59,6 +59,7 @@ exports.returnPost = async (req, res) => {
   // const { category, subCategory } = req.query;
   const category = decodeFromBase64(req.query.category);
   const subCategory = decodeFromBase64(req.query.subCategory);
+  const limit = parseInt(req.query.limit);
 
   let query = `SELECT * FROM post_list WHERE category = ?`;
   let params = [category];
@@ -67,7 +68,13 @@ exports.returnPost = async (req, res) => {
     query += ' AND sub_category = ?';
     params.push(subCategory);
   }
-  
+
+  // limit이 유효한 경우 LIMIT 조건 추가
+  if (!isNaN(limit) && limit > 0) {
+    query += ' LIMIT ?';
+    params.push(limit); // LIMIT 값 추가
+  }
+
   try {
     const [result] = await db.query(query, params);
     res.json(result);

@@ -6,6 +6,7 @@
     <title>CO/N</title>
     <link rel="stylesheet" href="../../css/home.css"/>
     <link rel="stylesheet" href="../../css/style.css"/>
+    <link rel="stylesheet" href="../../css/list.css">
 </head>
 
 <body>
@@ -13,27 +14,30 @@
     <div class="box-body">
       <header class="page-header">
         <img class="logo" src="/img/logo.jpg" />
-        <a href="../map/map.html">
-          <img class="map-img" src="/img/map_icon.png" />
+        <a href="../term-of-use/term-of-use.html">
+          <img class="term-of-use" src="/img/term-of-use.png" />
         </a>
       </header>
 
-      <!-- 배너 영역 -->
-      <div class="banner-container">
-        <!-- 움직이는 배너 영역 -->
-        <div class="moving-banner">
-          <div class="banner-item">광고 1</div>
-          <div class="banner-item">광고 2</div>
-          <div class="banner-item">광고 3</div>
+      <!-- 메뉴바 영역 -->
+      <div class="menu-bar">
+        <button class="menu-item active" data-category="taxi">택시</button>
+        <button class="menu-item" data-category="package">택배</button>
+        <button class="menu-item" data-category="delivery">배달</button>
+      </div>
 
-          <!-- 배너 인디케이터 영역 -->
-          <div class="banner-indicator"></div>
-        </div>
+      <!-- 게시글 불러오는 영역 -->
+      <div class="post-container">
+        <!-- <div class="post-header"></div> -->
+        <!-- <div id="post-list">
+        </div> -->
+        <iframe src="/post/list"></iframe>
 
-        <!-- 고정된 배너 영역 -->
-        <div class="fixed-banner">
-          <div class="fixed-banner-item">고정 게시글</div>
-        </div>
+      </div>
+
+      <!-- 고정된 배너 영역 -->
+      <div class="fixed-banner">
+        <div class="fixed-banner-item">고정 게시글</div>
       </div>
 
       <bottom-nav data-page="home"></bottom-nav>
@@ -43,3 +47,4 @@
   <script src="../../component/BottomNav.js"></script>
   <script src="/home.js"></script>
 </body>
+</html>
