@@ -37,6 +37,12 @@ router.get("/my-page", (req, res) => {
     res.sendFile(path.join(__dirname, "../../src/pages/my-page/my-page.html"));
 });
 
+// 내가 작성한 게시글 페이지
+router.get("/my-post", (req, res) => {
+    res.sendFile(path.join(__dirname, "../../src/pages/my-page/my-post.html"));
+
+});
+
 // 비밀번호 변경 페이지
 router.get("/change-pw", (req, res) => {
     res.sendFile(path.join(__dirname, "../../src/pages/my-info-change/change-pw.html"));

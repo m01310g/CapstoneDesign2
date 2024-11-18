@@ -22,7 +22,7 @@ window.onload = function() {
       // 받은 데이터로 HTML 내용 변경
       document.getElementById('user-nickname').textContent = data.userNickname;
       document.getElementById('user-point').textContent = `${data.userPoint.toLocaleString()}${" 포인트"}`;
-      document.getElementById('penalty-count').textContent = data.userPenalty;
+      // document.getElementById('penalty-count').textContent = data.userPenalty;
     })
     .catch(error => console.error('Error fetching session data:', error));
 };
