@@ -4,6 +4,9 @@ const selectedSubCategory = params.get("subCategory") || "전체";
 const searchKeyword = params.get("search");
 const departureKeyword = params.get("departure");
 const destinationKeyword = params.get("destination");
+//
+const postUserId = params.get("userId");
+//
 
 let category = "";
 
@@ -118,6 +121,12 @@ const filterPosts = (data) => {
             ? item.category === category
             : item.category === category && item.sub_category === selectedSubCategory;
     });
+
+    //
+    if (postUserId) {
+        filteredData = filteredData.filter(item => item.user_id === postUserId);
+    }
+    //
 
     if (searchKeyword) {
         filteredData = filteredData.filter(item => item.title.includes(searchKeyword));
