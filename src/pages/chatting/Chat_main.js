@@ -37,10 +37,10 @@ document.addEventListener("DOMContentLoaded", async () => {
                 <a href="/chat?index=${room.room_id}">
                     <div class="chatroom-title">
                         <h3>${room.title}</h3>
+                        <p class="participants-count">${room.participants_count}</p>
                     </div>
                     <div class="chatroom-info">
-                        <p>${room.recent_message || '채팅 메시지가 없습니다.'}</p>
-                        <p>${room.participants_count}</p>
+                        <p class="recent-message">${room.recent_message || '채팅 메시지가 없습니다.'}</p>
                     </div>
                 </a>
                 <hr>

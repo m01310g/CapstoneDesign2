@@ -115,7 +115,10 @@ body, html {
     left: 0;
     right: 0;
     width: 100%;
+    max-width: 37rem;
     z-index: 100;
+    overflow: hidden;
+    margin: 0 auto;
 }
 
 .chat-input {
