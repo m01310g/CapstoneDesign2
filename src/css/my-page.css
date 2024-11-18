@@ -21,11 +21,22 @@
   position: relative;
 }
 
-#profile-picture {
+/* #profile-picture {
   width: 2.5rem;
   height: 2.5rem;
-  background-color: lightcyan;
+  background-color: rgb(162, 162, 162);
   border-radius: 50%;
+} */
+
+#my-icon {
+  background-color: rgb(239, 239, 239);
+  border: 2px solid black;
+  border-radius: 50%;
+  width: 2.4rem;
+}
+
+#user-nickname {
+  font-size: 1rem;
 }
 
 #nickname-abode {
@@ -86,12 +97,21 @@ a:active {
   justify-content: center;
 }
 
-#penalty-info-container {
+#my-post-info-container {
   display: flex;
   justify-content: space-between;
   font-weight: 600 ;
 }
 
-#penalty-count-container {
-  color: red;
+#my-post-btn {
+  background-color: #ccc; /* 회색 배경색 */
+  width: 5rem;
+  border: none;
+  color: inherit;
+  font: inherit;
+  padding: 0;
+}
+
+#my-post-anchor {
+  cursor: pointer;
 }

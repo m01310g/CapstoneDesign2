@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CO/N</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/forgot.css">
+    <link rel="stylesheet" href="../../css/forgot-id.css">
+  </head>
+  <body>
+    <div class="body-container">
+      <div class="box-body">
+        <header class="page-header">
+          <button class="btn-close">&#215;</button>
+        </header>
+        <nav class="nav-forgot">
+          <ul>
+            <div class="clicked-container" id="forgot-id-container">
+              <li><a href="/forgot-id" id="forgot-id-anchor">아이디 찾기</a></li>
+            </div>
+            <div class="non-clicked-container" id="forgot-pw-container">
+              <li><a href="/forgot-pw" id="forgot-pw-anchor">비밀번호 찾기</a></li>
+            </div>
+          </ul>
+        </nav>
+        <main class="page-main">
+          <form id="forgot-id-form" target="_self" action="/forgot-id" method="post">
+            <div>
+              <label for="forgot-id-user-name">이름</label>
+              <br>
+              <input type="text" name="forgot-id-user-name" required>
+            </div>
+            <div>
+              <label for="forgot-id-user-email">이메일</label>
+              <br>
+              <input type="text" name="forgot-id-user-email-pre" required>
+              <input type="text" name="forgot-id-user-email-post" required readonly value="@mju.ac.kr">
+            </div>
+            <input type="submit" value="아이디 찾기">
+          </form>
+        </main>
+      </div>
+    </div>
+    <script src="/forgotId.js"></script>
+  </body>
+</html>
