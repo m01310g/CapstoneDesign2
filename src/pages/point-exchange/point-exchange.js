@@ -87,13 +87,15 @@ document.getElementById('exchangeButton').addEventListener('click', async () => 
     const userPoint = getUserInfo.userPoint;
 
 
-    if (selectedAmount > 0) {
+    if (selectedAmount > 0 && userPoint > selectedAmount) {
         exchangePoint(userId, selectedAmount);
         localStorage.clear();
     } else if (userPoint < selectedAmount) {
         alert("환전할 금액이 충전되어 있는 금액보다 많을 수 없습니다. 다시 입력해 주세요.");
+        return;
     } else {
         alert("유효한 금액을 입력하세요.");
+        return;
     }
 });
 
