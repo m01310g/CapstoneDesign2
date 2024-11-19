@@ -14,13 +14,18 @@ module.exports = (server) => {
         
         // 채팅 메시지 전송
         socket.on("sendMessage", (data) => {
+            // 받은 데이터
+            const messageData = {
+                roomId: data.roomId,
+                userId: data.userId,
+                userNickname: data.userNickname,
+                message: data.message
+            };
+
             // 해당 채팅방에 메시지 전송
-            // io.to(data.roomId).emit("message", {
-            // user: 'User',
-            // message: data.message
-            // }); 
-            console.log('받은 메시지: ', data);
-            io.to(data.roomId).emit('receiveMessage', data);
+            io.to(data.roomId).emit("message", messageData); 
+            console.log('받은 메시지: ', messageData);
+            // io.to(data.roomId).emit('receiveMessage', data);
         });
         
         // 채팅방 나갈 때
