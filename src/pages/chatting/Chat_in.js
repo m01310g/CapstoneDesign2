@@ -20,9 +20,27 @@ const fetchUserCount = async () => {
   }
 };
 
-const fetchUserInfo = async () => {
+const fetchUserId = async () => {
   try {
       const response = await fetch('/api/session/user-id');
+      if (!response.ok) {
+          console.error("Response not OK: ", response)
+          alert("로그인 되어 있지 않습니다.");
+          window.location.href = '/';
+          return null;
+      }
+      const userInfo = await response.json();
+      return userInfo;
+  } catch (error) {
+      console.error('Error fetching user info: ', error);
+      window.location.href = '/';
+      return null;
+  }
+};
+
+const fetchUserInfo = async () => {
+  try {
+      const response = await fetch('/api/session/user-info');
       if (!response.ok) {
           console.error("Response not OK: ", response)
           alert("로그인 되어 있지 않습니다.");
@@ -57,10 +75,11 @@ const fetchMessages = async () => {
 document.addEventListener("DOMContentLoaded", async () => {
   const getUserCount = await fetchUserCount();
   userCount.innerText = getUserCount;
-  const getUserId = await fetchUserInfo();
+  const getUserId = await fetchUserId();
   const userId = getUserId.userId;
 
   const messages = await fetchMessages();
+  console.log(messages);
   messages.forEach((message) => {
     if (userId === message.sender_id) {
       const messageElement = document.createElement('div');
@@ -69,8 +88,12 @@ document.addEventListener("DOMContentLoaded", async () => {
       chatBox.appendChild(messageElement);
     } else {
       const messageElement = document.createElement('div');
+      const nicknameElement = document.createElement('div');
       messageElement.classList.add('message', 'message-received');
       messageElement.innerText = message.message;
+      nicknameElement.classList.add('nickname');
+      nicknameElement.innerText = message.sender_nickname;
+      chatBox.appendChild(nicknameElement);
       chatBox.appendChild(messageElement);
     }
   })
@@ -81,13 +104,13 @@ const socket = io(); // 소켓 초기화 (서버 연결)
 socket.emit('joinRoom', roomId); // 해당 채팅방 입장
 
 // 서버로부터 메시지를 받으면 화면에 표시
-socket.on('message', (data) => {
-  const messageElement = document.createElement('div');
-  messageElement.classList.add('message');
-  messageElement.innerText = `${data.user}: ${data.message}`;
-  chatBox.appendChild(messageElement);
-  chatBox.scrollTop = chatBox.scrollHeight; // 스크롤 하단으로 유지
-});
+// socket.on('message', (data) => {
+//   const messageElement = document.createElement('div');
+//   messageElement.classList.add('message');
+//   messageElement.innerText = `${data.user}: ${data.message}`;
+//   chatBox.appendChild(messageElement);
+//   chatBox.scrollTop = chatBox.scrollHeight; // 스크롤 하단으로 유지
+// });
 
 // 메시지 전송
 // sendMessageBtn.addEventListener('click', () => {
@@ -106,12 +129,17 @@ socket.on('message', (data) => {
 
 sendMessageBtn.addEventListener('click', async () => {
   const message = messageInput.value.trim();
+  const getUserId = await fetchUserId();
+  const userId = getUserId.userId;
   const getUserInfo = await fetchUserInfo();
-  const userId = getUserInfo.userId;
+  const userNickname = getUserInfo.userNickname;
+
+
   if (message) {
     const messageData = {
       chat_room_id: roomId,
       sender_id: userId,
+      sender_nickname: userNickname,
       message
     };
 
@@ -129,7 +157,7 @@ sendMessageBtn.addEventListener('click', async () => {
         chatBox.appendChild(ownMessageElement);
         chatBox.scrollTop = chatBox.scrollHeight;
 
-        socket.emit('sendMessage', { roomId, message });
+        socket.emit('sendMessage', { roomId, userId, userNickname, message });
         messageInput.value = ''; // 입력창 초기화
       } else {
         console.error('Failed to save message: ', response.statusText);

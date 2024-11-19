@@ -28,7 +28,6 @@ exports.getChatRooms = async (req, res) => {
             SELECT post_id FROM participations WHERE user_id = ?
         )
         `;
-        // const query = 'SELECT * FROM chat_rooms';
         const [result] = await db.query(query, [userId]);
         res.json(result);
     } catch (error) {
@@ -52,18 +51,18 @@ exports.getUserCounts = async (req, res) => {
 };
 
 exports.sendMessage = async (req, res) => {
-    const { chat_room_id, sender_id, message } = req.body;
+    const { chat_room_id, sender_id, sender_nickname, message } = req.body;
 
-    if (!chat_room_id || !sender_id || !message) {
+    if (!chat_room_id || !sender_id || !sender_nickname || !message) {
         return res.status(400).json({ error: 'Missing required fields' });
     }
 
     try {
         const query = `
-        INSERT INTO chat_messages (chat_room_id, sender_id, message)
-        VALUES (?, ?, ?)
+        INSERT INTO chat_messages (chat_room_id, sender_id, sender_nickname, message)
+        VALUES (?, ?, ?, ?)
         `;
-        const [result] = await db.query(query, [chat_room_id, sender_id, message]);
+        const [result] = await db.query(query, [chat_room_id, sender_id, sender_nickname, message]);
 
         res.status(201).json({
             success: true,
@@ -80,7 +79,7 @@ exports.getMessages = async (req, res) => {
     const { roomId } = req.query;
     try {
         const query = `
-        SELECT sender_id, message, created_at
+        SELECT sender_id, message, sender_nickname, created_at
         FROM chat_messages
         WHERE chat_room_id = ?
         ORDER BY created_at ASC
