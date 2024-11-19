@@ -135,13 +135,15 @@ document.addEventListener("DOMContentLoaded", async () => {
             locationInput.value = data.location.replace(/"/g,"");
         }
 
-        $("#date-picker").daterangepicker({
-            startDate: data.start_date,
-            endDate: data.end_date,
-            timePicker: true,
-            locale: {
-                format: "YYYY년 MM월 DD일 HH시 mm분"
-            }
+        $('#date-picker').on('apply.daterangepicker', function(ev, picker) {
+            const startDate = picker.startDate.format("YYYY년 MM월 DD일 HH시 mm분");
+            const endDate = picker.endDate.format("YYYY년 MM월 DD일 HH시 mm분");
+    
+            const selectedDatesObj = localStorage.getItem("selectedDates") ? JSON.parse(localStorage.getItem("selectedDates")) : [];
+    
+            selectedDatesObj.push({ startDate, endDate });
+    
+            localStorage.setItem("selectedDates", JSON.stringify(selectedDatesObj));
         });
     } catch (error) {
         console.error("Fetch Error: ", error);
@@ -320,17 +322,17 @@ const handleModify = async (event) => {
     }
 
     const postData = {
-        subject,
-        content,
+        title: subject,
+        content: content,
         category: selectedCategory,
-        subCategory: selectedSubCategory,
-        departure,
-        destination,
-        loc,
-        price,
-        startDate,
-        endDate,
-        maxCapacity,
+        sub_category: selectedSubCategory,
+        departure: departure,
+        destination: destination,
+        location: loc,
+        price: price,
+        start_date: startDate,
+        end_date: endDate,
+        max_capacity: maxCapacity,
         user_id: loggedInUserId
     };
 

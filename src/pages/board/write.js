@@ -14,8 +14,6 @@ const taxiDestination = document.querySelector("#destination");
 
 const backIcon = document.querySelector("#back-icon");
 
-const confirmBtn = document.querySelector("#confirm-btn");
-
 let selectedCategory = '';
 let selectedSubCategory = '';
 
@@ -67,7 +65,6 @@ categoryItems.forEach(item => {
             subDropDown.classList.add(HIDDEN_CLASS_NAME); // 소분류 숨기기
             locationInput.classList.add(HIDDEN_CLASS_NAME);
             taxiMapContainer.classList.add(HIDDEN_CLASS_NAME);
-            confirmBtn.classList.add(HIDDEN_CLASS_NAME);
             locationContainer.classList.add(HIDDEN_CLASS_NAME);
         } else {
             taxiSearch.classList.add(HIDDEN_CLASS_NAME); // 택시 검색 필드 숨기기
@@ -75,7 +72,6 @@ categoryItems.forEach(item => {
             subDropDown.classList.remove(HIDDEN_CLASS_NAME); // 소분류 드롭다운 보이기
             locationInput.classList.remove(HIDDEN_CLASS_NAME);
             taxiMapContainer.classList.add(HIDDEN_CLASS_NAME);
-            confirmBtn.classList.add(HIDDEN_CLASS_NAME);
             locationContainer.classList.add(HIDDEN_CLASS_NAME);
         }
 
@@ -241,15 +237,6 @@ const handleSubmit = async (event) => {
 
     const selectedDates = JSON.parse(selectedDatesStr);
     console.log("selectedDates: ", selectedDates);
-
-    // let selectedDates;
-    // try {
-    //     selectedDates = JSON.parse(selectedDatesStr);
-    //     console.log("selectedDates:", selectedDates); // 정상적으로 파싱된 값 출력
-    // } catch (error) {
-    //     console.error("Error parsing JSON:", error); // JSON 파싱 오류 출력
-    // }
-    // localStorage.clear();
 
     if (selectedDates.length === 0) {
         alert("모집 기한을 선택헤주세요.");
