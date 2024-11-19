@@ -178,7 +178,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
-const fetchUserInfo = async () => {
+const fetchUserId = async () => {
     try {
         const response = await fetch('/api/session/user-id');
         if (!response.ok) {
@@ -195,11 +195,61 @@ const fetchUserInfo = async () => {
     }
 };
 
+const fetchUserInfo = async () => {
+    try {
+        const response = await fetch('/api/session/user-info');
+        if (!response.ok) {
+            console.error("Response not OK: ", response)
+            alert("로그인 되어 있지 않습니다.");
+            return null;
+        }
+        const userInfo = await response.json();
+        return userInfo;
+    } catch (error) {
+        console.error('Error fetching user info: ', error);
+        window.location.href = '/';
+        return null;
+    }
+};
+
+const checkPointStatus = async () => {
+
+    try {
+        // 사용자 포인트 가져오기
+        const getUserPoint = await fetchUserInfo();
+        const userPoint = getUserPoint.userPoint;
+
+        // 게시물 정보 가져오기
+        const response = await fetch(`/api/post/view/${index}`);
+        const data = await response.json();
+
+        // 가격 계산
+        const price = (data.price / 2).toFixed(2);
+        const [intPart, decPart] = price.split(".");
+        const formattedIntPart = parseInt(intPart, 10).toLocaleString();
+        const requiredPoint = parseFloat(price); // 필요한 포인트
+
+        // 조건 확인: 포인트 부족 시 입장 불가능
+        if (userPoint < requiredPoint) {
+            alert(
+                `포인트가 부족합니다! 
+                필요한 포인트: ${formattedIntPart}.${decPart}, 
+                현재 보유 포인트: ${userPoint.toLocaleString()}`
+            );
+            return false; // 입장 불가능
+        } else {
+            return true;
+        }
+    } catch (error) {
+        console.error("데이터를 가져오는 중 문제가 발생했습니다:", error);
+    }
+};
+
 const handleParticipation = async (event) => {
     event.preventDefault();
     const capacityDiv = document.querySelector("#capacity");
 
-    const userId = await fetchUserInfo();
+    const userId = await fetchUserId();
     const response = await fetch(`/api/chat/check-participation/${index}?userId=${userId}`);
     const data = await response.json();
 
@@ -208,6 +258,12 @@ const handleParticipation = async (event) => {
         window.location.href = `/chat?index=${index}`;
         return;
     };
+
+    // 포인트 상태 확인
+    const pointStatus = await checkPointStatus();
+    if (!pointStatus) {
+        return;
+    }
 
     const updatedData = await fetchBoardDetails();
 
