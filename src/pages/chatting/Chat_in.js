@@ -3,6 +3,7 @@ const messageInput = document.querySelector('.chat-input')
 const sendMessageBtn = document.querySelector('.send-button')
 const chatBox = document.querySelector('.chat-area');
 const userCount = document.querySelector('.user-count');
+const chatTitle = document.querySelector('.chat-title');
 
 const fetchUserCount = async () => {
   try {
@@ -12,7 +13,6 @@ const fetchUserCount = async () => {
       return null;
     }
     const data = await response.json();
-    console.log(data);
     return data.userCount;
   } catch (error) {
     console.error('Error fetching user count: ', error);
@@ -72,14 +72,32 @@ const fetchMessages = async () => {
   }
 };
 
+const fetchPostById = async () => {
+  try {
+    const response = await fetch(`/api/post/view/${roomId - 1}`);
+    if (!response.ok) {
+      console.error('Failed to fetch post: ', response.error);
+      return [];
+    }
+    const post = await response.json();
+    return post;
+  } catch (error) {
+    console.error('Error fetching post: ', error);
+    return [];
+  }
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
   const getUserCount = await fetchUserCount();
   userCount.innerText = getUserCount;
   const getUserId = await fetchUserId();
   const userId = getUserId.userId;
+  const getPostTitle = await fetchPostById();
+  const postTitle = getPostTitle.title;
+
+  chatTitle.innerText = postTitle;
 
   const messages = await fetchMessages();
-  console.log(messages);
   messages.forEach((message) => {
     if (userId === message.sender_id) {
       const messageElement = document.createElement('div');
@@ -104,30 +122,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 const socket = io(); // 소켓 초기화 (서버 연결)
 
 socket.emit('joinRoom', roomId); // 해당 채팅방 입장
-
-// 서버로부터 메시지를 받으면 화면에 표시
-// socket.on('message', (data) => {
-//   const messageElement = document.createElement('div');
-//   messageElement.classList.add('message');
-//   messageElement.innerText = `${data.user}: ${data.message}`;
-//   chatBox.appendChild(messageElement);
-//   chatBox.scrollTop = chatBox.scrollHeight; // 스크롤 하단으로 유지
-// });
-
-// 메시지 전송
-// sendMessageBtn.addEventListener('click', () => {
-//   const message = messageInput.value;
-//   if (message.trim()) {
-//     const ownMessageElement = document.createElement('div');
-//     ownMessageElement.classList.add('message', 'message-sended');
-//     ownMessageElement.innerText = message;
-//     chatBox.appendChild(ownMessageElement);
-//     chatBox.scrollTop = chatBox.scrollHeight;
-
-//     socket.emit('sendMessage', { roomId, message });
-//     messageInput.value = ''; // 입력창 초기화
-//   }
-// });
 
 sendMessageBtn.addEventListener('click', async () => {
   const message = messageInput.value.trim();
