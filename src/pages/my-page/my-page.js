@@ -20,7 +20,8 @@ window.onload = function() {
     .then(response => response.json())
     .then(data => {
       // 받은 데이터로 HTML 내용 변경
-      document.getElementById('user-nickname').textContent = data.userNickname;
+      document.getElementById('user-nickname').textContent = `${data.userNickname}님 안녕하세요!`;
+      document.getElementById('user-email').textContent = `${data.userEmail}`;
       document.getElementById('user-point').textContent = `${data.userPoint.toLocaleString()}${" 포인트"}`;
       // document.getElementById('penalty-count').textContent = data.userPenalty;
     })

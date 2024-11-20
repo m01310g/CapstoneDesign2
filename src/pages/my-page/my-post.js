@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     if (response.ok) {
         userId = data.userId; // userId 할당
-        console.log("User ID:", userId);
+        // console.log("User ID:", userId);
 
         // iframe의 src에 userId 추가
         listFrame.src = `/post/list?category=taxi&userId=${userId}`;
