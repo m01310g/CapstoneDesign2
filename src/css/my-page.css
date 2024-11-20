@@ -1,5 +1,9 @@
 .page-header {
   position: relative;
+  /* padding-top: 0.3rem; */
+  /* margin-bottom: 3.5rem; */
+  padding: 1.3rem 1rem 1rem 1rem;
+  margin: 0 !important;
 }
 
 #my-info-title {
@@ -9,7 +13,7 @@
 
 #logout-btn {
   position: absolute;
-  right: 0;
+  right: 1rem;
   font-size: 0.9rem;
   font-weight: 600;
   color: rgba(0, 0, 0, 0.6);
@@ -30,13 +34,20 @@
 
 #my-icon {
   background-color: rgb(239, 239, 239);
-  border: 2px solid black;
+  border: 1.4px solid black;
   border-radius: 50%;
   width: 2.4rem;
 }
 
 #user-nickname {
-  font-size: 1rem;
+  font-size: 1.23rem;
+  padding-bottom: 0.2rem;
+}
+
+#user-email {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: rgb(88, 88, 88);
 }
 
 #nickname-abode {
@@ -44,6 +55,7 @@
   flex-direction: column;
   position: relative;
   left: 1.75rem;
+  bottom: 0.15rem;
   justify-content: space-around;
   font-weight: 600;
 }
@@ -57,7 +69,16 @@
   flex-direction: column;
   align-self: center;
   position: absolute;
-  right: 0;
+  right: 1rem;
+}
+
+.id-email-container {
+  margin: 0 !important;
+  padding: 2.5rem 1rem 2rem 1rem;
+}
+
+.page-header, .id-email-container {
+  background-color: rgba(239, 239, 239, 0.7);
 }
 
 a {
@@ -73,11 +94,23 @@ a:active {
   color: #000;
 }
 
+.divider {
+  border: none;
+  border-top: 1px solid rgba(127, 127, 127, 0.52);
+}
+
+.divider-two {
+  border: none;
+  border-top: 1px solid rgba(127, 127, 127, 0.5);
+  margin-left: 0.6rem;
+  margin-right: 0.6rem;
+}
+
 #point-info {
   display: flex;
   justify-content: space-between;
   padding: 1rem;
-  background-color: lightgray;
+  /* background-color: lightgray; */
 }
 
 #available-point {
