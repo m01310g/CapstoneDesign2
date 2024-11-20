@@ -32,14 +32,30 @@ const formatDate = (dateString) => {
 
     const [_, year, month, day, hour, minute] = dateParts;
     return `${month}월 ${day}일 ${hour}시 ${minute}분`;
-}
+};
+
+const fetchUserId = async () => {
+    try {
+        const response = await fetch('/api/session/user-id');
+        if (!response.ok) {
+            console.error("Response not OK: ", response)
+            alert("로그인 되어 있지 않습니다.");
+            return null;
+        }
+        const userInfo = await response.json();
+        return userInfo.userId;
+    } catch (error) {
+        console.error('Error fetching user info: ', error);
+        window.location.href = '/';
+        return null;
+    }
+};
 
 // 게시물 정보 DOM에 렌더링
 const renderBoardDetails = async (data) => {
     post = data;
 
-    const getUserId = await fetchUserId();
-    const userId = getUserId.userId;
+    const userId = await fetchUserId();
     if (userId !== post.user_id) {
         document.querySelector(".button-container").innerHTML = "";
     }
@@ -187,23 +203,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
-const fetchUserId = async () => {
-    try {
-        const response = await fetch('/api/session/user-id');
-        if (!response.ok) {
-            console.error("Response not OK: ", response)
-            alert("로그인 되어 있지 않습니다.");
-            return null;
-        }
-        const userInfo = await response.json();
-        return userInfo.userId;
-    } catch (error) {
-        console.error('Error fetching user info: ', error);
-        window.location.href = '/';
-        return null;
-    }
-};
-
 const fetchUserInfo = async () => {
     try {
         const response = await fetch('/api/session/user-info');
@@ -222,7 +221,6 @@ const fetchUserInfo = async () => {
 };
 
 const checkPointStatus = async () => {
-
     try {
         // 사용자 포인트 가져오기
         const getUserPoint = await fetchUserInfo();
