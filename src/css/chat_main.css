@@ -57,7 +57,7 @@ body, html {
 .chat-list {
     flex: 1;
     overflow-y: auto;
-    padding: 1rem;
+    padding: 0 1rem 1rem 1rem;
 }
 
 .chat-item {
@@ -187,6 +187,10 @@ a:active {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 0.5rem;
+}
+
+.chatroom-item {
+    margin-top: 0.5rem;
 }
 
 .recent-message {

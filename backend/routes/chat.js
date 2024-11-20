@@ -9,5 +9,6 @@ router.post('/api/chat/update-participation-status/:postId/:userId', chatService
 router.post('/api/chat/create-room', chatService.createChatRoom);
 router.get('/api/chat/get-chat-rooms', chatService.getChatRooms);
 router.get('/api/chat/get-user-count', chatService.getUserCounts);
+router.post('/api/chat/leave-chat-room', chatService.leaveChatRoom);
 
 module.exports = router;

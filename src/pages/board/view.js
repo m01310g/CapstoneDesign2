@@ -26,24 +26,6 @@ const fetchBoardDetails = async () => {
     }
 };
 
-const fetchUserId = async () => {
-    try {
-        const response = await fetch('/api/session/user-id');
-        if (!response.ok) {
-            console.error("Response not OK: ", response)
-            alert("로그인 되어 있지 않습니다.");
-            window.location.href = '/';
-            return null;
-        }
-        const userInfo = await response.json();
-        return userInfo;
-    } catch (error) {
-        console.error('Error fetching user info: ', error);
-        window.location.href = '/';
-        return null;
-    }
-  };
-
 const formatDate = (dateString) => {
     const dateParts = dateString.match(/(\d{4})년 (\d{2})월 (\d{2})일 (\d{2})시 (\d{2})분/);
     if (!dateParts) return null;
@@ -282,7 +264,7 @@ const handleParticipation = async (event) => {
 
     // 이미 참여 상태인 경우, 더 진행하지 않음
     if (data.participated) {
-        window.location.href = `/chat?index=${index}`;
+        window.location.href = `/chat?index=${index + 1}`;
         return;
     };
 
@@ -328,7 +310,7 @@ const handleParticipation = async (event) => {
             // 상태 업데이트
             checkCapacityStatus();
 
-            window.location.href = `/chat?index=${index}`;
+            window.location.href = `/chat?index=${index + 1}`;
         } catch (error) {
             console.error("참여하기 버튼 클릭 오류: ", error);
         }

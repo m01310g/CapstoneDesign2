@@ -3,6 +3,8 @@ const messageInput = document.querySelector('.chat-input')
 const sendMessageBtn = document.querySelector('.send-button')
 const chatBox = document.querySelector('.chat-area');
 const userCount = document.querySelector('.user-count');
+const chatTitle = document.querySelector('.chat-title');
+const leaveBtn = document.querySelector('.leave-room-btn');
 
 const fetchUserCount = async () => {
   try {
@@ -12,7 +14,6 @@ const fetchUserCount = async () => {
       return null;
     }
     const data = await response.json();
-    console.log(data);
     return data.userCount;
   } catch (error) {
     console.error('Error fetching user count: ', error);
@@ -72,16 +73,45 @@ const fetchMessages = async () => {
   }
 };
 
+const fetchPostById = async () => {
+  try {
+    const response = await fetch(`/api/post/view/${roomId - 1}`);
+    if (!response.ok) {
+      console.error('Failed to fetch post: ', response.error);
+      return [];
+    }
+    const post = await response.json();
+    return post;
+  } catch (error) {
+    console.error('Error fetching post: ', error);
+    return [];
+  }
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
   const getUserCount = await fetchUserCount();
   userCount.innerText = getUserCount;
   const getUserId = await fetchUserId();
   const userId = getUserId.userId;
+  const getPostInfo = await fetchPostById();
+  const postTitle = getPostInfo.title;
+  const HIDDEN_CLASS_NAME = 'hidden';
+
+  chatTitle.innerText = postTitle;
+
+  if (getPostInfo.user_id === userId) {
+    leaveBtn.classList.add(HIDDEN_CLASS_NAME);
+  }
 
   const messages = await fetchMessages();
-  console.log(messages);
   messages.forEach((message) => {
-    if (userId === message.sender_id) {
+    if (message.message_type === 'system') {
+      // 시스템 메시지 렌더링
+      const messageElement = document.createElement('div');
+      messageElement.classList.add('message', 'system-message');
+      messageElement.innerText = message.message;
+      chatBox.appendChild(messageElement);
+    } else if (userId === message.sender_id) {
       const messageElement = document.createElement('div');
       messageElement.classList.add('message', 'message-sended');
       messageElement.innerText = message.message;
@@ -96,36 +126,14 @@ document.addEventListener("DOMContentLoaded", async () => {
       chatBox.appendChild(nicknameElement);
       chatBox.appendChild(messageElement);
     }
-  })
+  });
+
+  chatBox.scrollTop = chatBox.scrollHeight;
 })
 
 const socket = io(); // 소켓 초기화 (서버 연결)
 
 socket.emit('joinRoom', roomId); // 해당 채팅방 입장
-
-// 서버로부터 메시지를 받으면 화면에 표시
-// socket.on('message', (data) => {
-//   const messageElement = document.createElement('div');
-//   messageElement.classList.add('message');
-//   messageElement.innerText = `${data.user}: ${data.message}`;
-//   chatBox.appendChild(messageElement);
-//   chatBox.scrollTop = chatBox.scrollHeight; // 스크롤 하단으로 유지
-// });
-
-// 메시지 전송
-// sendMessageBtn.addEventListener('click', () => {
-//   const message = messageInput.value;
-//   if (message.trim()) {
-//     const ownMessageElement = document.createElement('div');
-//     ownMessageElement.classList.add('message', 'message-sended');
-//     ownMessageElement.innerText = message;
-//     chatBox.appendChild(ownMessageElement);
-//     chatBox.scrollTop = chatBox.scrollHeight;
-
-//     socket.emit('sendMessage', { roomId, message });
-//     messageInput.value = ''; // 입력창 초기화
-//   }
-// });
 
 sendMessageBtn.addEventListener('click', async () => {
   const message = messageInput.value.trim();
@@ -174,3 +182,39 @@ messageInput.addEventListener('keypress', (event) => {
     sendMessageBtn.click();
   }
 });
+
+leaveBtn.addEventListener('click', async () => {
+  const confirmLeave = confirm('채팅방을 나가시겠습니까?');
+  if (!confirmLeave) return;
+
+  try {
+    const getUserId = await fetchUserId();
+    const userId = getUserId.userId;
+    const getUserInfo = await fetchUserInfo();
+    const userNickname = getUserInfo.userNickname;
+
+    socket.emit('leaveRoom', { roomId, userNickname });
+
+    const response = await fetch('/api/chat/leave-chat-room', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ roomId, userId })
+    });
+
+    const result = await response.json();
+    if (result.success) {
+      window.location.href = '/chat/main';
+    }
+  } catch (error) {
+    console.error('Error leaving chat room: ', error);
+    alert('서버 오류가 발생했습니다.');
+  }
+});
+
+socket.on('userLeft', ({ message }) => {
+  const messageElement = document.createElement('div');
+  messageElement.classList.add('message', 'system-message');
+  messageElement.innerText = message;
+  chatBox.appendChild(messageElement);
+  chatBox.scrollTop = chatBox.scrollHeight;
+})

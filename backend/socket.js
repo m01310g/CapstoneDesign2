@@ -32,6 +32,13 @@ module.exports = (server) => {
         socket.on("disconnect", () => {
             console.log("User disconnected");
         });
+
+        // 채팅방 퇴장
+        socket.on("leaveRoom", ({ roomId, userNickname }) => {
+            io.to(roomId).emit("userLeft", {message: `${userNickname}님이 채팅방을 나갔습니다.`});
+
+            socket.leave(roomId);
+        });
     });
     return io;
 }
