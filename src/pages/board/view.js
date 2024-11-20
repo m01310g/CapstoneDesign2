@@ -26,24 +26,6 @@ const fetchBoardDetails = async () => {
     }
 };
 
-const fetchUserId = async () => {
-    try {
-        const response = await fetch('/api/session/user-id');
-        if (!response.ok) {
-            console.error("Response not OK: ", response)
-            alert("로그인 되어 있지 않습니다.");
-            window.location.href = '/';
-            return null;
-        }
-        const userInfo = await response.json();
-        return userInfo;
-    } catch (error) {
-        console.error('Error fetching user info: ', error);
-        window.location.href = '/';
-        return null;
-    }
-  };
-
 const formatDate = (dateString) => {
     const dateParts = dateString.match(/(\d{4})년 (\d{2})월 (\d{2})일 (\d{2})시 (\d{2})분/);
     if (!dateParts) return null;
