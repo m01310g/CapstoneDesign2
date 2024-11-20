@@ -137,3 +137,9 @@ input[type='checkbox'] {
     max-width: 22rem; /* 모달 창 너비 */
   }
 }
+
+@media screen and (max-width: 360px) {
+  #modal-content {
+    max-width: 20rem; /* 모달 창 너비 */
+  }
+}
