@@ -130,7 +130,7 @@ exports.returnPostById = async (req, res) => {
 // 게시물 수정 업데이트 엔드포인트
 exports.modifyPost = async (req, res) => {
     const postId = parseInt(req.params.id, 10) + 1;
-    const { subject, content, category, subCategory, departure, destination, loc, price, startDate, endDate, maxCapacity } = req.body;
+    const { title, content, category, sub_category, departure, destination, location, price, start_date, end_date, max_capacity } = req.body;
   
     try {
       const query = `
@@ -142,17 +142,17 @@ exports.modifyPost = async (req, res) => {
       `;
   
       const values = [
-        subject, 
+        title, 
         content, 
         category, 
-        subCategory || null, 
+        sub_category || null, 
         departure || null,
         destination || null,
-        loc || null,
+        location || null,
         price, 
-        startDate, 
-        endDate, 
-        parseInt(maxCapacity)
+        start_date, 
+        end_date, 
+        parseInt(max_capacity)
       ];
   
       const [result] = await db.execute(query, [...values, postId]);

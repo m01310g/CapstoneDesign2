@@ -26,6 +26,24 @@ const fetchBoardDetails = async () => {
     }
 };
 
+const fetchUserId = async () => {
+    try {
+        const response = await fetch('/api/session/user-id');
+        if (!response.ok) {
+            console.error("Response not OK: ", response)
+            alert("로그인 되어 있지 않습니다.");
+            window.location.href = '/';
+            return null;
+        }
+        const userInfo = await response.json();
+        return userInfo;
+    } catch (error) {
+        console.error('Error fetching user info: ', error);
+        window.location.href = '/';
+        return null;
+    }
+  };
+
 const formatDate = (dateString) => {
     const dateParts = dateString.match(/(\d{4})년 (\d{2})월 (\d{2})일 (\d{2})시 (\d{2})분/);
     if (!dateParts) return null;
@@ -35,8 +53,15 @@ const formatDate = (dateString) => {
 }
 
 // 게시물 정보 DOM에 렌더링
-const renderBoardDetails = (data) => {
+const renderBoardDetails = async (data) => {
     post = data;
+
+    const getUserId = await fetchUserId();
+    const userId = getUserId.userId;
+    if (userId !== post.user_id) {
+        document.querySelector(".button-container").innerHTML = "";
+    }
+
     const subjectDiv = document.querySelector("#subject");
     const categoryDiv = document.querySelector("#category");
     const dateDiv = document.querySelector("#date");
@@ -62,8 +87,9 @@ const renderBoardDetails = (data) => {
 
 const modifyBtn = document.querySelector("#modify");
 
-const handleModifyBtn = (event) => {
+const handleModifyBtn = async (event) => {
     event.preventDefault();
+    await fetchUserId();
     location.href = `/post/modify?index=${index}`;
     backLink.addEventListener("click", () => {
         window.history.back();
@@ -91,6 +117,7 @@ backLink.setAttribute("href", `/category/${selectedCategory}`);
 const deleteBtn = document.querySelector("#delete");
 deleteBtn.addEventListener("click", async (event) => {
     event.preventDefault();
+    await fetchUserId();
     let category;
     if (post.category === "택배") {
         category = "package";
