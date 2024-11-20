@@ -28,14 +28,18 @@ body, html {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px;
+    padding: 1rem;
     background-color: #fff;
     border-bottom: 1px solid #ddd;
 }
 
+.hidden {
+    display: none;
+}
+
 .back-button img {
-    width: 24px;
-    height: 24px;
+    width: 1.5rem;
+    height: 1.5rem;
 }
 .back-button {
     border: none;
@@ -53,13 +57,13 @@ body, html {
 }
 
 .user-icon {
-    width: 24px;
-    height: 24px;
+    width: 1rem;
+    height: 1rem;
 }
 
 .user-count {
-    margin-left: 5px;
-    font-size: 16px;
+    margin-left: 0.3rem;
+    font-size: 1rem;
 }
 
 /* 채팅 메시지 영역 */
@@ -226,4 +230,24 @@ body, html {
 .chat-input-area.menu-open {
     transform: translateY(-60px);
     transition: transform 0.3s ease-out;
+}
+
+.leave-room-btn {
+    border: none;
+    background-color: transparent;
+    margin-left: 1rem;
+    color: #f7b500;
+    font-weight: bold;
+    font-size: 1rem;
+}
+
+.system-message {
+    align-self: center;
+    display: flex;
+    justify-content: center;
+    color: gray;
+    font-weight: bold;
+    text-align: center;
+    margin: 1rem 0;
+    background-color: transparent;
 }

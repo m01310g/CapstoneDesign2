@@ -264,7 +264,7 @@ const handleParticipation = async (event) => {
 
     // 이미 참여 상태인 경우, 더 진행하지 않음
     if (data.participated) {
-        window.location.href = `/chat?index=${index}`;
+        window.location.href = `/chat?index=${index + 1}`;
         return;
     };
 
@@ -310,7 +310,7 @@ const handleParticipation = async (event) => {
             // 상태 업데이트
             checkCapacityStatus();
 
-            window.location.href = `/chat?index=${index}`;
+            window.location.href = `/chat?index=${index + 1}`;
         } catch (error) {
             console.error("참여하기 버튼 클릭 오류: ", error);
         }

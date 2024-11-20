@@ -4,6 +4,7 @@ const sendMessageBtn = document.querySelector('.send-button')
 const chatBox = document.querySelector('.chat-area');
 const userCount = document.querySelector('.user-count');
 const chatTitle = document.querySelector('.chat-title');
+const leaveBtn = document.querySelector('.leave-room-btn');
 
 const fetchUserCount = async () => {
   try {
@@ -92,14 +93,25 @@ document.addEventListener("DOMContentLoaded", async () => {
   userCount.innerText = getUserCount;
   const getUserId = await fetchUserId();
   const userId = getUserId.userId;
-  const getPostTitle = await fetchPostById();
-  const postTitle = getPostTitle.title;
+  const getPostInfo = await fetchPostById();
+  const postTitle = getPostInfo.title;
+  const HIDDEN_CLASS_NAME = 'hidden';
 
   chatTitle.innerText = postTitle;
 
+  if (getPostInfo.user_id === userId) {
+    leaveBtn.classList.add(HIDDEN_CLASS_NAME);
+  }
+
   const messages = await fetchMessages();
   messages.forEach((message) => {
-    if (userId === message.sender_id) {
+    if (message.message_type === 'system') {
+      // 시스템 메시지 렌더링
+      const messageElement = document.createElement('div');
+      messageElement.classList.add('message', 'system-message');
+      messageElement.innerText = message.message;
+      chatBox.appendChild(messageElement);
+    } else if (userId === message.sender_id) {
       const messageElement = document.createElement('div');
       messageElement.classList.add('message', 'message-sended');
       messageElement.innerText = message.message;
@@ -170,3 +182,39 @@ messageInput.addEventListener('keypress', (event) => {
     sendMessageBtn.click();
   }
 });
+
+leaveBtn.addEventListener('click', async () => {
+  const confirmLeave = confirm('채팅방을 나가시겠습니까?');
+  if (!confirmLeave) return;
+
+  try {
+    const getUserId = await fetchUserId();
+    const userId = getUserId.userId;
+    const getUserInfo = await fetchUserInfo();
+    const userNickname = getUserInfo.userNickname;
+
+    socket.emit('leaveRoom', { roomId, userNickname });
+
+    const response = await fetch('/api/chat/leave-chat-room', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ roomId, userId })
+    });
+
+    const result = await response.json();
+    if (result.success) {
+      window.location.href = '/chat/main';
+    }
+  } catch (error) {
+    console.error('Error leaving chat room: ', error);
+    alert('서버 오류가 발생했습니다.');
+  }
+});
+
+socket.on('userLeft', ({ message }) => {
+  const messageElement = document.createElement('div');
+  messageElement.classList.add('message', 'system-message');
+  messageElement.innerText = message;
+  chatBox.appendChild(messageElement);
+  chatBox.scrollTop = chatBox.scrollHeight;
+})
