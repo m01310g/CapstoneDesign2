@@ -96,7 +96,9 @@ document.addEventListener("DOMContentLoaded", async () => {
       chatBox.appendChild(nicknameElement);
       chatBox.appendChild(messageElement);
     }
-  })
+  });
+
+  chatBox.scrollTop = chatBox.scrollHeight;
 })
 
 const socket = io(); // 소켓 초기화 (서버 연결)

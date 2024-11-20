@@ -64,14 +64,16 @@ body, html {
 
 /* 채팅 메시지 영역 */
 .chat-area {
-    /* flex: 1;
+    flex: 1;
     flex-direction: column;
-    padding: 10px;
+    padding: 0.5rem;
     background-color: #f9f9f9;
-    overflow-y: auto; */
+    overflow-y: auto;
     display: flex;
+    margin-bottom: 5rem;
     flex-direction: column;
     justify-content: flex-start;
+    box-sizing: border-box;
 }
 
 .message {
