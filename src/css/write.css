@@ -279,6 +279,20 @@ ul li button {
     outline: none;
 }
 
+#package-location {
+    border: none;
+    border-bottom: 0.1rem solid grey;
+    font-weight: bold;
+    padding: 1rem;
+    font-size: 1.1rem;
+    margin-top: 0.3rem;
+    width: 47.5%;
+}
+
+#package-location:focus {
+    outline: none;
+}
+
 #departure,
 #destination {
     width: 48%;
