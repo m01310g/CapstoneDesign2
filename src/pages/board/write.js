@@ -8,6 +8,9 @@ const taxiSearch = document.querySelector('.taxi-search');
 const locationInput = document.querySelector("#location");
 const locationContainer = document.querySelector("#location-map");
 const taxiMapContainer = document.querySelector("#map");
+//
+const packageLocationInput = document.querySelector("#package-location");
+//
 
 const taxiDeparture = document.querySelector("#departure");
 const taxiDestination = document.querySelector("#destination");
@@ -64,13 +67,23 @@ categoryItems.forEach(item => {
             taxiSearch.classList.remove(HIDDEN_CLASS_NAME);
             subDropDown.classList.add(HIDDEN_CLASS_NAME); // 소분류 숨기기
             locationInput.classList.add(HIDDEN_CLASS_NAME);
+            packageLocationInput.classList.add(HIDDEN_CLASS_NAME);
             taxiMapContainer.classList.add(HIDDEN_CLASS_NAME);
             locationContainer.classList.add(HIDDEN_CLASS_NAME);
-        } else {
+        } else if (selectedCategory === "택배") {
+            taxiSearch.classList.add(HIDDEN_CLASS_NAME); // 택시 검색 필드 숨기기
+            updateSubCategories(selectedCategory);
+            subDropDown.classList.remove(HIDDEN_CLASS_NAME); // 소분류 드롭다운 보이기
+            locationInput.classList.add(HIDDEN_CLASS_NAME);
+            packageLocationInput.classList.remove(HIDDEN_CLASS_NAME); // 택배 드롭다운 보이기
+            taxiMapContainer.classList.add(HIDDEN_CLASS_NAME);
+            locationContainer.classList.add(HIDDEN_CLASS_NAME);
+        } else { // 배달
             taxiSearch.classList.add(HIDDEN_CLASS_NAME); // 택시 검색 필드 숨기기
             updateSubCategories(selectedCategory);
             subDropDown.classList.remove(HIDDEN_CLASS_NAME); // 소분류 드롭다운 보이기
             locationInput.classList.remove(HIDDEN_CLASS_NAME);
+            packageLocationInput.classList.add(HIDDEN_CLASS_NAME);
             taxiMapContainer.classList.add(HIDDEN_CLASS_NAME);
             locationContainer.classList.add(HIDDEN_CLASS_NAME);
         }
@@ -248,7 +261,15 @@ const handleSubmit = async (event) => {
     const currentCapacity = 1;
     const departure = selectedCategory === "택시" ? event.target.departure.value : null;
     const destination = selectedCategory === "택시" ? event.target.destination.value : null;
-    const loc = selectedCategory !== "택시" ? event.target.location.value : null;
+    let loc;
+    if (selectedCategory === "택시") {
+        loc = null;
+    } else if (selectedCategory === "택배") {
+        loc = packageLocationInput.value;
+    } else if (selectedCategory === "배달") {
+        loc = event.target.location.value;
+    }
+    // const loc = selectedCategory !== "택시" ? event.target.location.value : null;
 
     const loggedInUserId = userInfo.userId;
 
