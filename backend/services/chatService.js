@@ -1,5 +1,4 @@
 const db = require('../config/db');
-const axios = require('axios');
 
 exports.createChatRoom = async (req, res) => {
     const { postId, userId } = req.body;
@@ -174,5 +173,107 @@ exports.leaveChatRoom = async (req, res) => {
     } catch (error) {
         console.error('Error leaving chat room: ', error);
         return res.status(500).json({ success: false, message: '서버 오류가 발생했습니다.' });
+    }
+};
+
+exports.reserveTrade = async (req, res) => {
+    const { roomId, userId } = req.body;
+
+    try {
+        const [roomInfo] = await db.query('SELECT price, current_capacity FROM post_list WHERE post_index = ?', [roomId]);
+        const [userInfo] = await db.query('SELECT user_point FROM user_info WHERE user_id = ?', [userId]);
+
+        const price = parseInt(roomInfo[0].price) / parseInt(roomInfo[0].current_capacity);
+        const currentPoints = userInfo[0].user_point;
+
+        if (currentPoints < price) {
+            return res.status(400).json({ success: false });
+        }
+
+        await db.query('UPDATE user_info SET user_point = user_point - ? WHERE user_id = ?', [price, userId]);
+        await db.query('INSERT INTO trade_reservations (room_id, user_id, amount) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE amount = ?', [roomId, userId, price, price]);
+
+        return res.json({ success: true, remainingPoints : currentPoints - price });
+    } catch (error) {
+        console.error('Error reserving trade: ', error);
+        res.status(500).json({ success: false, message: '서버 오류' });
+    }
+};
+
+exports.startTrade = async (req, res) => {
+    const { roomId } = req.body;
+    try {
+        await db.query('UPDATE chat_rooms SET is_trade_active = 1 WHERE post_index = ?', [roomId]);
+        const systemMessage = '거래가 시작됩니다.';
+        await db.query(
+            'INSERT INTO chat_messages (chat_room_id, sender_id, sender_nickname, message, message_type) VALUES (?, ?, ?, ?, ?)',
+            [roomId, 'system', 'system', systemMessage, 'system']
+        );
+        return res.json({ success: true });
+    } catch (error) {
+        console.error('Error starting trade: ', error);
+        res.status(500).json({ success: false, message: '서버 오류' });
+    }
+};
+
+exports.checkReservationStatus = async (req, res) => {
+    const { roomId, userId } = req.query;
+
+    try {
+        const [reservation] = await db.query(
+            "SELECT * FROM trade_reservations WHERE room_id = ? AND user_id = ?",
+            [roomId, userId]
+        );
+        const reserved = reservation.length > 0;
+        res.json({ reserved });
+    } catch (error) {
+        console.error('Error checking reservation status: ', error);
+        res.status(500).json({ reserved: false });
+    }
+};
+
+exports.cancelReservation = async (req, res) => {
+    const { roomId, userId } = req.body;
+
+    try {
+        const [reservation] = await db.query(
+            "SELECT amount FROM trade_reservations WHERE room_id = ? AND user_id = ?",
+            [roomId, userId]
+        );
+
+        if (!reservation.length) {
+            return res.status(400).json({ success: false, message: '거래 예약 내역이 없습니다.' });
+        }
+
+        const amount = reservation[0].amount;
+
+        await db.query('UPDATE user_info SET user_point = user_point + ? WHERE user_id = ?',
+            [amount, userId]
+        );
+
+        await db.query('DELETE FROM trade_reservations WHERE room_id = ? AND user_id = ?',
+            [roomId, userId]
+        );
+
+        res.json({ success: true, message: '거래 예약이 취소되었습니다.' });
+    } catch (error) {
+        console.error('Error cancelling reservation: ', error);
+        res.status(500).json({ success: false, message: '서버 오류' });
+    }
+};
+
+exports.getReservationCount = async (req, res) => {
+    const { roomId } = req.query;
+
+    try {
+        const [countResult] = await db.query(
+            "SELECT COUNT(*) AS count FROM trade_reservations WHERE room_id = ?",
+            [roomId]
+        );
+
+        res.json({ count: countResult[0].count });
+    } catch (error) {
+        console.error('Error getting reservation count: ', error);
+        res.status(500).json({ count: 0 });
     }
 };

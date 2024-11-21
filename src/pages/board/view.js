@@ -167,7 +167,17 @@ const checkCapacityStatus = async () => {
         const formattedIntPart = parseInt(intPart, 10).toLocaleString();
         const formattedPrice = `${formattedIntPart}.${decPart}`;
 
-        if (currentDate < startDate) {
+        const hasReservations = await checkReservations();
+        console.log(hasReservations);
+
+        if (hasReservations) {
+            if (participationBtn) {
+                participationBtn.innerHTML = `<div id="participate">모집 완료</div>`;
+                participationBtn.style.backgroundColor = 'grey';
+                participationBtn.style.pointerEvents = 'none';
+                document.querySelector(".current-capacity").style.color = "grey";
+            }
+        } else if (currentDate < startDate) {
             participationBtn.innerHTML = `
                 <div id="price-container">인당 <span id="price">${formattedPrice}</span>원씩 부담하면 돼요!</div>
                 <div id="participate">모집 예정</div>
@@ -195,7 +205,30 @@ const checkCapacityStatus = async () => {
     }
 };
 
-document.addEventListener("DOMContentLoaded", () => {
+// 게시글 예약 상태 확인
+const checkReservations = async () => {
+    try {
+        const response = await fetch(`/api/post/has-reservations/${index + 1}`);
+        if (!response.ok) {
+            throw new Error('Failed to fetch reservation status');
+        }
+        const data = await response.json();
+        return data.hasReservations;
+    } catch (error) {
+        console.error('예약 상태 확인 중 오류 발생: ', error);
+        return false;
+    }
+};
+
+document.addEventListener("DOMContentLoaded", async () => {
+    const hasReservations = await checkReservations();
+    if (hasReservations) {
+        const buttonContainer = document.querySelector(".button-container");
+        if (buttonContainer) {
+            buttonContainer.style.display = 'none';
+        }
+    }
+
     fetchBoardDetails().then(() => {
         checkCapacityStatus();    // 로드 시 상태 확인
         participationBtn.removeEventListener("click", handleParticipation);
@@ -314,3 +347,12 @@ const handleParticipation = async (event) => {
         }
     }
 };
+
+// const socket = io();
+// socket.on("tradeStarted", ({ roomId }) => {
+//     if (participationBtn) {
+//         participationBtn.innerHTML = `<div id="participate">모집 완료</div>`;
+//         participationBtn.style.backgroundColor = 'grey';
+//         participationBtn.style.pointerEvents = 'none';
+//     }
+// });

@@ -5,6 +5,10 @@ const chatBox = document.querySelector('.chat-area');
 const userCount = document.querySelector('.user-count');
 const chatTitle = document.querySelector('.chat-title');
 const leaveBtn = document.querySelector('.leave-room-btn');
+const menuButton = document.querySelector('.menu-button');
+const chatInputArea = document.querySelector('.chat-input-area');
+const bottomMenu = document.querySelector('.bottom-menu');
+const confirmBtn = document.querySelector('.confirm-button');
 
 const fetchUserCount = async () => {
   try {
@@ -86,22 +90,128 @@ const fetchPostById = async () => {
     console.error('Error fetching post: ', error);
     return [];
   }
-}
+};
+
+const startTrade = async () => {
+  try {
+    const response = await fetch('/api/chat/start-trade', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ roomId })
+    });
+
+    if (response.ok) {
+      const systemMessage = document.createElement('div');
+      systemMessage.classList.add('message', 'system-message');
+      systemMessage.innerText = '거래가 시작됩니다.';
+      chatBox.appendChild(systemMessage);
+      chatBox.scrollTop = chatBox.scrollHeight;
+
+      const tradeBtn = document.querySelector('.trade-button');
+      tradeBtn.disabled = true;
+
+      socket.emit('tradeStarted', { roomId });
+    } else {
+      console.error('거래 시작 실패: ', await response.text());
+    }
+  } catch (error) {
+    console.error('Error starting trade: ', error);
+  }
+};
+
+const updateReservationButton = async () => {
+  const getUserId = await fetchUserId();
+  const userId = getUserId.userId;
+  const getPostInfo = await fetchPostById();
+  const writerId = getPostInfo.user_id;
+  const HIDDEN_CLASS_NAME = 'hidden';
+
+  const tradeBtn = document.querySelector('.trade-button');
+
+  const checkReservationStatus = async () => {
+    const response = await fetch(`/api/chat/check-reservation?roomId=${roomId}&userId=${userId}`);
+    const { reserved } = await response.json();
+    return reserved;
+  };
+
+  const getReservationCount = async () => {
+    const response = await fetch(`/api/chat/get-reservation-count?roomId=${roomId}`);
+    const { count } = await response.json();
+    return count;
+  }
+
+  if (writerId === userId) {
+    const reservationCount = await getReservationCount();
+    const currentCapacity = getPostInfo.current_capacity;
+
+    if (reservationCount + 1 === currentCapacity) {
+      tradeBtn.classList.remove(HIDDEN_CLASS_NAME);
+      tradeBtn.innerText = '거래 진행';
+      tradeBtn.onclick = async () => {
+        await startTrade();
+      };
+    } else {
+      tradeBtn.classList.add(HIDDEN_CLASS_NAME);
+    }
+
+    leaveBtn.classList.add(HIDDEN_CLASS_NAME);
+  } else {
+    const isReserved = await checkReservationStatus();
+    
+    if (isReserved) {
+      tradeBtn.innerText = '예약 취소';
+      leaveBtn.classList.add(HIDDEN_CLASS_NAME);
+      tradeBtn.onclick = async () => {
+        const response = await fetch('/api/chat/cancel-reservation', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ roomId, userId })
+        });
+
+        if (response.ok) {
+          await updateReservationButton();
+        }
+      };
+    } else {
+      tradeBtn.innerText = '거래 예약';
+      leaveBtn.classList.remove(HIDDEN_CLASS_NAME);
+      tradeBtn.onclick = async () => {
+        const response = await fetch('/api/chat/reserve-trade', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ roomId, userId })
+        });
+
+        if (response.ok) {
+          await updateReservationButton();
+        }
+      };
+    }
+  }
+};
+
+const syncTradeStatus = async () => {
+  socket.emit("getTradeStatus", { roomId }, (isTradeStarted) => {
+      const tradeBtn = document.querySelector('.trade-button');
+      if (isTradeStarted) {
+          // 거래 진행 상태일 경우 버튼 비활성화
+          if (tradeBtn) tradeBtn.disabled = true;
+          leaveBtn.classList.add("hidden"); // 나가기 버튼 숨기기
+      } else {
+          // 거래 미진행 상태일 경우 버튼 활성화
+          if (tradeBtn) tradeBtn.disabled = false;
+          leaveBtn.classList.remove("hidden"); // 나가기 버튼 보이기
+      }
+  });
+};
 
 document.addEventListener("DOMContentLoaded", async () => {
   const getUserCount = await fetchUserCount();
   userCount.innerText = getUserCount;
   const getUserId = await fetchUserId();
   const userId = getUserId.userId;
-  const getPostInfo = await fetchPostById();
-  const postTitle = getPostInfo.title;
-  const HIDDEN_CLASS_NAME = 'hidden';
 
-  chatTitle.innerText = postTitle;
-
-  if (getPostInfo.user_id === userId) {
-    leaveBtn.classList.add(HIDDEN_CLASS_NAME);
-  }
+  chatTitle.innerText = (await fetchPostById()).title;
 
   const messages = await fetchMessages();
   messages.forEach((message) => {
@@ -129,7 +239,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 
   chatBox.scrollTop = chatBox.scrollHeight;
-})
+  await syncTradeStatus(); // 거래 상태 동기화
+  await updateReservationButton();
+});
 
 const socket = io(); // 소켓 초기화 (서버 연결)
 
@@ -176,6 +288,29 @@ sendMessageBtn.addEventListener('click', async () => {
   } 
 });
 
+menuButton.addEventListener('click', () => {
+  const HIDDEN_CLASS_NAME = "hidden";
+  const MENU_OPEN_CLASS_NAME = "menu-open";
+  const isMenuOpen = bottomMenu.classList.contains(HIDDEN_CLASS_NAME);
+
+  if (isMenuOpen) {
+    bottomMenu.classList.remove(HIDDEN_CLASS_NAME);
+    chatInputArea.classList.add(MENU_OPEN_CLASS_NAME);
+    document.querySelector('#menuIcon').classList.add('x-icon');
+    const bottomMenuHeight = bottomMenu.offsetHeight;
+    // 메뉴 보이기
+    bottomMenu.style.transform = 'translateY(0)';
+    chatInputArea.style.transform = `translateY(-${bottomMenuHeight}px)`; // chat-input-area 이동
+  } else {
+    bottomMenu.classList.add(HIDDEN_CLASS_NAME);
+    chatInputArea.classList.remove(MENU_OPEN_CLASS_NAME);
+    document.querySelector('#menuIcon').classList.remove('x-icon');
+    // 메뉴 숨기기
+    bottomMenu.style.transform = 'translateY(100%)';
+    chatInputArea.style.transform = 'translateY(0)'; // 원래 위치로 복구
+  }
+})
+
 // Enter 키로 메시지 전송
 messageInput.addEventListener('keypress', (event) => {
   if (event.key === 'Enter') {
@@ -217,4 +352,15 @@ socket.on('userLeft', ({ message }) => {
   messageElement.innerText = message;
   chatBox.appendChild(messageElement);
   chatBox.scrollTop = chatBox.scrollHeight;
-})
+});
+
+socket.on('tradeStarted', ({ roomId }) => {
+  // const systemMessage = document.createElement('div');
+  // systemMessage.classList.add('message', 'system-messsage');
+  // systemMessage.innerText = '거래가 시작됩니다.';
+  // chatBox.appendChild(systemMessage);
+  // chatBox.scrollTop = chatBox.scrollHeight;
+  // console.log(document.querySelector('.trade-button'));
+
+  if (document.querySelector('.trade-button')) document.querySelector('.trade-button').disabled = true;
+});

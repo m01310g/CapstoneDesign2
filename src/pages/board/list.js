@@ -4,9 +4,7 @@ const selectedSubCategory = params.get("subCategory") || "전체";
 const searchKeyword = params.get("search");
 const departureKeyword = params.get("departure");
 const destinationKeyword = params.get("destination");
-//
 const postUserId = params.get("userId");
-//
 
 let category = "";
 
@@ -54,6 +52,21 @@ const fetchData = async () => {
     }
 };
 
+// 게시글 예약 상태 확인
+const checkReservations = async () => {
+    try {
+        const response = await fetch(`/api/post/has-reservations/${index + 1}`);
+        if (!response.ok) {
+            throw new Error('Failed to fetch reservation status');
+        }
+        const data = await response.json();
+        return data.hasReservations;
+    } catch (error) {
+        console.error('예약 상태 확인 중 오류 발생: ', error);
+        return false;
+    }
+};
+
 // 게시글 템플릿
 const template = (objValue) => {
     const currentDate = new Date();
@@ -69,14 +82,17 @@ const template = (objValue) => {
     let statusText = "";
     let statusClass = "";
 
-    if (currentDate < startDate) {
+    if (objValue.is_trade_active === 1) {
+        statusText = "모집 완료";
+        statusClass = "status-pending";
+    } else if (currentDate < startDate) {
         statusText = "모집 예정";
         statusClass = "status-pending";
     } else if ((currentDate >= startDate && currentDate <= endDate) && (currentCapacity < maxCapacity)) {
         statusText = "모집 중";
         statusClass = "status-active";
     } else if ((currentDate > endDate) || (currentCapacity === maxCapacity)) {
-        statusText = "모집 완료";
+        statusText = "모집 마감";
         statusClass = "status-closed";
     }
 
