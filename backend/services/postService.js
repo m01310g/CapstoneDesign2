@@ -56,16 +56,27 @@ exports.writePost = async (req, res) => {
 
 // 게시물 목록 반환
 exports.returnPost = async (req, res) => {
-  // const { category, subCategory } = req.query;
   const category = decodeFromBase64(req.query.category);
   const subCategory = decodeFromBase64(req.query.subCategory);
   const limit = parseInt(req.query.limit);
 
-  let query = `SELECT * FROM post_list WHERE category = ?`;
+  let query = `
+    SELECT 
+      post_list.*, 
+      chat_rooms.is_trade_active 
+    FROM 
+      post_list
+    LEFT JOIN 
+      chat_rooms 
+    ON 
+      post_list.post_index = chat_rooms.post_index
+    WHERE 
+      post_list.category = ?
+  `;
   let params = [category];
 
   if (subCategory !== '전체') {
-    query += ' AND sub_category = ?';
+    query += ' AND post_list.sub_category = ?';
     params.push(subCategory);
   }
 
@@ -83,6 +94,37 @@ exports.returnPost = async (req, res) => {
     return res.status(500).send("Database query error");
   }
 };
+
+
+// // 게시물 목록 반환
+// exports.returnPost = async (req, res) => {
+//   // const { category, subCategory } = req.query;
+//   const category = decodeFromBase64(req.query.category);
+//   const subCategory = decodeFromBase64(req.query.subCategory);
+//   const limit = parseInt(req.query.limit);
+
+//   let query = `SELECT * FROM post_list WHERE category = ?`;
+//   let params = [category];
+
+//   if (subCategory !== '전체') {
+//     query += ' AND sub_category = ?';
+//     params.push(subCategory);
+//   }
+
+//   // limit이 유효한 경우 LIMIT 조건 추가
+//   if (!isNaN(limit) && limit > 0) {
+//     query += ' LIMIT ?';
+//     params.push(limit); // LIMIT 값 추가
+//   }
+
+//   try {
+//     const [result] = await db.query(query, params);
+//     res.json(result);
+//   } catch (err) {
+//     console.error(err);
+//     return res.status(500).send("Database query error");
+//   }
+// };
 
 // 참여 버튼 클릭시 게시물의 current_capacity 업데이트하는 엔드포인트
 exports.updateCurrentCapacity = async (req, res) => {
@@ -185,4 +227,17 @@ exports.deletePost = async (req, res) => {
       console.error("게시글 삭제 중 오류 발생: ", error);
       res.status(500).json({ message: "게시글 삭제 중 오류가 발생했습니다." });
     }
+};
+
+exports.getReservationStatus = async (req, res) => {
+  const { postId } = req.params;
+
+  try {
+    const [reservationResult] = await db.query('SELECT is_trade_active FROM chat_rooms WHERE post_index = ?', [postId]);
+    const hasReservations = reservationResult[0].is_trade_active === 1;
+    res.json({ hasReservations });
+  } catch (error) {
+    console.error('Error checking reservations: ', error);
+    res.status(500).json({ success: false, message: '서버 오류' });
+  }
 };

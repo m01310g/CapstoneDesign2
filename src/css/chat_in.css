@@ -21,6 +21,7 @@ body, html {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     height: 100vh;
     position: relative;
+    overflow: hidden;
 }
 
 /* 채팅방 헤더 */
@@ -156,7 +157,7 @@ body, html {
 .menu-list {
     display: none;
     background-color: #f0f0f0;
-    padding: 10px;
+    padding: 1rem;
     position: absolute;
     bottom: 0;
     width: 100%;
@@ -170,41 +171,40 @@ body, html {
 }
 
 .menu-icon, .send-icon {
-    width: 24px;
-    height: 24px;
+    width: 1.5rem;
+    height: 1.5rem;
 }
 
 /* 하단 메뉴 */
 .bottom-menu {
-    display: flex;
     background-color: #e0e0e0;
-    padding: 15px;
+    padding: 1rem;
     position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
-    display: flex;
+    /* display: flex; */
     justify-content: space-around;
     border-top: 1px solid #ddd;
-    border-radius: 20px 20px 0 0;
     transition: transform 0.3s ease-out;
     transform: translateY(100%);
     max-width: 37rem;
     width: 100%;
     margin:0 auto;
     box-sizing: border-box;
+    height: 20rem;
 }
 
-.bottom-menu-item {
+.menu-item {
     background-color: #f0f0f0;
     border-radius: 50%;
-    padding: 10px;
-    font-size: 14px;
+    padding: 1rem;
+    font-size: 1rem;
     border: 1px solid #ddd;
     cursor: pointer;
 }
 
-.bottom-menu-item:hover {
+.menu-item:hover {
         background-color: #f7b500;
 }
 

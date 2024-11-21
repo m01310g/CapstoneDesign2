@@ -1,4 +1,5 @@
 const socketIo = require("socket.io");
+const roomTradeStatus = {}; // { roomId: true/false }
 
 module.exports = (server) => {
     const io = socketIo(server);
@@ -38,6 +39,19 @@ module.exports = (server) => {
             io.to(roomId).emit("userLeft", {message: `${userNickname}님이 채팅방을 나갔습니다.`});
 
             socket.leave(roomId);
+        });
+
+        // 거래 시작 이벤트 처리
+        socket.on("tradeStarted", ({ roomId }) => {
+            roomTradeStatus[roomId] = true; // 거래 시작 상태 저장
+            io.to(roomId).emit("tradeStarted", { roomId });
+            console.log(`거래 시작 이벤트 전송: roomId ${roomId}`);
+        });
+
+        // 거래 상태 요청
+        socket.on("getTradeStatus", ({ roomId }, callback) => {
+            const isTradeStarted = roomTradeStatus[roomId] || false;
+            callback(isTradeStarted);
         });
     });
     return io;
