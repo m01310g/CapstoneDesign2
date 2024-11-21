@@ -132,6 +132,26 @@ input[type='checkbox'] {
   padding-right: 10px;
 }
 
+#modal-body > div {
+  position: relative;
+  left: 0.4rem;
+  padding-bottom: 0.25rem;
+}
+
+.tos-detail-title {
+  position: relative;
+  left: 0 !important;
+  font-size: 1.1rem;
+  font-weight: 600;
+  padding-top: 1rem;
+}
+
+.number-four-dot,
+#number-three-exception {
+  position: relative;
+  left: 1.2rem !important;
+}
+
 @media screen and (max-width: 430px) {
   #modal-content {
     max-width: 22rem; /* 모달 창 너비 */
