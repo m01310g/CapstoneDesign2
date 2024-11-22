@@ -15,5 +15,9 @@ router.post('/api/chat/start-trade', chatService.startTrade);
 router.get('/api/chat/check-reservation', chatService.checkReservationStatus);
 router.post('/api/chat/cancel-reservation', chatService.cancelReservation);
 router.get('/api/chat/get-reservation-count', chatService.getReservationCount);
+router.post('/api/chat/confirm-payment', chatService.confirmPayment);
+router.get('/api/chat/check-trade-status', chatService.checkTradeStatus);
+router.get('/api/chat/get-payment-status', chatService.getPaymentStatus);
+router.get('/api/chat/user-confirmed', chatService.userConfirmed);
 
 module.exports = router;

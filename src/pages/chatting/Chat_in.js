@@ -8,7 +8,7 @@ const leaveBtn = document.querySelector('.leave-room-btn');
 const menuButton = document.querySelector('.menu-button');
 const chatInputArea = document.querySelector('.chat-input-area');
 const bottomMenu = document.querySelector('.bottom-menu');
-const confirmBtn = document.querySelector('.confirm-button');
+const confirmButton = document.querySelector('.confirm-button');
 
 const fetchUserCount = async () => {
   try {
@@ -144,7 +144,7 @@ const updateReservationButton = async () => {
     const reservationCount = await getReservationCount();
     const currentCapacity = getPostInfo.current_capacity;
 
-    if (reservationCount + 1 === currentCapacity) {
+    if ((reservationCount + 1 === currentCapacity) && currentCapacity !== 1) {
       tradeBtn.classList.remove(HIDDEN_CLASS_NAME);
       tradeBtn.innerText = '거래 진행';
       tradeBtn.onclick = async () => {
@@ -157,6 +157,7 @@ const updateReservationButton = async () => {
     leaveBtn.classList.add(HIDDEN_CLASS_NAME);
   } else {
     const isReserved = await checkReservationStatus();
+    console.log(isReserved);
     
     if (isReserved) {
       tradeBtn.innerText = '예약 취소';
@@ -174,6 +175,7 @@ const updateReservationButton = async () => {
       };
     } else {
       tradeBtn.innerText = '거래 예약';
+      tradeBtn.disabled = false;
       leaveBtn.classList.remove(HIDDEN_CLASS_NAME);
       tradeBtn.onclick = async () => {
         const response = await fetch('/api/chat/reserve-trade', {
@@ -191,18 +193,74 @@ const updateReservationButton = async () => {
 };
 
 const syncTradeStatus = async () => {
-  socket.emit("getTradeStatus", { roomId }, (isTradeStarted) => {
-      const tradeBtn = document.querySelector('.trade-button');
-      if (isTradeStarted) {
-          // 거래 진행 상태일 경우 버튼 비활성화
-          if (tradeBtn) tradeBtn.disabled = true;
-          leaveBtn.classList.add("hidden"); // 나가기 버튼 숨기기
-      } else {
-          // 거래 미진행 상태일 경우 버튼 활성화
-          if (tradeBtn) tradeBtn.disabled = false;
-          leaveBtn.classList.remove("hidden"); // 나가기 버튼 보이기
+  // socket.emit("getTradeStatus", { roomId }, (isTradeStarted) => {
+  //     const tradeBtn = document.querySelector('.trade-button');
+  //     if (isTradeStarted) {
+  //         // 거래 진행 상태일 경우 버튼 비활성화
+  //         if (tradeBtn) tradeBtn.disabled = true;
+  //         leaveBtn.classList.add("hidden"); // 나가기 버튼 숨기기
+  //     } else {
+  //         // 거래 미진행 상태일 경우 버튼 활성화
+  //         if (tradeBtn) tradeBtn.disabled = false;
+  //         leaveBtn.classList.remove("hidden"); // 나가기 버튼 보이기
+  //     }
+  // });
+  try {
+    const response = await fetch(`/api/chat/check-trade-status?roomId=${roomId}`);
+    if (!response.ok) {
+      console.error('Failed to fetch trade status: ', response.statusText);
+      return null;
+    }
+    const isTradeStarted = await response.json();
+    const tradeBtn = document.querySelector('.trade-button');
+    if (isTradeStarted.isTradeStarted) {
+      // 거래 진행 상태일 경우 버튼 비활성화
+      if (tradeBtn) tradeBtn.disabled = true;
+      confirmButton.classList.remove('hidden');
+      leaveBtn.classList.add("hidden"); // 나가기 버튼 숨기기
+    } else {
+      // 거래 미진행 상태일 경우 버튼 활성화
+      if (tradeBtn) tradeBtn.disabled = false;
+      confirmButton.classList.add('hidden');
+      leaveBtn.classList.remove("hidden"); // 나가기 버튼 보이기
+    }
+  } catch (error) {
+    console.error('Error fetching trade status: ', error);
+    return null;
+  }
+};
+
+const confirmPayment = async () => {
+  const getUserId = await fetchUserId();
+  const userId = getUserId.userId;
+  const getPostInfo = await fetchPostById();
+  const writerId = getPostInfo.user_id;
+
+  if (userId === writerId) {
+    confirmButton.classList.add('hidden');
+    return;
+  }
+  // confirmButton.innerText = '확인';
+  // confirmButton.classList.remove('hidden');
+  confirmButton.addEventListener('click', async () => {
+      try {
+          const response = await fetch('/api/chat/confirm-payment',{
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ roomId, userId })
+          });
+
+          if (response.ok) {
+              alert('결제 확인을 완료했습니다.');
+              confirmButton.disabled = true;
+          } else {
+              alert('결제 확인에 실패했습니다.');
+          }
+      } catch (error) {
+          console.error('Error confirming payment: ', error);
       }
   });
+  document.querySelector('.bottom-menu').appendChild(confirmButton);
 };
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -212,6 +270,16 @@ document.addEventListener("DOMContentLoaded", async () => {
   const userId = getUserId.userId;
 
   chatTitle.innerText = (await fetchPostById()).title;
+  await confirmPayment(roomId, userId);
+
+  const userResponse = await fetch(`/api/chat/user-confirmed?roomId=${roomId}&userId=${userId}`);
+  if (userResponse.ok) {
+    const result = await userResponse.json();
+    if (result.userConfirmed === 1) {
+      confirmButton.classList.remove('hidden');
+      confirmButton.disabled = true;
+    }
+  }
 
   const messages = await fetchMessages();
   messages.forEach((message) => {
@@ -355,12 +423,5 @@ socket.on('userLeft', ({ message }) => {
 });
 
 socket.on('tradeStarted', ({ roomId }) => {
-  // const systemMessage = document.createElement('div');
-  // systemMessage.classList.add('message', 'system-messsage');
-  // systemMessage.innerText = '거래가 시작됩니다.';
-  // chatBox.appendChild(systemMessage);
-  // chatBox.scrollTop = chatBox.scrollHeight;
-  // console.log(document.querySelector('.trade-button'));
-
   if (document.querySelector('.trade-button')) document.querySelector('.trade-button').disabled = true;
 });
