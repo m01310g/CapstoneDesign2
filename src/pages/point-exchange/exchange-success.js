@@ -19,6 +19,5 @@ document.addEventListener('DOMContentLoaded', () => {
   // "확인" 버튼 클릭 시 루트로 리다이렉트
   document.querySelector("#next-btn").addEventListener("click", () => {
     window.location.href = '/';
-    alert("asd");
   });
 });
