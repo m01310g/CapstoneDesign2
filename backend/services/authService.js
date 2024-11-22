@@ -259,7 +259,7 @@ exports.getSessionUserId = async (req, res) => {
 exports.getSessionUserInfo = async (req, res) => {
   if (req.session.isLogined) {
     // 로그인 상태라면
-    const query = 'SELECT user_nickname, user_point, user_penalty, user_email FROM user_info WHERE user_id = ?';
+    const query = 'SELECT user_nickname, user_point, user_penalty, user_email, sent_money FROM user_info WHERE user_id = ?';
 
     try {
       const [result] = await db.query(query, [req.session.userId]);
@@ -270,13 +270,15 @@ exports.getSessionUserInfo = async (req, res) => {
         const userPoint = result[0].user_point;
         const userPenalty = result[0].user_penalty;
         const userEmail = result[0].user_email;
+        const sentMoney = result[0].sent_money;
 
         // JSON 형태로 응답
         res.json({
           userNickname,
           userPoint,
           userPenalty,
-          userEmail
+          userEmail,
+          sentMoney
         });
       } else {
         res.status(404).json({ message: "User not found" });
