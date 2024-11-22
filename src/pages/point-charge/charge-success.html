@@ -5,17 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CO/N</title>
     <link rel="stylesheet" href="../../css/style.css"/>
-    <link rel="stylesheet" href="../../css/point.css"/>
+    <link rel="stylesheet" href="../../css/charge-success.css">
 </head>
 
 <body>
   <div class="body-container">
     <div class="box-body">
-        <a href="/my-page">X</a>
-
-        <h1>포인트가 성공적으로 충전되었습니다</h1>
-
+      <header class="page-header">
+        <a href="/">
+          <img src="/img/back-icon.png">
+        </a>
+      </header>
+      <main class="page-main">
+        <div id="logo-container">
+          <img class="logo" src="/img/logo.jpg" />
+        </div>
+        <div id="charged-msg">
+          <div>포인트 충전이 완료되었습니다!</div>
+          <div id="charged-point">현재 포인트: <span id="point">10000</span>포인트</div>
+        </div>
+        <button type="button" id="next-btn">확인</button>
+      </main>
     </div>
   </div>
+  <script src="/charge-success.js"></script>
 </body>
 </html>
