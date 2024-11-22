@@ -64,3 +64,20 @@
   bottom: 0.5rem;
   z-index: 10;
 }
+
+#msg, #charged-point, img[class='logo'] {
+  display: inline-block;
+  opacity: 0;
+  animation: fadeInText 1.25s forwards; /* 텍스트 애니메이션 */
+}
+
+@keyframes fadeInText {
+  0% {
+    opacity: 0;
+    transform: translateX(-20px); /* 왼쪽에서 살짝 밀리며 나타남 */
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0); /* 원래 위치로 돌아옴 */
+  }
+}
