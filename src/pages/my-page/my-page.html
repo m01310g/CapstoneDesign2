@@ -30,21 +30,38 @@
       <div id="point-info">
         <div id="available-point">
           <div>보유 포인트</div>
-          <div id="user-point">45,404pt</div>
+          <div id="user-point">45,404 포인트</div>
         </div>
         <div id="exchange-point-anchor">
           <div>
-            <a href="/point-charge">충전 |</a><a href="/point-exchange">&nbsp;환전</a>
+            <img src="/img/arrow-down.png" class="expand-icon" style="cursor: pointer;">
+            <!-- <a href="/point-charge">충전 |</a><a href="/point-exchange">&nbsp;환전</a> -->
           </div>
         </div>
       </div>
-      <hr class="divider-two">
+      <div id="expanded-point-anchor" class="hidden">
+        <div id="point-anchor-one">
+          <span>포인트 충전</span>
+          <a href="/point-charge">
+            <img class="next-icon" src="/img/back-icon.png">
+          </a>
+        </div>
+        <div id="ponint-anchor-two">
+          <span>포인트 환전</span>
+          <a href="/point-exchange">
+            <img class="next-icon" src="/img/back-icon.png">
+          </a>
+        </div>
+      </div>
+      <hr class="divider">
       <main class="page-main">
         <!-- 별점 기능 추가 시 추가 -->
         <div id="my-post-info-container">
           <span>작성 게시글</span>
           <div id="my-post">
-            <a href="/my-post" id="my-post-anchor">보러 가기</a>
+            <a href="/my-post">
+              <img class="next-icon" src="/img/back-icon.png">
+            </a>
           </div>
         </div>
       </main>
