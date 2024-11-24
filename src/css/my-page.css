@@ -6,6 +6,55 @@
   margin: 0 !important;
 }
 
+.hidden {
+  display: none;
+}
+
+img[class='expand-icon'] {
+  width: 1rem;
+}
+
+img[class='next-icon'] {
+  position: relative;
+  width: 0.7rem;
+  transform: scaleX(-1);
+}
+
+#expanded-point-anchor {
+  opacity: 0;  /* 기본적으로 투명 상태 */
+  max-height: 0;  /* 기본적으로 높이를 0으로 설정하여 보이지 않도록 함 */
+  overflow: hidden;  /* 콘텐츠가 보이지 않도록 숨김 */
+  transition: opacity 0.3s ease-out, max-height 0.5s ease-out;  /* opacity와 max-height에 대한 애니메이션 효과 */
+}
+
+
+#expanded-point-anchor div {
+  display: flex;
+  justify-content: space-between;
+  background-color: rgba(239, 239, 239, 0.7);
+}
+
+#point-anchor-one {
+  padding-top: 0.7rem;
+  padding-bottom: 0.5rem;
+}
+
+#ponint-anchor-two {
+  padding-top: 0.5rem;
+  padding-bottom: 0.7rem;
+  /* border-bottom: 1px solid rgba(127, 127, 127, 0.52); */
+}
+
+#expanded-point-anchor span {
+  position: relative;
+  left: 1rem;
+}
+
+#expanded-point-anchor a {
+  position: relative;
+  right: 1rem;
+}
+
 #my-info-title {
   font-size: 1.1rem;
   font-weight: 600;
@@ -101,9 +150,9 @@ a:active {
 
 .divider-two {
   border: none;
-  border-top: 1px solid rgba(127, 127, 127, 0.5);
-  margin-left: 0.6rem;
-  margin-right: 0.6rem;
+  border-top: 1px solid rgba(127, 127, 127, 0.2);
+  margin-left: 0.9rem;
+  margin-right: 0.9rem;
 }
 
 #point-info {
