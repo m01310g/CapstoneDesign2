@@ -19,5 +19,7 @@ router.post('/api/chat/confirm-payment', chatService.confirmPayment);
 router.get('/api/chat/check-trade-status', chatService.checkTradeStatus);
 router.get('/api/chat/get-payment-status', chatService.getPaymentStatus);
 router.get('/api/chat/user-confirmed', chatService.userConfirmed);
+router.post('/api/chat/update-reservation-amounts', chatService.updateReservationAmounts);
+// router.post('/api/chat/add-default-reservation', chatService.addDefaultReservation);
 
 module.exports = router;

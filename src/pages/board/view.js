@@ -79,7 +79,7 @@ const renderBoardDetails = async (data) => {
         locationDiv.innerText = `${departureText} ➡️ ${destinationText}`;
     } else {
         const locationText = data.location.replace(/"/g,"");
-        console.log(locationText);
+        locationDiv.innerText = `수령지: ${locationText}`
     }
 };
 
@@ -162,7 +162,7 @@ const checkCapacityStatus = async () => {
         const startDate = parseDate(data.start_date);
         const endDate = parseDate(data.end_date);
         const currentDate = new Date();
-        const price = (data.price / data.max_capacity).toFixed(2);
+        const price = (data.price / (parseInt(currentCapacity) + 1)).toFixed(2);
         const [intPart, decPart] = price.split(".");
         const formattedIntPart = parseInt(intPart, 10).toLocaleString();
         const formattedPrice = `${formattedIntPart}.${decPart}`;
@@ -179,7 +179,7 @@ const checkCapacityStatus = async () => {
             }
         } else if (currentDate < startDate) {
             participationBtn.innerHTML = `
-                <div id="price-container">인당 <span id="price">${formattedPrice}</span>원씩 부담하면 돼요!</div>
+                <div id="price-container">지금 참여하면 인당 <span id="price">${formattedPrice}</span>원씩 부담하면 돼요!</div>
                 <div id="participate">모집 예정</div>
             `;
             participationBtn.style.backgroundColor = "grey";
