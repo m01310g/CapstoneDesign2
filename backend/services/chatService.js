@@ -376,61 +376,6 @@ const calculatePoints = async (roomId) => {
     }
 };
 
-exports.confirmPayment = async (req, res) => {
-    const { roomId, userId } = req.body;
-    
-    try {
-        const [userInfo] = await db.query(
-            'SELECT user_point FROM user_info WHERE user_id = ?',
-            [userId]
-        );
-
-        const [reservationInfo] = await db.query(
-            'SELECT additional_amount FROM trade_reservations WHERE room_id = ? AND user_id = ?',
-            [roomId, userId]
-        );
-
-        const userPoint = userInfo[0].user_point;
-        const amountToDeduct = reservationInfo[0].additional_amount;
-
-        // 포인트 부족 여부 확인
-        if (userPoint < amountToDeduct) {
-            return res.status(400).json({ success: false, message: '포인트 충전이 필요합니다.' });
-        }
-
-        // 포인트 차감
-        await db.query(
-            'UPDATE user_info SET user_point = user_point - ? WHERE user_id = ?',
-            [amountToDeduct, userId]
-        );
-
-        // 참여자 확인 상태 업데이트
-        await db.query(
-            'UPDATE participations SET confirmed = true WHERE post_id = ? AND user_id = ?',
-            [roomId, userId]
-        );
-
-        const allConfirmed = await isAllConfirmed(roomId);
-        if (allConfirmed) {
-            // 모든 참여자가 확인했으면 시스템 메시지 저장
-            const systemMessage = '모든 참여자가 결제 내역을 확인했습니다.';
-            await db.query(
-                'INSERT INTO chat_messages (chat_room_id, sender_id, sender_nickname, message, message_type) VALUES (?, ?, ?, ?, ?)',
-                [roomId, 'system', 'system', systemMessage, 'system']
-            );
-
-            // 방장에게 포인트 지급 로직 추가
-            const hostId = await getHostId(roomId);
-            const points = await calculatePoints(roomId);
-            await updatePoints(hostId, points);
-        }
-        res.json({ success: true, allConfirmed });
-    } catch (error) {
-        console.error('Error confirming payment: ', error);
-        res.status(500).json({ success: false, message: '서버 오류가 발생했습니다.' });
-    }
-};
-
 exports.getPaymentStatus = async (req, res) => {
     const { roomId } = req.query;
 
@@ -473,23 +418,22 @@ exports.updateReservationAmounts = async (req, res) => {
     const { roomId, additionalPrice } = req.body;
 
     try {
+        const [confirmedCheck] = await db.query(
+            'SELECT COUNT(*) AS confirmedCount FROM participations WHERE post_id = ? AND confirmed = true',
+            [roomId]
+        );
+
+        if (confirmedCheck[0].confirmedCount > 0) {
+            return res.status(400).json({ success: false });
+        }
+
         const [postInfo] = await db.query(
             'SELECT price, current_capacity FROM post_list WHERE post_index = ?',
             [roomId]
         );
 
         const { price, current_capacity } = postInfo[0];
-
-        // const [tradeStatus] = await db.query(
-        //     'SELECT is_trade_active FROM chat_rooms WHERE post_index = ?',
-        //     [roomId]
-        // );
-
-        // const isTradeActive = tradeStatus[0].is_trade_active;
-        // if (isTradeActive) {
-        //     return res.status(400).json({ success: false });
-        // }
-
+        
         if (!current_capacity || current_capacity <= 0) {
             return res.status(400).json({ success: false });
         }
@@ -511,5 +455,112 @@ exports.updateReservationAmounts = async (req, res) => {
     } catch (error) {
         console.error('Error updating reservation amounts: ', error);
         res.status(500).json({ success: false, message: '서버 오류가 발생했습니다.' });
+    }
+};
+
+exports.checkAnyConfirmed = async (req, res) => {
+    const { roomId } = req.query;
+
+    try {
+        const [result] = await db.query(
+            'SELECT COUNT(*) AS confirmedCount FROM participations WHERE post_id = ? AND confirmed = true',
+            [roomId]
+        );
+
+        const hasConfirmed = result[0].confirmedCount > 0;
+        res.json({ hasConfirmed });
+    } catch (eror) {
+        console.error('Error checking confirmed status: ', error);
+        res.status(500).json({ success: false, message: '서버 오류' });
+    }
+};
+
+exports.toggleConfirmedStatus = async (req, res) => {
+    const { roomId, userId } = req.body;
+
+    try {
+        const [result] = await db.query(
+            'SELECT confirmed FROM participations WHERE post_id = ? AND user_id = ?',
+            [roomId, userId]
+        );
+
+        if (!result.length) {
+            return res.status(404).json({ success: false });
+        }
+
+        const currentStatus = result[0].confirmed;
+        const newStatus = !currentStatus;
+        
+        const [userInfo] = await db.query(
+            'SELECT user_point FROM user_info WHERE user_id = ?',
+            [userId]
+        );
+
+        const [reservationInfo] = await db.query(
+            'SELECT additional_amount FROM trade_reservations WHERE room_id = ? AND user_id = ?',
+            [roomId, userId]
+        );
+
+        const userPoint = userInfo[0].user_point;
+        const amountToDeduct = reservationInfo[0]?.additional_amount;
+
+        if (newStatus && !currentStatus) {
+            // 확인 버튼 눌렀을 때 포인트 차감
+            if (userPoint < amountToDeduct) {
+                return res.status(400).json({ success: false, message: '포인트 충전이 필요합니다.' });
+            }
+            await db.query(
+                'UPDATE user_info SET user_point = user_point - ? WHERE user_id = ?',
+                [amountToDeduct, userId]
+            );
+        } else if (!newStatus && currentStatus) {
+            // 확인 취소 시 포인트 반환
+            await db.query(
+                'UPDATE user_info set user_point = user_point + ? WHERE user_id = ?',
+                [userId]
+            );
+        }
+
+        await db.query(
+            'UPDATE participations SET confirmed = ? WHERE post_id = ? AND user_id = ?',
+            [newStatus, roomId, userId]
+        );
+
+        // 모든 참여자가 확인했는지 검증
+        const allConfirmed = await isAllConfirmed(roomId);
+        if (allConfirmed) {
+            // 모든 참여자가 확인했으면 시스템 메시지 저장
+            const systemMessage = '모든 참여자가 결제 내역을 확인했습니다.';
+            await db.query(
+                'INSERT INTO chat_messages (chat_room_id, sender_id, sender_nickname, message, message_type) VALUES (?, ?, ?, ?, ?)',
+                [roomId, 'system', 'system', systemMessage, 'system']
+            );
+
+            // 방장에게 포인트 지급 로직 추가
+            const hostId = await getHostId(roomId);
+            const points = await calculatePoints(roomId);
+            await updatePoints(hostId, points);
+        }
+
+        res.json({ success: true, confirmed: newStatus, allConfirmed });
+    } catch (error) {
+        console.error('Error toggling confirmed status: ', error);
+        res.status(500).json({ success: false });
+    }
+};
+
+exports.checkAllConfirmed = async (req, res) => {
+    const { roomId } = req.query;
+
+    try {
+        const [result] = await db.query(
+            'SELECT COUNT(*) AS total, SUM(confirmed) AS confirmed FROM participations WHERE post_id = ?',
+            [roomId]
+        );
+
+        return parseInt(result[0].total) - 1 === parseInt(result[0].confirmed);
+    } catch (error) {
+        console.error('Error checking all confirmed status: ', error);
+        throw error;
     }
 };

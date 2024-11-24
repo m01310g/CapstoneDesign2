@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const chatService = require('../services/chatService');
+const { route } = require('./post');
 
 router.get('/api/chat/get-message', chatService.getMessages);
 router.post('/api/chat/send-message', chatService.sendMessage);
@@ -15,11 +16,12 @@ router.post('/api/chat/start-trade', chatService.startTrade);
 router.get('/api/chat/check-reservation', chatService.checkReservationStatus);
 router.post('/api/chat/cancel-reservation', chatService.cancelReservation);
 router.get('/api/chat/get-reservation-count', chatService.getReservationCount);
-router.post('/api/chat/confirm-payment', chatService.confirmPayment);
 router.get('/api/chat/check-trade-status', chatService.checkTradeStatus);
 router.get('/api/chat/get-payment-status', chatService.getPaymentStatus);
 router.get('/api/chat/user-confirmed', chatService.userConfirmed);
 router.post('/api/chat/update-reservation-amounts', chatService.updateReservationAmounts);
-// router.post('/api/chat/add-default-reservation', chatService.addDefaultReservation);
+router.get('/api/chat/check-any-confirmed', chatService.checkAnyConfirmed);
+router.post('/api/chat/toggle-confirmed-status', chatService.toggleConfirmedStatus);
+router.get('/api/chat/check-all-confirmed', chatService.checkAllConfirmed);
 
 module.exports = router;
