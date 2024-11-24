@@ -15,7 +15,6 @@ const fetchUserCount = async () => {
     const response = await fetch(`/api/chat/get-user-count?postId=${roomId}`);
     if (!response.ok) {
       console.error('Response not Ok:', response);
-      return null;
     }
     const data = await response.json();
     return data.userCount;
@@ -111,12 +110,43 @@ const startTrade = async () => {
       tradeBtn.disabled = true;
 
       socket.emit('tradeStarted', { roomId });
+
     } else {
       console.error('거래 시작 실패: ', await response.text());
     }
   } catch (error) {
     console.error('Error starting trade: ', error);
   }
+};
+
+const showAdditionalPriceButton = async () => {
+  const getPostInfo = await fetchPostById();
+  const writerId = getPostInfo.user_id;
+  const getUserId = await fetchUserId();
+  const userId = getUserId.userId;
+  
+  const hasConfirmed = await checkAnyConfirmed();
+  const additionalPriceBtn = document.querySelector('.additional-price-btn');
+
+  if (userId === writerId) {
+    additionalPriceBtn.classList.remove('hidden');
+    // 참여자 중 한명이라도 확인 버튼을 누를 경우
+    if (hasConfirmed) {
+      additionalPriceBtn.disabled = true;
+    } else {
+      additionalPriceBtn.disabled = false;
+      additionalPriceBtn.addEventListener('click', updateAdditionalPrice);
+      document.querySelector('.bottom-menu').appendChild(additionalPriceBtn);
+    }
+  }
+};
+
+const checkReservationStatus = async () => {
+  const getUserId = await fetchUserId();
+  const userId = getUserId.userId;
+  const response = await fetch(`/api/chat/check-reservation?roomId=${roomId}&userId=${userId}`);
+  const result = await response.json();
+  return result;
 };
 
 const updateReservationButton = async () => {
@@ -127,12 +157,6 @@ const updateReservationButton = async () => {
   const HIDDEN_CLASS_NAME = 'hidden';
 
   const tradeBtn = document.querySelector('.trade-button');
-
-  const checkReservationStatus = async () => {
-    const response = await fetch(`/api/chat/check-reservation?roomId=${roomId}&userId=${userId}`);
-    const { reserved } = await response.json();
-    return reserved;
-  };
 
   const getReservationCount = async () => {
     const response = await fetch(`/api/chat/get-reservation-count?roomId=${roomId}`);
@@ -157,9 +181,9 @@ const updateReservationButton = async () => {
     leaveBtn.classList.add(HIDDEN_CLASS_NAME);
   } else {
     const isReserved = await checkReservationStatus();
-    console.log(isReserved);
+    console.log(isReserved.reserved);
     
-    if (isReserved) {
+    if (isReserved.reserved) {
       tradeBtn.innerText = '예약 취소';
       leaveBtn.classList.add(HIDDEN_CLASS_NAME);
       tradeBtn.onclick = async () => {
@@ -193,18 +217,11 @@ const updateReservationButton = async () => {
 };
 
 const syncTradeStatus = async () => {
-  // socket.emit("getTradeStatus", { roomId }, (isTradeStarted) => {
-  //     const tradeBtn = document.querySelector('.trade-button');
-  //     if (isTradeStarted) {
-  //         // 거래 진행 상태일 경우 버튼 비활성화
-  //         if (tradeBtn) tradeBtn.disabled = true;
-  //         leaveBtn.classList.add("hidden"); // 나가기 버튼 숨기기
-  //     } else {
-  //         // 거래 미진행 상태일 경우 버튼 활성화
-  //         if (tradeBtn) tradeBtn.disabled = false;
-  //         leaveBtn.classList.remove("hidden"); // 나가기 버튼 보이기
-  //     }
-  // });
+  const getPostInfo = await fetchPostById();
+  const writerId = getPostInfo.user_id;
+  const getUserId = await fetchUserId();
+  const userId = getUserId.userId;
+
   try {
     const response = await fetch(`/api/chat/check-trade-status?roomId=${roomId}`);
     if (!response.ok) {
@@ -216,8 +233,9 @@ const syncTradeStatus = async () => {
     if (isTradeStarted.isTradeStarted) {
       // 거래 진행 상태일 경우 버튼 비활성화
       if (tradeBtn) tradeBtn.disabled = true;
-      confirmButton.classList.remove('hidden');
+      if (writerId !== userId) confirmButton.classList.remove('hidden');
       leaveBtn.classList.add("hidden"); // 나가기 버튼 숨기기
+      await showAdditionalPriceButton();
     } else {
       // 거래 미진행 상태일 경우 버튼 활성화
       if (tradeBtn) tradeBtn.disabled = false;
@@ -230,47 +248,99 @@ const syncTradeStatus = async () => {
   }
 };
 
-const confirmPayment = async () => {
+const toggleConfirmedStatus = async () => {
+  const getUserId = await fetchUserId();
+  const userId = getUserId.userId;
+  const getAmount = await checkReservationStatus();
+  const additionalAmount = getAmount.additionalAmount;
+  const originalAmount = getAmount.originalAmount;
+
+  try {
+    const confirmInput = confirm(`${additionalAmount}원이 추가되어 총 ${parseInt(originalAmount + additionalAmount)}포인트가 차감됩니다. `);
+    if (!confirmInput) return;
+    const response = await fetch('/api/chat/toggle-confirmed-status', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ roomId, userId })
+    });
+
+    if (!response.ok) {
+      return;
+    }
+
+    const { success, confirmed, allConfirmed } = await response.json();
+  
+    if (success) {
+      if (confirmed) {
+        confirmButton.innerText = '확인 취소';
+        alert('결제를 확인했습니다.');
+      } else {
+        confirmButton.innerText = '확인';
+        alert('취소되었습니다.');
+      }
+    }
+
+    confirmButton.disabled = allConfirmed;
+
+    // confirmButton.disabled = false;
+  } catch (error) {
+    console.error('Error toggling confirmed status: ', error);
+  }
+};
+
+const updateAdditionalPrice = async () => {
+  const additionalPrice = parseInt(prompt('추가 금액을 입력하세요: '));
+  if (isNaN(additionalPrice)) {
+    alert('유효한 금액을 입력하세요.');
+    return;
+  }
+
+  const confirmInput = confirm(`입력한 추가 금액은 ${additionalPrice}원입니다. 적용하시겠습니까?`);
+  if (!confirmInput) {
+    alert('추가 금액 입력이 취소되었습니다.');
+    return;
+  }
+
+  try {
+    const response = await fetch('/api/chat/update-reservation-amounts', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ roomId, additionalPrice: parseInt(additionalPrice, 10) })
+    });
+    const result = await response.json();
+    if (!response.ok) {
+      alert(result.message);
+    }
+  } catch (error) {
+    console.error('Error updating addtional price: ', error);
+  }
+};
+
+const checkAnyConfirmed = async () => {
+  try {
+    const response = await fetch(`/api/chat/check-any-confirmed?roomId=${roomId}`);
+    if (!response.ok) {
+      console.error('Failed to check confirmed status: ', response.statusText);
+      return false;
+    }
+    const { hasConfirmed } = await response.json();
+    return hasConfirmed;
+  } catch (error) {
+    console.error('Error checking confirmed status: ', error);
+    return false;
+  }
+};
+
+document.addEventListener("DOMContentLoaded", async () => {
+  // await checkAllConfirmed();
+  const getUserCount = await fetchUserCount();
+  userCount.innerText = getUserCount;
   const getUserId = await fetchUserId();
   const userId = getUserId.userId;
   const getPostInfo = await fetchPostById();
   const writerId = getPostInfo.user_id;
 
-  if (userId === writerId) {
-    confirmButton.classList.add('hidden');
-    return;
-  }
-  // confirmButton.innerText = '확인';
-  // confirmButton.classList.remove('hidden');
-  confirmButton.addEventListener('click', async () => {
-      try {
-          const response = await fetch('/api/chat/confirm-payment',{
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ roomId, userId })
-          });
-
-          if (response.ok) {
-              alert('결제 확인을 완료했습니다.');
-              confirmButton.disabled = true;
-          } else {
-              alert('결제 확인에 실패했습니다.');
-          }
-      } catch (error) {
-          console.error('Error confirming payment: ', error);
-      }
-  });
-  document.querySelector('.bottom-menu').appendChild(confirmButton);
-};
-
-document.addEventListener("DOMContentLoaded", async () => {
-  const getUserCount = await fetchUserCount();
-  userCount.innerText = getUserCount;
-  const getUserId = await fetchUserId();
-  const userId = getUserId.userId;
-
   chatTitle.innerText = (await fetchPostById()).title;
-  await confirmPayment(roomId, userId);
 
   const userResponse = await fetch(`/api/chat/user-confirmed?roomId=${roomId}&userId=${userId}`);
   if (userResponse.ok) {
@@ -280,6 +350,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       confirmButton.disabled = true;
     }
   }
+
+  confirmButton.addEventListener('click', toggleConfirmedStatus);
 
   const messages = await fetchMessages();
   messages.forEach((message) => {
@@ -301,6 +373,10 @@ document.addEventListener("DOMContentLoaded", async () => {
       messageElement.innerText = message.message;
       nicknameElement.classList.add('nickname');
       nicknameElement.innerText = message.sender_nickname;
+      if (message.sender_id = writerId) {
+        nicknameElement.style.color = '#F5AF12';
+        nicknameElement.style.fontWeight = 'bold';
+      }
       chatBox.appendChild(nicknameElement);
       chatBox.appendChild(messageElement);
     }
