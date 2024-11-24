@@ -52,3 +52,24 @@ document.addEventListener("DOMContentLoaded", async () => {
         chatRoomList.innerHTML = '<p>채팅방을 가져오는 중 오류가 발생했습니다.</p>';
     }
 });
+
+document.addEventListener("DOMContentLoaded", () => {
+    const notificationButton = document.querySelector(".notification-button");
+    // 알림 버튼 클릭 시 알림 페이지로 이동
+    notificationButton.addEventListener("click", () => {
+        window.location.href = "/notification_page.html";
+    });
+});
+
+const socket = io();
+
+// 알림 실시간 업데이트
+socket.on('new-notification', (notification) => {
+    const notificationButton = document.querySelector('.notification-button');
+    const notificationCount = notificationButton.querySelector('.notification-count');
+
+    // 알림 개수 업데이트
+    notificationCount.textContent = parseInt(notificationCount.textContent || '0') + 1;
+});
+
+

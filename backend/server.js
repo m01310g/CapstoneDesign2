@@ -53,6 +53,7 @@ app.use(session({
 
 app.use(express.static(path.join(__dirname, "public")));
 
+
 // body parser: 아래 코드 2줄 없으면 form 제출 시 오류 발생
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
