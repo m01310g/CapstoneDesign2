@@ -106,6 +106,59 @@ module.exports = (server) => {
             const isTradeStarted = roomTradeStatus[roomId] || false;
             callback(isTradeStarted);
         });
+
+        // 메세지 전송 시 알림
+        socket.on('send-message', async ({ chatRoomId, senderId, senderNickname, message, receiverId }) => {
+            try {
+                // 메시지 전송
+                await db.query(
+                    `INSERT INTO chat_message (chat_room_id, sender_id, sender_nickname, message, message_type) 
+                     VALUES (?, ?, ?, ?, 'user')`,
+                    [chatRoomId, senderId, senderNickname, message]
+                );
+        
+                // 알림 생성
+                await db.query(
+                    `INSERT INTO notifications (user_id, chat_room_id, type, message, sender_id) 
+                     VALUES (?, ?, 'message', ?, ?)`,
+                    [receiverId, chatRoomId, `${senderNickname}: ${message}`, senderId]
+                );
+        
+                // 알림 전달
+                io.to(receiverId).emit('new-notification', {
+                    chatRoomId,
+                    type: 'message',
+                    message: `${senderNickname}: ${message}`,
+                    senderId,
+                    createdAt: new Date(),
+                });
+            } catch (error) {
+                console.error('메시지 전송 중 오류:', error);
+            }
+        });
+        
+        // 사용자 입장 시 알림
+        socket.on('join-room', async ({ chatRoomId, userId, userNickname }) => {
+            try {
+                // 알림 생성
+                await db.query(
+                    `INSERT INTO notifications (user_id, chat_room_id, type, message, sender_id) 
+                     VALUES (?, ?, 'entry', ?, ?)`,
+                    [userId, chatRoomId, `${userNickname}님이 채팅방에 입장했습니다.`, userId]
+                );
+        
+                // 알림 전달
+                io.to(chatRoomId).emit('new-notification', {
+                    chatRoomId,
+                    type: 'entry',
+                    message: `${userNickname}님이 채팅방에 입장했습니다.`,
+                    senderId: userId,
+                    createdAt: new Date(),
+                });
+            } catch (error) {
+                console.error('입장 알림 생성 오류:', error);
+            }
+        });
     });
     return io;
 }

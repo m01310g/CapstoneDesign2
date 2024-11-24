@@ -29,7 +29,7 @@ body, html {
 
 .notification-header h2 {
     margin: 0;
-    font-size: 18px;
+    font-size: 24px;
     display: flex;
     align-items: center;
 }
@@ -74,8 +74,4 @@ body, html {
     margin-left: 5px;
     font-size: 18px;
     line-height: 1;
-}
-
-.notification-item:hover, .notification-item:active {
-    background-color: #f0f0f0; /* 마우스를 올리거나 터치하면-> 색이 바뀌게끔*/
 }
