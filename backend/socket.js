@@ -26,18 +26,24 @@ module.exports = (server) => {
         });
         
         // 채팅 메시지 전송
-        socket.on("sendMessage", (data) => {
-            // 받은 데이터
-            const messageData = {
-                roomId: data.roomId,
-                userId: data.userId,
-                userNickname: data.userNickname,
-                message: data.message
-            };
+        socket.on("sendMessage", (data, callback) => {
+            try {
+                callback({ success: true });
+                // 받은 데이터
+                const messageData = {
+                    roomId: data.chat_room_id,
+                    userId: data.sender_id,
+                    userNickname: data.sender_nickname,
+                    message: data.message
+                };
 
-            // 해당 채팅방에 메시지 전송
-            io.to(data.roomId).emit("message", messageData); 
-            console.log('받은 메시지: ', messageData);
+                // 해당 채팅방에 메시지 전송
+                io.to(data.roomId).emit("message", messageData); 
+                console.log('받은 메시지: ', messageData);
+            } catch (error) {
+                console.error('메시지 처리 중 오류: ', error);
+                callback({ success: false, error: '서버 오류' });
+            }
             // io.to(data.roomId).emit('receiveMessage', data);
         });
         
