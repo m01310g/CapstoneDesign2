@@ -193,7 +193,7 @@ const checkCapacityStatus = async () => {
             document.querySelector(".current-capacity").style.color = "red";
         } else {
             participationBtn.innerHTML = `
-                <div id="price-container">인당 <span id="price">${formattedPrice}</span>원씩 부담하면 돼요!</div>
+                <div id="price-container">지금 참여하면 인당 <span id="price">${formattedPrice}</span>원씩 부담하면 돼요!</div>
                 <div id="participate">참여하기</div>
             `;
             participationBtn.style.backgroundColor = "#F5AF12";

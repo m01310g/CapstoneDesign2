@@ -122,12 +122,19 @@ const startTrade = async () => {
 const showAdditionalPriceButton = async () => {
   const getPostInfo = await fetchPostById();
   const writerId = getPostInfo.user_id;
+  const category = getPostInfo.category;
   const getUserId = await fetchUserId();
   const userId = getUserId.userId;
   
   const hasConfirmed = await checkAnyConfirmed();
   const additionalPriceBtn = document.querySelector('.additional-price-btn');
 
+  if (category !== '택시') {
+    additionalPriceBtn.classList.add('hidden');
+    return;
+  }
+
+  // 글 작성자인 경우에만 추가 금액 버튼 보이도록 설정
   if (userId === writerId) {
     additionalPriceBtn.classList.remove('hidden');
     // 참여자 중 한명이라도 확인 버튼을 누를 경우
