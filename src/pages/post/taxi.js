@@ -76,6 +76,10 @@ const updateOptions = () => {
     }
 };
 
+document.querySelector('.btn-close').addEventListener('click', () => {
+    document.querySelector('.announcement').classList.add('hidden');
+});
+
 dept.addEventListener("change", updateOptions);
 dept.addEventListener("change", updateIframeSrc);
 dest.addEventListener("change", updateIframeSrc);
