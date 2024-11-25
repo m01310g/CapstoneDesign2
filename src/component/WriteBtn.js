@@ -31,9 +31,9 @@ class WriteBtn extends HTMLElement {
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                position: absolute;
+                position: fixed;
                 right: 5%;
-                bottom: 10%;
+                bottom: 6.5rem;
                 z-index: 1000;
             }
 
