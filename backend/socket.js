@@ -28,7 +28,6 @@ module.exports = (server) => {
         // 채팅 메시지 전송
         socket.on("sendMessage", (data, callback) => {
             try {
-                callback({ success: true });
                 // 받은 데이터
                 const messageData = {
                     roomId: data.chat_room_id,
@@ -38,8 +37,9 @@ module.exports = (server) => {
                 };
 
                 // 해당 채팅방에 메시지 전송
-                io.to(data.roomId).emit("message", messageData); 
+                io.to(data.chat_room_id).emit("message", messageData); 
                 console.log('받은 메시지: ', messageData);
+                callback({ success: true });
             } catch (error) {
                 console.error('메시지 처리 중 오류: ', error);
                 callback({ success: false, error: '서버 오류' });
