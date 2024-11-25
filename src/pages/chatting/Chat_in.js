@@ -9,6 +9,7 @@ const menuButton = document.querySelector('.menu-button');
 const chatInputArea = document.querySelector('.chat-input-area');
 const bottomMenu = document.querySelector('.bottom-menu');
 const confirmButton = document.querySelector('.confirm-button');
+const memberButton = document.querySelector('.member-button');
 
 const fetchUserCount = async () => {
   try {
@@ -469,7 +470,8 @@ menuButton.addEventListener('click', () => {
 
 // Enter 키로 메시지 전송
 messageInput.addEventListener('keypress', (event) => {
-  if (event.key === 'Enter') {
+  if (event.key === 'Enter' && !event.shiftKey) {
+    event.preventDefault(); // 기본 Enter 동작 방지
     sendMessageBtn.click();
   }
 });
