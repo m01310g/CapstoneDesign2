@@ -422,14 +422,19 @@ sendMessageBtn.addEventListener('click', async () => {
       });
 
       if (response.ok) {
-        const ownMessageElement = document.createElement('div');
-        ownMessageElement.classList.add('message', 'message-sended');
-        ownMessageElement.innerText = message;
-        chatBox.appendChild(ownMessageElement);
-        chatBox.scrollTop = chatBox.scrollHeight;
+        socket.emit('sendMessage', messageData, (response) => {
+          if (response?.success) {
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message', 'message-sended');
+            messageElement.innerText = message;
+            chatBox.appendChild(messageElement);
+            chatBox.scrollTop = chatBox.scrollHeight;
+            messageInput.value = '';
+          }
+        });
 
-        socket.emit('sendMessage', { roomId, userId, userNickname, message });
-        messageInput.value = ''; // 입력창 초기화
+        // socket.emit('sendMessage', { roomId, userId, userNickname, message });
+        // messageInput.value = ''; // 입력창 초기화
       } else {
         console.error('Failed to save message: ', response.statusText);
       }
@@ -495,6 +500,56 @@ leaveBtn.addEventListener('click', async () => {
     console.error('Error leaving chat room: ', error);
     alert('서버 오류가 발생했습니다.');
   }
+});
+
+// socket.on('sendMessages', async () => {
+//   const message = messageInput.value.trim();
+//   const getUserId = await fetchUserId();
+//   const userId = getUserId.userId;
+//   const getUserInfo = await fetchUserInfo();
+//   const userNickname = getUserInfo.userNickname;
+
+//   if (message) {
+//     const messageData = {
+//       chat_room_id: roomId,
+//       sender_id: userId,
+//       sender_nickname: userNickname,
+//       message: message
+//     };
+
+//     try {
+//       const response = await fetch('/api/chat/send-message', {
+//         method: 'POST',
+//         headers: { 'Content-Type': 'application/json' },
+//         body: JSON.stringify(messageData)
+//       });
+
+//       if (response.ok) {
+//         socket.emit('sendMessage', messageData, (response) => {
+//           if (response?.success) {
+//             const messageElement = document.createElement('div');
+//             messageElement.classList.add('message', 'message-sended');
+//             messageElement.innerText = message;
+//             chatBox.appendChild(messageElement);
+//             chatBox.scrollTop = chatBox.scrollHeight;
+//             messageInput.value = '';
+//           }
+//         });
+//       } else {
+//         console.error('Failed to save message: ', response.statusText);
+//       }
+//     } catch (error) {
+//       console.error('Error saving message: ', error);
+//     }
+//   }
+// });
+
+socket.on('message', (messageData) => {
+  const messageElement = document.createElement('div');
+  messageElement.classList.add('message', 'message-received');
+  messageElement.innerText = messageData.message;
+  chatBox.appendChild(messageElement);
+  chatBox.scrollTop = chatBox.scrollHeight;
 });
 
 socket.on('userLeft', ({ message }) => {
