@@ -545,11 +545,18 @@ leaveBtn.addEventListener('click', async () => {
 // });
 
 socket.on('message', (messageData) => {
-  const messageElement = document.createElement('div');
-  messageElement.classList.add('message', 'message-received');
-  messageElement.innerText = messageData.message;
-  chatBox.appendChild(messageElement);
-  chatBox.scrollTop = chatBox.scrollHeight;
+  fetchUserId().then(({ userId }) => {
+  // 본인이 보낸 메시지 무시
+    if (messageData.userId === userId) return;
+
+    const messageElement = document.createElement('div');
+    messageElement.classList.add('message', 'message-received');
+    messageElement.innerText = messageData.message;
+    chatBox.appendChild(messageElement);
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }).catch(error => {
+    console.error('Error fetching userId: ', error);
+  });
 });
 
 socket.on('userLeft', ({ message }) => {
