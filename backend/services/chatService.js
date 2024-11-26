@@ -622,6 +622,7 @@ exports.getReservations = async (req, res) => {
 }
 
 exports.kickParticiapnt = async (req, res) => {
+    const io = req.app.get('socketio');
     const { roomId, userId } = req.body;
 
     // 유효성 검사
@@ -639,8 +640,6 @@ exports.kickParticiapnt = async (req, res) => {
             return res.status(404).json({ success: false, message: 'Room not found' });
         }
 
-        console.log(room)
-
         const hostId = room[0].user_id;
 
         const requestingId = req.session.userId;
@@ -653,12 +652,19 @@ exports.kickParticiapnt = async (req, res) => {
             [roomId, userId]
         );
 
+        await db.query(
+            'UPDATE post_list SET current_capacity = current_capacity - 1 WHERE post_index = ?',
+            [roomId]
+        );
+
         if (deleteResult.affectedRows === 0) {
             return res.status(404).json({ success: false, message: 'User not found in the room' });
         }
 
+        const [participant] = await db.query('SELECT user_nickname FROM user_info WHERE user_id = ?', [userId]);
+
         // 시스템 메시지 생성
-        const systemMessage = `${participant.nickname} 님이 강제 퇴장되었습니다.`;
+        const systemMessage = `${participant[0].user_nickname} 님이 강제 퇴장되었습니다.`;
         await db.query(
             'INSERT INTO chat_messages (chat_room_id, sender_id, sender_nickname, message, message_type) VALUES (?, ?, ?, ?, ?)',
             [roomId, 'system', 'system', systemMessage, 'system']

@@ -506,6 +506,16 @@ leaveBtn.addEventListener('click', async () => {
   }
 });
 
+// 사용자 등록
+socket.on("connect", () => {
+  console.log("Connected to socket server with ID:", socket.id);
+
+  fetchUserId().then(({ userId }) => {
+    // 서버로 유저 정보 전달
+    socket.emit("registerUser", { userId });
+  });
+});
+
 socket.on('message', (messageData) => {
   fetchUserId().then(({ userId }) => {
   // 본인이 보낸 메시지 무시
