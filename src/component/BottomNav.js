@@ -56,6 +56,8 @@ class BottomNav extends HTMLElement {
                 align-items: center;
                 background-color: #FFFFFF;
                 padding-top: 1rem;
+                /*border-top: 1px solid #ccc;*/
+                box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.1); /* 그림자 위쪽 (-4px) */
             }
 
             #bottom-nav-bar img {
