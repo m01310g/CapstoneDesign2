@@ -1,0 +1,107 @@
+.logo { 
+    width: 6rem;
+    height: auto;
+}
+
+/* 공통 슬라이드 스타일 */
+.slide {
+    display: flex; /* 가로로 나란히 배치 */
+    position: relative;
+    width: 100%;
+    top: 0;
+    left: 0;
+    transition: transform 0.6s ease-in-out, opacity 0.6s ease-in-out;
+    opacity: 0;
+    transform: translateX(100%);
+    display: none; /* 기본적으로 숨김 처리 */
+}
+
+.slide.active {
+    opacity: 1;
+    transform: translateX(0);
+    display: block;
+}
+
+.slide.hidden-left {
+    transform: translateX(-100%);
+}
+
+.slide.hidden-right {
+    transform: translateX(100%);
+}
+
+/* 헤더 스타일 */
+.header {
+    text-align: center;
+    padding: 20px;
+    background: linear-gradient(45deg, #6a11cb, #2575fc);
+    color: white;
+    border-radius: 10px;
+}
+
+.header p {
+    font-size: 1.2rem;
+}
+
+/* 설명 섹션 스타일 */
+.instruction-section {
+    background: #f9f9f9;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin: 20px 0;
+}
+
+.instruction-section h2 {
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+}
+
+.instruction-list {
+    list-style-type: decimal;
+    padding-left: 20px;
+}
+
+.instruction-list li {
+    margin-bottom: 10px;
+}
+
+.instruction-list strong {
+    color: #2575fc;
+}
+
+/* 푸터 스타일 */
+.footer {
+    text-align: center;
+    padding: 10px;
+    margin-top: 20px;
+    background: #F5AF12;
+    border-radius: 1rem;
+    margin: 3rem 1rem 0 1rem;
+}
+
+.slide img {
+    width: 80%; /* 이미지 너비 (슬라이드 내에서 80% 차지) */
+    height: 35rem; /* 최대 높이 제한 */
+    margin: 0 auto 20px; /* 상단, 좌우 중앙 정렬, 아래쪽 간격 설정 */
+    border-radius: 10px; /* 둥근 모서리 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
+    object-fit: cover; /* 이미지 비율 유지 */
+    display: block; /* 블록 요소로 변환 (중앙 정렬에 필요) */
+}
+
+.home-link {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.next-btn {
+    position: absolute;
+    right: 1rem;
+    background-color: transparent;
+    border: none;
+    color:#F5AF12;
+    font-weight: bold;
+    font-size: 1rem;
+}

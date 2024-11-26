@@ -35,10 +35,31 @@
 
       </div>
 
-      <!-- 고정된 배너 영역 -->
-      <div class="fixed-banner">
-        <div class="fixed-banner-item">고정 게시글</div>
-      </div>
+      <div class="banner-container">
+        <!-- 배너 영역 -->
+        <div class="moving-banner">
+            <!-- 배너 아이템 1 -->
+            <div class="banner-item active">
+                <img src="/img/ad1.jpg" alt="광고 배너 1">
+            </div>
+            <!-- 배너 아이템 2 -->
+            <div class="banner-item">
+                <img src="/img/ad2.jpg" alt="광고 배너 2">
+            </div>
+            <!-- 배너 아이템 3 -->
+            <div class="banner-item">
+                <img src="/img/ad3.jpg" alt="광고 배너 3">
+            </div>
+        </div>
+    
+        <!-- 인디케이터 영역 -->
+        <div class="banner-indicator">
+            <span class="indicator-dot active" data-index="0"></span>
+            <span class="indicator-dot" data-index="1"></span>
+            <span class="indicator-dot" data-index="2"></span>
+        </div>
+    </div>
+    
 
       <bottom-nav data-page="home"></bottom-nav>
     </div>
