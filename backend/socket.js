@@ -88,31 +88,6 @@ module.exports = (server) => {
             }
         });
 
-        socket.on("kickUser", async ({ roomId, userId }) => {
-            try {
-                // 유저 강제 퇴장
-                const userSocketId = userSocketMap[userId];
-                if (userSocketId) {
-                    // 방에서 소켓 강제 퇴장 처리
-                    socket.to(userSocketId).emit("kickedFromRoom", {
-                        message: "방에서 강제 퇴장당하셨습니다.",
-                    });
-
-                    const user = await db.query('SELECT user_nickname FROM user_info WHERE user_id = ?', [userId]);
-
-                    // 방 내 모든 사람에게 알림
-                    io.to(roomId).emit("systemMessage", {
-                        message: `${user.user_nickname}님이 강제 퇴장되었습니다.`,
-                    });
-
-                    console.log(`User ${userId} kicked from room ${roomId}`);
-                }
-            } catch (error) {
-                console.error("강제 퇴장 처리 중 오류:", error);
-            }
-        });
-
-
         // 메세지 전송 시 알림
         socket.on('send-message', async ({ chatRoomId, senderId, senderNickname, message, receiverId }) => {
             try {

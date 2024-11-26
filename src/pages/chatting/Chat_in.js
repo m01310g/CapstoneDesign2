@@ -1,6 +1,6 @@
 const roomId = new URLSearchParams(window.location.search).get('index');
-const messageInput = document.querySelector('.chat-input')
-const sendMessageBtn = document.querySelector('.send-button')
+const messageInput = document.querySelector('.chat-input');
+const sendMessageBtn = document.querySelector('.send-button');
 const chatBox = document.querySelector('.chat-area');
 const userCount = document.querySelector('.user-count');
 const chatTitle = document.querySelector('.chat-title');
@@ -588,12 +588,8 @@ memberButton.addEventListener('click', async () => {
       hostItem.textContent = `${hostParticipant.user_nickname}`;
       hostItem.style.color = '#f5af12'; // 방장 색상
       hostItem.style.fontWeight = 'bold';
+      hostItem.style.height = '2.5rem';
       memberList.appendChild(hostItem);
-
-      // 구분선 추가
-      // const separator = document.createElement('hr');
-      // separator.style.margin = '10px 0';
-      // memberList.appendChild(separator);
     }
 
     // 예약 중인 참여자 추가
@@ -601,7 +597,6 @@ memberButton.addEventListener('click', async () => {
       const reservedHeader = document.createElement('li');
       reservedHeader.textContent = '거래 예약 중';
       reservedHeader.style.fontWeight = 'bold';
-      // reservedHeader.style.marginTop = '10px';
       memberList.appendChild(reservedHeader);
 
       reservedParticipants.forEach(participant => {
@@ -627,17 +622,66 @@ memberButton.addEventListener('click', async () => {
         listItem.style.display = 'flex';
         listItem.style.justifyContent = 'space-between';
         listItem.style.alignItems = 'center';
+        listItem.style.height = '2.5rem';
         listItem.id = `#participant-${participant.user_nickname}`
 
         // 닉네임 추가
         const nicknameSpan = document.createElement('span');
         nicknameSpan.textContent = participant.user_nickname;
+        listItem.appendChild(nicknameSpan);
+
+        participants.forEach(participant => {
+          if (participant.user_id === userId) return; // 자기 자신은 제외
+    
+          // 신고하기 버튼 추가
+          const reportButton = document.createElement('button');
+          reportButton.textContent = '신고';
+          reportButton.style.marginLeft = '2rem';
+          reportButton.style.padding = '5px 5px';
+          reportButton.style.backgroundColor = 'transparent';
+          reportButton.style.color = 'grey';
+          reportButton.style.border = 'none';
+          reportButton.style.borderRadius = '4px';
+          reportButton.style.cursor = 'pointer';
+    
+          // 신고하기 버튼 클릭 이벤트 리스너
+          reportButton.addEventListener('click', async () => {
+              const confirmReport = confirm(
+                  `${participant.user_nickname}님을 신고하시겠습니까?`
+              );
+              if (!confirmReport) return;
+    
+              try {
+                  const reportResponse = await fetch('/api/chat/report-user', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({
+                          roomId: roomId,
+                          reportedUserId: participant.user_id,
+                      }),
+                  });
+    
+                  if (reportResponse.ok) {
+                      alert(`${participant.user_nickname}님을 신고했습니다.`);
+                  } else {
+                      console.error('Failed to report user');
+                      alert('신고 처리 중 오류가 발생했습니다.');
+                  }
+              } catch (error) {
+                  console.error('Error reporting user: ', error);
+                  alert('신고 처리 중 서버 오류가 발생했습니다.');
+              }
+            });
+    
+            listItem.appendChild(reportButton);
+            memberList.appendChild(listItem); // 사용자 목록에 항목 추가
+        });
 
         // 강제 퇴장 버튼 추가 (방장만 보이도록)
         if (userId === hostId) {
           const kickButton = document.createElement('button');
           kickButton.classList.add('kick-btn');
-          kickButton.textContent = '퇴장';
+          kickButton.textContent = '강제 퇴장';
           kickButton.style.marginLeft = '10px';
           kickButton.style.backgroundColor = 'red';
           kickButton.style.color = 'white';
@@ -669,25 +713,14 @@ memberButton.addEventListener('click', async () => {
               }
             }
           });
-
           listItem.appendChild(kickButton);
         }
-
-        listItem.appendChild(nicknameSpan);
         memberList.appendChild(listItem);
       });
     }
 
     // UI 표시
     memberListContainer.classList.toggle('hidden');
-
-    // // 참여자 목록 추가
-    // participants.forEach(participant => {
-    //   const listItem = document.createElement('li');
-    //   listItem.textContent = participant.user_nickname;
-    //   memberList.appendChild(listItem);
-    // });
-    // memberListContainer.classList.toggle('hidden');
   } catch (error) {
     console.error('Error fetching participants: ', error);
   }

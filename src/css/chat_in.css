@@ -264,13 +264,12 @@ body, html {
 .member-list-container {
     position: absolute;
     top: calc(100% + 1.5rem); /* member-button 아래로 약간 띄움 */
-    left: 50%;
-    transform: translateX(-50%);
+    right: 0;
     background-color: white;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    border-radius: 0.25rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 0.5rem;
     z-index: 1000;
-    width: 20rem;
+    width: 13rem;
     max-height: 13rem;
     overflow-y: auto;
 }

@@ -683,3 +683,25 @@ exports.kickParticiapnt = async (req, res) => {
         return res.status(500).json({ success: false, message: 'Internal server error' });
     }
 };
+
+exports.reportUser = async (req, res) => {
+    const { roomId, reportedUserId, reportReason } = req.body;
+    const reportingUserId = req.session.userId;
+
+    if (!roomId || !reportedUserId) {
+        return res.status(400).json({ success: false, message: 'Invalid data' });
+    }
+
+    try {
+        // 신고 기록 저장
+        await db.query(
+            'INSERT INTO user_reports (reporting_user_id, reported_user_id, room_id, report_reason, created_at) VALUES (?, ?, ?, ?, NOW())',
+            [reportingUserId, reportedUserId, roomId, reportReason]
+        );
+
+        res.status(200).json({ success: true, message: 'User reported successfully' });
+    } catch (error) {
+        console.error('Error reporting user: ', error);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+};
