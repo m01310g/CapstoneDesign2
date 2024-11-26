@@ -59,9 +59,15 @@
               <input type="text" name="user-email-post" id="user-email-post" readonly value="@mju.ac.kr">
               <button type="button" id="send-authn-btn">전송</button>
             </div>
-            <div id="email-authn-container">
+            <div class="email-authn-container-one">
               <label for="email-authn">인증번호</label>
               <input type="text" name="email-authn" pattern=".{1,4}" required>
+            </div>
+            <div class="email-authn-container-two">
+              <label>학생카드 파일</label>
+              <input id="upload-box" placeholder="파일 첨부" readonly required>
+              <label for="student-card">선택</label>
+              <input type="file" id="student-card" style="display: none;" required>
             </div>
             <input type="submit" value="가입하기" disabled>
           </form>

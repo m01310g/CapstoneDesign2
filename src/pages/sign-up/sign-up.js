@@ -156,7 +156,8 @@ const insertHyphen = (t) => {
 };
 
 $btnEmailAuthn.addEventListener("click", () => {
-  document.querySelector("#email-authn-container").style.display = "block";
+  document.querySelector(".email-authn-container-one").style.display = "block";
+  document.querySelector(".email-authn-container-two").style.display = "block";
   const authnForEmailPre = document.querySelector("#user-email").value;
   const authnForEmailPost = document.querySelector("input[name='user-email-post']").value;
   const fullEmail = `${authnForEmailPre}${authnForEmailPost}`;
@@ -175,7 +176,7 @@ $btnEmailAuthn.addEventListener("click", () => {
     return response.json(); // JSON 형식으로 응답 받기
   })
   .then(data => {
-    console.log('성공:', data); // 성공적으로 전송된 데이터 확인
+    // console.log('성공:', data); // 성공적으로 전송된 데이터 확인
   })
   .catch((error) => {
     console.error('문제가 발생했습니다:', error); // 에러 처리
@@ -188,5 +189,17 @@ document.querySelector("#sign-up-form").addEventListener("submit", (event) => {
     event.preventDefault();
     location.reload(); // 페이지 리로드
     return;
+  }
+});
+
+document.querySelector("#student-card").addEventListener("change", function () {
+  const fileInput = this; // 현재 input[type="file"]
+  const uploadBox = document.querySelector("#upload-box");
+
+  // 파일이 선택되었는지 확인하고 파일 이름을 표시
+  if (fileInput.files.length > 0) {
+    uploadBox.value = fileInput.files[0].name; // 첫 번째 파일 이름
+  } else {
+    uploadBox.value = "파일 첨부"; // 기본값
   }
 });
