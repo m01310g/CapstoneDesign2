@@ -34,11 +34,25 @@ selfBtn.addEventListener('click', () => {
 inputField.addEventListener('input', () => {
     const amount = inputField.value.replace(/,/g, ''); // Remove commas from the input field value if any
     selectedAmount = parseInt(amount) || 0; // Convert to integer, default to 0 if invalid
-    display.textContent = `충전할 금액: ${formatNumberWithCommas(selectedAmount)}원`; // Update display with formatted amount
 
-    // 선택된 금액을 localStorage에 저장
-    localStorage.setItem('selectedAmount', selectedAmount);
+    const alertMessage = document.getElementById('alert-message'); // 알림 메시지 요소
+
+    if (selectedAmount < 1000 && selectedAmount !== 0) { // Validate minimum amount
+        display.textContent = ''; // Display를 비웁니다
+        alertMessage.style.display = 'block'; // 알림 메시지를 표시
+        localStorage.removeItem('selectedAmount'); // Remove invalid amount from localStorage
+    } else {
+        alertMessage.style.display = 'none'; // 알림 메시지를 숨김
+        display.textContent = selectedAmount > 0 
+            ? `충전할 금액: ${formatNumberWithCommas(selectedAmount)}원` 
+            : ''; // Update display with formatted amount or clear it if input is empty
+        if (selectedAmount >= 1000) {
+            localStorage.setItem('selectedAmount', selectedAmount); // Save valid amount to localStorage
+        }
+    }
 });
+
+
 
 // 페이지 로드 시 세션 데이터를 요청하여 사용자 포인트를 표시
 window.onload = function() {

@@ -39,7 +39,7 @@ a:active {
   
 .box-body {
     /* nav 높이 */
-    padding-bottom: 10px;
+    padding-bottom: 3rem;
 }
 
 /* 배너 컨테이너 스타일 */
@@ -166,7 +166,7 @@ a:active {
 }
 
 .post-container {
-    height: 20rem;
+    height: 25rem;
     margin: 0 1rem 0 1rem;
 }
 
@@ -174,4 +174,56 @@ iframe {
     width: 100%;
     height: 100%;
     border: none;
+}
+
+/* 움직이는 배너 스타일 */
+.moving-banner {
+    display: flex;
+    overflow: hidden;
+    width: 80%;
+    height: 220px;
+    border: 2px solid #ddd;
+    background-color: #f9f9f9;
+    position: relative;
+}
+
+/* 각각의 배너 항목 스타일 */
+.banner-item {
+    min-width: 100%; /* 각 배너가 화면 너비를 차지 */
+    flex-shrink: 0;
+    display: none; /* 기본적으로 숨김 */
+    height: 100%; /* 부모 높이에 맞춤 */
+}
+
+.banner-item.active {
+    display: block; /* 활성화된 배너만 표시 */
+}
+
+/* 배너 이미지 스타일 */
+.banner-item img {
+    width: 100%; /* 부모 요소의 너비에 맞춤 */
+    height: 100%; /* 부모 요소의 높이에 맞춤 */
+    object-fit: cover; /* 이미지가 컨테이너를 꽉 채우도록 설정 */
+    object-position: center; /* 이미지가 중앙에 배치되도록 설정 */
+}
+
+/* 배너 인디케이터 스타일 */
+.banner-indicator {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.indicator-dot {
+    width: 10px;
+    height: 10px;
+    margin: 0 5px;
+    background-color: #ddd;
+    border-radius: 50%;
+    transition: background-color 0.3s;
+    cursor: pointer;
+}
+
+.indicator-dot.active {
+    background-color: #333; /* 활성화된 점 색상 */
 }

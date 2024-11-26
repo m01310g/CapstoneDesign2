@@ -4,13 +4,68 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CO/N</title>
-    <link rel="stylesheet" href="../../css/home.css"/>
     <link rel="stylesheet" href="../../css/style.css"/>
+    <link rel="stylesheet" href="../../css/term-of-use.css">
 </head>
 
 <body>
   <div class="body-container">
     <div class="box-body">
-  <script src="../../component/BottomNav.js"></script>
-  <script src="/home.js"></script>
+      <header class="page-header">
+        <img class="logo" src="/img/logo.jpg" />
+        <h2>서비스 사용 방법</h2>
+      </header>
+      <p>간단하고 빠르게 CO/N 서비스를 사용하는 방법을 아래에서 확인하세요.</p>
+    
+      <div class="container">
+        <!-- 슬라이드 1 -->
+        <div class="slide active" id="slide1">
+            <img src="/img/term-of-use1.jpg" alt="게시글 작성" class="slide-image">
+            <p><strong>게시글 작성:</strong> 새로운 거래를 만들기 위해 게시글을 작성합니다.</p>
+            <button class="next-btn" onclick="nextSlide(1)">다음 ></button>
+        </div>
+    
+        <!-- 슬라이드 2 -->
+        <div class="slide hidden" id="slide2">
+            <img src="/img/term-of-use1.jpg" alt="채팅방 입장" class="slide-image">
+            <p><strong>채팅방 입장:</strong> 다른 사용자들이 채팅방에 입장하여 준비 상태를 표시합니다.</p>
+            <button class="next-btn" onclick="nextSlide(2)">다음 ></button>
+        </div>
+    
+        <!-- 슬라이드 3 -->
+        <div class="slide hidden" id="slide3">
+            <img src="/img/term-of-use1.jpg" alt="거래 예약" class="slide-image">
+            <p><strong>거래 예약:</strong> 모든 사용자가 준비 상태가 되면 거래를 시작합니다.</p>
+            <button class="next-btn" onclick="nextSlide(3)">다음 ></button>
+        </div>
+    
+        <!-- 슬라이드 4 -->
+        <div class="slide hidden" id="slide4">
+            <img src="/img/term-of-use1.jpg" alt="거래 진행" class="slide-image">
+            <p><strong>거래 진행:</strong> 서비스나 거래를 진행합니다 (예: 택시 이용).</p>
+            <button class="next-btn" onclick="nextSlide(4)">다음 ></button>
+        </div>
+    
+        <!-- 슬라이드 5 -->
+        <div class="slide hidden" id="slide5">
+            <img src="/img/term-of-use1.jpg" alt="완료 버튼" class="slide-image">
+            <p><strong>완료 버튼:</strong> 거래가 완료된 후 완료 버튼을 클릭합니다.</p>
+            <button class="next-btn" onclick="nextSlide(5)">다음 ></button>
+        </div>
+    
+        <!-- 슬라이드 6 -->
+        <div class="slide hidden" id="slide6">
+            <img src="/img/term-of-use1.jpg" alt="포인트 지급" class="slide-image">
+            <p><strong>포인트 지급:</strong> 거래 종료 후 방장에게 포인트가 지급됩니다.</p>
+            <button class="next-btn" onclick="restartSlides()">처음으로</button>
+        </div>
+      </div>
+
+      <footer class="footer">
+        <a href="/home" class="home-link">CO/N 서비스와 함께하세요! 💡</a>
+      </footer>
+    </div>
+  </div>
+  <script src="term-of-use.js"></script>
 </body>
+</html>
