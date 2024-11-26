@@ -55,6 +55,7 @@ body, html {
 .user-info {
     display: flex;
     align-items: center;
+    position: relative;
 }
 
 .user-icon {
@@ -145,7 +146,7 @@ body, html {
     word-wrap: break-word;
     word-break: break-word;
     /* max-height: 10rem; */
-    height: 3rem;
+    height: 3.2rem;
     overflow-y: auto;
     resize: none;
 }
@@ -255,4 +256,60 @@ body, html {
 .user-info > button {
     background-color: transparent;
     border: none;
+}
+.user-info > button:focus {
+    outline: none;
+}
+
+.member-list-container {
+    position: absolute;
+    top: calc(100% + 1.5rem); /* member-button 아래로 약간 띄움 */
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 0.25rem;
+    z-index: 1000;
+    width: 20rem;
+    max-height: 13rem;
+    overflow-y: auto;
+}
+
+.member-list-container ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.member-list-container li {
+    padding: 8px;
+    border-bottom: 1px solid #ddd;
+    font-size: 14px;
+}
+
+.member-list-container li:last-child {
+    border-bottom: none;
+}
+
+#memberList {
+    list-style: none;
+    padding: 0;
+}
+
+#memberList li {
+    display: flex;
+    justify-content: space-between; /* 왼쪽과 오른쪽으로 요소 분리 */
+    align-items: center;
+    padding: 0.5rem;
+    border-bottom: 1px solid #ddd;
+}
+
+.kick-btn {
+    background-color: #f7b500;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 0.3rem 0.6rem;
+    cursor: pointer;
+    font-size: 0.9rem;
 }

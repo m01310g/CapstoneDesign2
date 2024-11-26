@@ -62,6 +62,9 @@ exports.sendMessage = async (req, res) => {
         `;
         const [result] = await db.query(query, [chat_room_id, sender_id, sender_nickname, message]);
 
+        // 시스템 메시지를 소켓 이벤트로 모든 클라이언트에게 전송
+        io.to(roomId).emit('systemMessage', { message });
+
         res.status(201).json({
             success: true,
             message: 'Message saved successfully',
@@ -134,6 +137,8 @@ exports.updateParticipateStatus = async (req, res) => {
         if (participationResult.affectedRows > 0) {
             const systemMessage = `${userNickname} 님이 입장했습니다.`;
             await db.query(insertSystemMessageQuery, [postId, "system", "system", systemMessage, "system"]);
+            // 시스템 메시지를 소켓 이벤트로 모든 클라이언트에게 전송
+            io.to(roomId).emit('systemMessage', { systemMessage });
             res.status(201).json({ message: "Participation added and system message created" });
         } else {
             res.status(400).send("Failed to add participation");
@@ -163,10 +168,15 @@ exports.leaveChatRoom = async (req, res) => {
         const [user] = await db.query('SELECT user_nickname FROM user_info WHERE user_id = ?', [userId]);
         const userNickname = user[0].user_nickname;
 
+        const systemMessage = `${userNickname} 님이 채팅방을 나갔습니다.`;
+
         await db.query(
             'INSERT INTO chat_messages (chat_room_id, sender_id, sender_nickname, message, message_type) VALUES (?, ?, ?, ?, ?)',
             [roomId, "system", "system", `${userNickname} 님이 채팅방을 나갔습니다.`, "system"]
         );
+
+        // 시스템 메시지를 소켓 이벤트로 모든 클라이언트에게 전송
+        io.to(roomId).emit('systemMessage', { systemMessage });
 
         await exports.updateReservationAmounts({ body: { roomId } }, res);
 
@@ -229,6 +239,9 @@ exports.startTrade = async (req, res) => {
             'INSERT INTO chat_messages (chat_room_id, sender_id, sender_nickname, message, message_type) VALUES (?, ?, ?, ?, ?)',
             [roomId, 'system', 'system', systemMessage, 'system']
         );
+        // 시스템 메시지를 소켓 이벤트로 모든 클라이언트에게 전송
+        io.to(roomId).emit('systemMessage', { systemMessage });
+        
         return res.json({ success: true });
     } catch (error) {
         console.error('Error starting trade: ', error);
@@ -451,6 +464,9 @@ exports.updateReservationAmounts = async (req, res) => {
             'INSERT INTO chat_messages (chat_room_id, sender_id, sender_nickname, message, message_type) VALUES (?, ?, ?, ?, ?)',
             [roomId, 'system', 'system', systemMessage, 'system']
         );
+        // 시스템 메시지를 소켓 이벤트로 모든 클라이언트에게 전송
+        io.to(roomId).emit('systemMessage', { systemMessage });
+
         res.json({ success: true, additionalAmountPerPerson });
     } catch (error) {
         console.error('Error updating reservation amounts: ', error);
@@ -536,6 +552,9 @@ exports.toggleConfirmedStatus = async (req, res) => {
                 [roomId, 'system', 'system', systemMessage, 'system']
             );
 
+            // 시스템 메시지를 소켓 이벤트로 모든 클라이언트에게 전송
+            io.to(roomId).emit('systemMessage', { systemMessage });
+
             // 방장에게 포인트 지급 로직 추가
             const hostId = await getHostId(roomId);
             const points = await calculatePoints(roomId);
@@ -562,5 +581,99 @@ exports.checkAllConfirmed = async (req, res) => {
     } catch (error) {
         console.error('Error checking all confirmed status: ', error);
         throw error;
+    }
+};
+
+exports.getParticipations = async (req, res) => {
+    const roomId = req.query.roomId;
+    try {
+        const [members] = await db.query(
+            `SELECT u.user_nickname, u.user_id
+            FROM participations p
+            JOIN user_info u ON p.user_id = u.user_id
+            WHERE p.post_id = ?`,
+            [roomId]
+        );
+
+        const [host] = await db.query(
+            'SELECT user_id FROM post_list WHERE post_index = ?',
+            [roomId]
+        );
+        res.json({ success: true, participants: members, hostId: host[0]?.user_id });
+    } catch (error) {
+        console.error('Error fetching members: ', error);
+        res.status(500).json({ success: false, message: '서버 오류' });
+    }
+};
+
+exports.getReservations = async (req, res) => {
+    const { roomId } = req.query;
+
+    try {
+        const [reservations] = await db.query(
+            'SELECT user_id FROM trade_reservations WHERE room_id = ?',
+            [roomId]
+        );
+        res.json(reservations);
+    } catch (error) {
+        console.error('Error fetching reservations: ', error);
+
+    }
+}
+
+exports.kickParticiapnt = async (req, res) => {
+    const { roomId, userId } = req.body;
+
+    // 유효성 검사
+    if (!roomId || !userId) {
+        return res.status(400).json({ success: false, message: 'roomId and userId are not defined' });
+    }
+
+    try {
+        const [room] = await db.query(
+            'SELECT user_id FROM chat_rooms WHERE post_index = ?',
+            [roomId]
+        );
+
+        if (room.length === 0) {
+            return res.status(404).json({ success: false, message: 'Room not found' });
+        }
+
+        console.log(room)
+
+        const hostId = room[0].user_id;
+
+        const requestingId = req.session.userId;
+        if (requestingId !== hostId) {
+            return res.status(403).json({ success: false, message: 'You are not the host' });
+        }
+
+        const deleteResult = await db.query(
+            'DELETE FROM participations WHERE post_id = ? AND user_id = ?',
+            [roomId, userId]
+        );
+
+        if (deleteResult.affectedRows === 0) {
+            return res.status(404).json({ success: false, message: 'User not found in the room' });
+        }
+
+        // 시스템 메시지 생성
+        const systemMessage = `${participant.nickname} 님이 강제 퇴장되었습니다.`;
+        await db.query(
+            'INSERT INTO chat_messages (chat_room_id, sender_id, sender_nickname, message, message_type) VALUES (?, ?, ?, ?, ?)',
+            [roomId, 'system', 'system', systemMessage, 'system']
+        );
+
+        // 실시간 알림
+        io.to(roomId).emit('systemMessage', { message: systemMessage });
+        io.to(roomId).emit('participantKicked', { userId });
+
+        // 강제 퇴장된 유저에게 알림
+        io.to(userId).emit('kickedFromRoom', { message: '방에서 강제 퇴장당하셨습니다.' });
+
+        return res.json({ success: true, message: 'User has been removed from the room' });
+    } catch (error) {
+        console.error('Error kicking participant: ', error);
+        return res.status(500).json({ success: false, message: 'Internal server error' });
     }
 };

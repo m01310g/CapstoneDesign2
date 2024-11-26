@@ -10,6 +10,8 @@ const chatInputArea = document.querySelector('.chat-input-area');
 const bottomMenu = document.querySelector('.bottom-menu');
 const confirmButton = document.querySelector('.confirm-button');
 const memberButton = document.querySelector('.member-button');
+const memberListContainer = document.querySelector('#memberListContainer');
+const memberList = document.querySelector('#memberList');
 
 const fetchUserCount = async () => {
   try {
@@ -519,6 +521,15 @@ socket.on('message', (messageData) => {
   });
 });
 
+// 소켓으로 시스템 메시지를 수신
+socket.on('systemMessage', ({ message }) => {
+  const systemMessageElement = document.createElement('div');
+  systemMessageElement.classList.add('message', 'system-message');
+  systemMessageElement.innerText = message;
+  chatBox.appendChild(systemMessageElement);
+  chatBox.scrollTop = chatBox.scrollHeight; // 최신 메시지로 스크롤
+});
+
 socket.on('userLeft', ({ message }) => {
   const messageElement = document.createElement('div');
   messageElement.classList.add('message', 'system-message');
@@ -529,4 +540,152 @@ socket.on('userLeft', ({ message }) => {
 
 socket.on('tradeStarted', ({ roomId }) => {
   if (document.querySelector('.trade-button')) document.querySelector('.trade-button').disabled = true;
+});
+
+socket.on('kickedFromRoom', ({ message }) => {
+  alert(message);
+  window.location.href = '/chat/main'; // 메인 화면으로 리다이렉트
+});
+
+memberButton.addEventListener('click', async () => {
+  try {
+    const response = await fetch(`/api/chat/get-participations?roomId=${roomId}`);
+    if (!response.ok) {
+      console.error('Failed to fetch participants');
+      return;
+    }
+    const { participants, hostId } = await response.json();
+    const memberList = document.querySelector('#memberList');
+
+    const reservationResponse = await fetch(`/api/chat/get-reservations?roomId=${roomId}`);
+    const reservations = await reservationResponse.json();
+
+    const userId = (await fetchUserId()).userId;
+
+    const reservedUsers = reservations.map(reservation => reservation.user_id);
+    const reservedParticipants = participants.filter(participant => reservedUsers.includes(participant.user_id));
+    const nonReservedParticipants = participants.filter(
+      participant => !reservedUsers.includes(participant.user_id) && participant.user_id !== hostId
+    );
+
+    const hostParticipant = participants.find(participant => participant.user_id === hostId);
+
+    memberList.innerHTML = '';
+
+    // 방장 추가
+    if (hostParticipant) {
+      const hostItem = document.createElement('li');
+      hostItem.textContent = `${hostParticipant.user_nickname}`;
+      hostItem.style.color = '#f5af12'; // 방장 색상
+      hostItem.style.fontWeight = 'bold';
+      memberList.appendChild(hostItem);
+
+      // 구분선 추가
+      // const separator = document.createElement('hr');
+      // separator.style.margin = '10px 0';
+      // memberList.appendChild(separator);
+    }
+
+    // 예약 중인 참여자 추가
+    if (reservedParticipants.length > 0) {
+      const reservedHeader = document.createElement('li');
+      reservedHeader.textContent = '거래 예약 중';
+      reservedHeader.style.fontWeight = 'bold';
+      // reservedHeader.style.marginTop = '10px';
+      memberList.appendChild(reservedHeader);
+
+      reservedParticipants.forEach(participant => {
+          const listItem = document.createElement('li');
+          listItem.textContent = participant.user_nickname;
+          if (participant.user_id === hostId) {
+              listItem.style.color = '#f5af12'; // 방장 색상
+              listItem.style.fontWeight = 'bold';
+          }
+          memberList.appendChild(listItem);
+      });
+    }
+
+    // 대기 중인 참여자 추가
+    if (nonReservedParticipants.length > 0) {
+      const nonReservedHeader = document.createElement('li');
+      nonReservedHeader.textContent = '대기 중';
+      nonReservedHeader.style.fontWeight = 'bold';
+      memberList.appendChild(nonReservedHeader);
+
+      nonReservedParticipants.forEach(participant => {
+        const listItem = document.createElement('li');
+        listItem.style.display = 'flex';
+        listItem.style.justifyContent = 'space-between';
+        listItem.style.alignItems = 'center';
+        listItem.id = `#participant-${participant.user_nickname}`
+
+        // 닉네임 추가
+        const nicknameSpan = document.createElement('span');
+        nicknameSpan.textContent = participant.user_nickname;
+
+        // 강제 퇴장 버튼 추가 (방장만 보이도록)
+        if (userId === hostId) {
+          const kickButton = document.createElement('button');
+          kickButton.classList.add('kick-btn');
+          kickButton.textContent = '퇴장';
+          kickButton.style.marginLeft = '10px';
+          kickButton.style.backgroundColor = 'red';
+          kickButton.style.color = 'white';
+          kickButton.style.border = 'none';
+          kickButton.style.padding = '5px';
+          kickButton.style.borderRadius = '4px';
+          kickButton.style.cursor = 'pointer';
+
+          // 강제 퇴장 이벤트
+          kickButton.addEventListener('click', async () => {
+            if (confirm(`${participant.user_nickname}님을 강제 퇴장시키겠습니까?`)) {
+              try {
+                const kickResponse = await fetch('/api/chat/kick-participant', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ roomId, userId: participant.user_id })
+                });
+
+                if (kickResponse.ok) {
+                  alert(`${participant.user_nickname}님을 퇴장시켰습니다.`);
+                  // UI 업데이트
+                  listItem.remove();
+                } else {
+                  alert('퇴장 요청에 실패했습니다.');
+                }
+              } catch (error) {
+                console.error('Error kicking participant: ', error);
+                alert('서버 오류로 인해 퇴장 요청에 실패했습니다.');
+              }
+            }
+          });
+
+          listItem.appendChild(kickButton);
+        }
+
+        listItem.appendChild(nicknameSpan);
+        memberList.appendChild(listItem);
+      });
+    }
+
+    // UI 표시
+    memberListContainer.classList.toggle('hidden');
+
+    // // 참여자 목록 추가
+    // participants.forEach(participant => {
+    //   const listItem = document.createElement('li');
+    //   listItem.textContent = participant.user_nickname;
+    //   memberList.appendChild(listItem);
+    // });
+    // memberListContainer.classList.toggle('hidden');
+  } catch (error) {
+    console.error('Error fetching participants: ', error);
+  }
+});
+
+// 클릭 시 닫기
+document.addEventListener('click', (event) => {
+  if (!memberButton.contains(event.target) && !memberListContainer.contains(event.target)) {
+      memberListContainer.classList.add('hidden');
+  }
 });

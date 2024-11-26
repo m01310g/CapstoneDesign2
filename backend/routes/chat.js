@@ -23,5 +23,8 @@ router.post('/api/chat/update-reservation-amounts', chatService.updateReservatio
 router.get('/api/chat/check-any-confirmed', chatService.checkAnyConfirmed);
 router.post('/api/chat/toggle-confirmed-status', chatService.toggleConfirmedStatus);
 router.get('/api/chat/check-all-confirmed', chatService.checkAllConfirmed);
+router.get('/api/chat/get-participations', chatService.getParticipations);
+router.get('/api/chat/get-reservations', chatService.getReservations);
+router.post('/api/chat/kick-participant', chatService.kickParticiapnt);
 
 module.exports = router;
