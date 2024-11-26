@@ -49,6 +49,7 @@ exports.getUserCounts = async (req, res) => {
 };
 
 exports.sendMessage = async (req, res) => {
+    const io = req.app.get('socketio');
     const { chat_room_id, sender_id, sender_nickname, message } = req.body;
 
     if (!chat_room_id || !sender_id || !sender_nickname || !message) {
@@ -61,9 +62,6 @@ exports.sendMessage = async (req, res) => {
         VALUES (?, ?, ?, ?)
         `;
         const [result] = await db.query(query, [chat_room_id, sender_id, sender_nickname, message]);
-
-        // 시스템 메시지를 소켓 이벤트로 모든 클라이언트에게 전송
-        io.to(roomId).emit('systemMessage', { message });
 
         res.status(201).json({
             success: true,
@@ -111,6 +109,7 @@ exports.checkParticipation = async (req, res) => {
 };
 
 exports.updateParticipateStatus = async (req, res) => {
+    const io = req.app.get('socketio');
     const postId = parseInt(req.params.postId) + 1;
     const userId = req.params.userId;
 
@@ -138,7 +137,7 @@ exports.updateParticipateStatus = async (req, res) => {
             const systemMessage = `${userNickname} 님이 입장했습니다.`;
             await db.query(insertSystemMessageQuery, [postId, "system", "system", systemMessage, "system"]);
             // 시스템 메시지를 소켓 이벤트로 모든 클라이언트에게 전송
-            io.to(roomId).emit('systemMessage', { systemMessage });
+            io.to(postId).emit('systemMessage', { systemMessage });
             res.status(201).json({ message: "Participation added and system message created" });
         } else {
             res.status(400).send("Failed to add participation");
@@ -150,6 +149,7 @@ exports.updateParticipateStatus = async (req, res) => {
 };
 
 exports.leaveChatRoom = async (req, res) => {
+    const io = req.app.get('socketio');
     const { roomId, userId } = req.body;
 
     try {
@@ -214,6 +214,7 @@ exports.reserveTrade = async (req, res) => {
 };
 
 exports.startTrade = async (req, res) => {
+    const io = req.app.get('socketio');
     const { roomId } = req.body;
     try {
         // 최대 인원보다 적게 들어올 경우 금액 재조정
@@ -492,6 +493,7 @@ exports.checkAnyConfirmed = async (req, res) => {
 };
 
 exports.toggleConfirmedStatus = async (req, res) => {
+    const io = req.app.get('socketio');
     const { roomId, userId } = req.body;
 
     try {
