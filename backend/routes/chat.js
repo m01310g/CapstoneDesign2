@@ -26,5 +26,6 @@ router.get('/api/chat/check-all-confirmed', chatService.checkAllConfirmed);
 router.get('/api/chat/get-participations', chatService.getParticipations);
 router.get('/api/chat/get-reservations', chatService.getReservations);
 router.post('/api/chat/kick-participant', chatService.kickParticiapnt);
+router.post('/api/chat/report-user', chatService.reportUser)
 
 module.exports = router;

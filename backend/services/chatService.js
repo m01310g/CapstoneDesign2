@@ -49,6 +49,7 @@ exports.getUserCounts = async (req, res) => {
 };
 
 exports.sendMessage = async (req, res) => {
+    const io = req.app.get('socketio');
     const { chat_room_id, sender_id, sender_nickname, message } = req.body;
 
     if (!chat_room_id || !sender_id || !sender_nickname || !message) {
@@ -61,9 +62,6 @@ exports.sendMessage = async (req, res) => {
         VALUES (?, ?, ?, ?)
         `;
         const [result] = await db.query(query, [chat_room_id, sender_id, sender_nickname, message]);
-
-        // 시스템 메시지를 소켓 이벤트로 모든 클라이언트에게 전송
-        io.to(roomId).emit('systemMessage', { message });
 
         res.status(201).json({
             success: true,
@@ -111,6 +109,7 @@ exports.checkParticipation = async (req, res) => {
 };
 
 exports.updateParticipateStatus = async (req, res) => {
+    const io = req.app.get('socketio');
     const postId = parseInt(req.params.postId) + 1;
     const userId = req.params.userId;
 
@@ -138,7 +137,7 @@ exports.updateParticipateStatus = async (req, res) => {
             const systemMessage = `${userNickname} 님이 입장했습니다.`;
             await db.query(insertSystemMessageQuery, [postId, "system", "system", systemMessage, "system"]);
             // 시스템 메시지를 소켓 이벤트로 모든 클라이언트에게 전송
-            io.to(roomId).emit('systemMessage', { systemMessage });
+            io.to(postId).emit('systemMessage', { systemMessage });
             res.status(201).json({ message: "Participation added and system message created" });
         } else {
             res.status(400).send("Failed to add participation");
@@ -150,6 +149,7 @@ exports.updateParticipateStatus = async (req, res) => {
 };
 
 exports.leaveChatRoom = async (req, res) => {
+    const io = req.app.get('socketio');
     const { roomId, userId } = req.body;
 
     try {
@@ -214,6 +214,7 @@ exports.reserveTrade = async (req, res) => {
 };
 
 exports.startTrade = async (req, res) => {
+    const io = req.app.get('socketio');
     const { roomId } = req.body;
     try {
         // 최대 인원보다 적게 들어올 경우 금액 재조정
@@ -492,6 +493,7 @@ exports.checkAnyConfirmed = async (req, res) => {
 };
 
 exports.toggleConfirmedStatus = async (req, res) => {
+    const io = req.app.get('socketio');
     const { roomId, userId } = req.body;
 
     try {
@@ -622,6 +624,7 @@ exports.getReservations = async (req, res) => {
 }
 
 exports.kickParticiapnt = async (req, res) => {
+    const io = req.app.get('socketio');
     const { roomId, userId } = req.body;
 
     // 유효성 검사
@@ -639,8 +642,6 @@ exports.kickParticiapnt = async (req, res) => {
             return res.status(404).json({ success: false, message: 'Room not found' });
         }
 
-        console.log(room)
-
         const hostId = room[0].user_id;
 
         const requestingId = req.session.userId;
@@ -653,12 +654,19 @@ exports.kickParticiapnt = async (req, res) => {
             [roomId, userId]
         );
 
+        await db.query(
+            'UPDATE post_list SET current_capacity = current_capacity - 1 WHERE post_index = ?',
+            [roomId]
+        );
+
         if (deleteResult.affectedRows === 0) {
             return res.status(404).json({ success: false, message: 'User not found in the room' });
         }
 
+        const [participant] = await db.query('SELECT user_nickname FROM user_info WHERE user_id = ?', [userId]);
+
         // 시스템 메시지 생성
-        const systemMessage = `${participant.nickname} 님이 강제 퇴장되었습니다.`;
+        const systemMessage = `${participant[0].user_nickname} 님이 강제 퇴장되었습니다.`;
         await db.query(
             'INSERT INTO chat_messages (chat_room_id, sender_id, sender_nickname, message, message_type) VALUES (?, ?, ?, ?, ?)',
             [roomId, 'system', 'system', systemMessage, 'system']
@@ -675,5 +683,27 @@ exports.kickParticiapnt = async (req, res) => {
     } catch (error) {
         console.error('Error kicking participant: ', error);
         return res.status(500).json({ success: false, message: 'Internal server error' });
+    }
+};
+
+exports.reportUser = async (req, res) => {
+    const { roomId, reportedUserId, reportReason } = req.body;
+    const reportingUserId = req.session.userId;
+
+    if (!roomId || !reportedUserId) {
+        return res.status(400).json({ success: false, message: 'Invalid data' });
+    }
+
+    try {
+        // 신고 기록 저장
+        await db.query(
+            'INSERT INTO user_reports (reporting_user_id, reported_user_id, room_id, report_reason, created_at) VALUES (?, ?, ?, ?, NOW())',
+            [reportingUserId, reportedUserId, roomId, reportReason]
+        );
+
+        res.status(200).json({ success: true, message: 'User reported successfully' });
+    } catch (error) {
+        console.error('Error reporting user: ', error);
+        res.status(500).json({ success: false, message: 'Server error' });
     }
 };

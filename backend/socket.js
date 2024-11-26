@@ -15,6 +15,7 @@ const updateTradestatus = async (roomId, status) => {
 
 module.exports = (server) => {
     const io = socketIo(server);
+    const userSocketMap = {}; // { userId: socketId }
 
     io.on("connection", (socket) => {
         console.log("A user connected: " + socket.id);
@@ -25,6 +26,12 @@ module.exports = (server) => {
             console.log(`User joined chat: ${roomId}`);
         });
         
+        socket.on("registerUser", ({ userId }) => {
+            // 유저 ID와 소켓 ID 매핑
+            userSocketMap[userId] = socket.id;
+            console.log(`User ${userId} registered with socket ID ${socket.id}`);
+        });
+
         // 채팅 메시지 전송
         socket.on("sendMessage", (data, callback) => {
             try {
