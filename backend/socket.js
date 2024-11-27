@@ -13,6 +13,10 @@ const updateTradestatus = async (roomId, status) => {
     }
 };
 
+const sendNotificationToClient = (io, userId, notification) => {
+    io.to(userId).emit('new-notification', notification);
+};
+
 module.exports = (server) => {
     const io = socketIo(server);
 
@@ -84,14 +88,14 @@ module.exports = (server) => {
         // 메세지 전송 시 알림
         socket.on('send-message', async ({ chatRoomId, senderId, senderNickname, message, receiverId }) => {
             try {
-                // 메시지 전송
+                // 메시지 저장
                 await db.query(
                     `INSERT INTO chat_message (chat_room_id, sender_id, sender_nickname, message, message_type) 
                      VALUES (?, ?, ?, ?, 'user')`,
                     [chatRoomId, senderId, senderNickname, message]
                 );
         
-                // 알림 생성
+                // 알림 저장
                 await db.query(
                     `INSERT INTO notifications (user_id, chat_room_id, type, message, sender_id) 
                      VALUES (?, ?, 'message', ?, ?)`,
@@ -122,7 +126,7 @@ module.exports = (server) => {
                 );
         
                 // 알림 전달
-                io.to(chatRoomId).emit('new-notification', {
+                sendNotificationToClient(io, receiverId, {
                     chatRoomId,
                     type: 'entry',
                     message: `${userNickname}님이 채팅방에 입장했습니다.`,
