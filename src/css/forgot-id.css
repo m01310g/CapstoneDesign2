@@ -88,4 +88,8 @@ input[name="forgot-id-user-email-post"] {
   #forgot-pw-container {
     padding-left: 13%;
   }
+
+  .page-header {
+    margin-bottom: 35px;
+  }
 }

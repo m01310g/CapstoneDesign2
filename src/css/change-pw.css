@@ -56,3 +56,9 @@ a:active {
   font-weight: 600;
   cursor: pointer;
 }
+
+@media screen and (max-width: 430px) {
+  .page-header {
+    margin-bottom: 0.75rem;
+  }
+}
