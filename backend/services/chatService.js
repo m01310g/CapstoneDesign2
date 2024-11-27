@@ -1,5 +1,6 @@
 const db = require('../config/db');
 
+
 exports.createChatRoom = async (req, res) => {
     const { postId, userId } = req.body;
     const query = "INSERT INTO chat_rooms (post_index, user_id) VALUES(?, ?)";

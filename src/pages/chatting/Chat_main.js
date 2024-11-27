@@ -61,7 +61,18 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
+
 const socket = io();
+
+function updateNotificationBadge(count) {
+    const badge = document.getElementById("notification-badge");
+    if (count > 0) {
+      badge.style.display = "block";
+      badge.textContent = count;
+    } else {
+      badge.style.display = "none";
+    }
+  }
 
 // 알림 실시간 업데이트
 socket.on('new-notification', (notification) => {
@@ -70,6 +81,18 @@ socket.on('new-notification', (notification) => {
 
     // 알림 개수 업데이트
     notificationCount.textContent = parseInt(notificationCount.textContent || '0') + 1;
+
+    window.onload = updateNotificationCount;
+
+    // 알림 리스트에 추가 (옵션: UI에 동적으로 표시할 수도 있음)
+    const notificationList = document.getElementById('notification-list');
+    if (notificationList) {
+        const listItem = document.createElement('div');
+        listItem.className = 'notification-item';
+        listItem.textContent = notification.message;
+        notificationList.appendChild(listItem);
+    }
 });
+
 
 
