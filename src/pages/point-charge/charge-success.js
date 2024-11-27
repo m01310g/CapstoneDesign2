@@ -5,7 +5,7 @@ window.onload = function() {
   fetch('/api/session/user-info') // API 엔드포인트에 요청
     .then(response => response.json())
     .then(data => {
-      $chargedPoint.textContent = `${data.userPoint}`;
+      $chargedPoint.textContent = `${data.userPoint.toLocaleString()}`;
     })
     .catch(error => console.error('Error fetching session data:', error));
 };
