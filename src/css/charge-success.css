@@ -45,6 +45,11 @@
 
 #charged-point {
   font-size: 1.15rem;
+  line-height: 1.5;
+}
+
+#point {
+  vertical-align: baseline;
 }
 
 #next-btn {

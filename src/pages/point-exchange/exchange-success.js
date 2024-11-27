@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     .then(data => {
       if (data.sentMoney !== undefined) {
         // 서버에서 받은 sentMoney 값을 #point에 표시
-        $chargedPoint.textContent = `${data.sentMoney}`;
+        $chargedPoint.textContent = `${data.sentMoney.toLocaleString()}`;
       } else {
         console.error("sentMoney is not available in the response data");
       }
