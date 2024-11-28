@@ -46,6 +46,26 @@
             <button class="additional-price-btn hidden">추가 금액 설정</button>
         </div>
     </div>
+
+    <div id="reportModal" class="modal hidden">
+        <div class="modal-content">
+            <h3>신고 사유 선택</h3>
+            <form id="reportForm">
+            <label>
+                <input type="radio" name="reason" value="부적절한 언어 사용"> 부적절한 언어 사용
+            </label><br>
+            <label>
+                <input type="radio" name="reason" value="스팸 메시지"> 스팸 메시지
+            </label><br>
+            <label>
+                <input type="radio" name="reason" value="기타"> 기타
+            </label><br>
+            <textarea id="additionalReason" class="hidden" placeholder="신고 사유를 입력하세요..."></textarea><br>
+            <button type="button" id="submitReport">신고하기</button>
+            <button type="button" id="closeModal">닫기</button>
+            </form>
+        </div>
+    </div>
     <script src="https://cdn.socket.io/4.7.1/socket.io.min.js"></script>
     <script src="/Chat_in.js"></script>
 </body>
