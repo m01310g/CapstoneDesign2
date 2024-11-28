@@ -342,7 +342,6 @@ const checkAnyConfirmed = async () => {
 };
 
 document.addEventListener("DOMContentLoaded", async () => {
-  // await checkAllConfirmed();
   const getUserCount = await fetchUserCount();
   userCount.innerText = getUserCount;
   const getUserId = await fetchUserId();
@@ -391,6 +390,10 @@ document.addEventListener("DOMContentLoaded", async () => {
       chatBox.appendChild(messageElement);
     }
   });
+
+  const modal = document.querySelector('#reportModal');
+
+  modal.style.display = "none"; // 초기 상태에서 모달 숨김
 
   chatBox.scrollTop = chatBox.scrollHeight;
   await syncTradeStatus(); // 거래 상태 동기화
@@ -565,7 +568,6 @@ memberButton.addEventListener('click', async () => {
       return;
     }
     const { participants, hostId } = await response.json();
-    const memberList = document.querySelector('#memberList');
 
     const reservationResponse = await fetch(`/api/chat/get-reservations?roomId=${roomId}`);
     const reservations = await reservationResponse.json();
@@ -590,6 +592,29 @@ memberButton.addEventListener('click', async () => {
       hostItem.style.fontWeight = 'bold';
       hostItem.style.height = '2.5rem';
       memberList.appendChild(hostItem);
+
+      // 신고하기 버튼 (자기 자신 제외)
+      if (hostParticipant.user_id !== userId) {
+        const reportButton = document.createElement('button');
+        reportButton.textContent = '신고';
+        reportButton.style.marginLeft = '10px';
+        reportButton.style.padding = '5px 10px';
+        reportButton.style.backgroundColor = 'transparent';
+        reportButton.style.color = 'grey';
+        reportButton.style.border = '1px solid grey';
+        reportButton.style.borderRadius = '4px';
+        reportButton.style.cursor = 'pointer';
+        reportButton.dataset.userId = hostParticipant.user_id; // 유저 ID 추가
+        reportButton.classList.add('report-btn');
+
+        // 신고하기 버튼 클릭 이벤트
+        reportButton.addEventListener('click', async () => {
+          const confirmReport = confirm(`${hostParticipant.user_nickname}님을 신고하시겠습니까?`);
+          if (!confirmReport) return;
+        });
+
+        hostItem.appendChild(reportButton);
+      }
     }
 
     // 예약 중인 참여자 추가
@@ -606,6 +631,29 @@ memberButton.addEventListener('click', async () => {
               listItem.style.color = '#f5af12'; // 방장 색상
               listItem.style.fontWeight = 'bold';
           }
+
+          // 신고하기 버튼 (자기 자신 제외)
+          if (participant.user_id !== userId) {
+            const reportButton = document.createElement('button');
+            reportButton.textContent = '신고';
+            reportButton.style.marginLeft = '10px';
+            reportButton.style.padding = '5px 10px';
+            reportButton.style.backgroundColor = 'transparent';
+            reportButton.style.color = 'grey';
+            reportButton.style.border = '1px solid grey';
+            reportButton.style.borderRadius = '4px';
+            reportButton.style.cursor = 'pointer';
+            reportButton.classList.add('report-btn');
+            reportButton.dataset.userId = participant.user_id; // 유저 ID 추가
+
+            // 신고하기 버튼 클릭 이벤트
+            reportButton.addEventListener('click', async () => {
+              const confirmReport = confirm(`${participant.user_nickname}님을 신고하시겠습니까?`);
+              if (!confirmReport) return;
+            });
+
+            listItem.appendChild(reportButton);
+          }
           memberList.appendChild(listItem);
       });
     }
@@ -619,7 +667,7 @@ memberButton.addEventListener('click', async () => {
 
       nonReservedParticipants.forEach(participant => {
         const listItem = document.createElement('li');
-        listItem.style.display = 'flex';
+        listItem.style.display = "flex";
         listItem.style.justifyContent = 'space-between';
         listItem.style.alignItems = 'center';
         listItem.style.height = '2.5rem';
@@ -630,52 +678,22 @@ memberButton.addEventListener('click', async () => {
         nicknameSpan.textContent = participant.user_nickname;
         listItem.appendChild(nicknameSpan);
 
-        participants.forEach(participant => {
-          if (participant.user_id === userId) return; // 자기 자신은 제외
-    
-          // 신고하기 버튼 추가
+        // 신고하기 버튼 (자기 자신 제외)
+        if (participant.user_id !== userId) {
           const reportButton = document.createElement('button');
           reportButton.textContent = '신고';
-          reportButton.style.marginLeft = '2rem';
-          reportButton.style.padding = '5px 5px';
+          reportButton.style.marginLeft = '10px';
+          reportButton.style.padding = '5px 10px';
           reportButton.style.backgroundColor = 'transparent';
           reportButton.style.color = 'grey';
-          reportButton.style.border = 'none';
+          reportButton.style.border = '1px solid grey';
           reportButton.style.borderRadius = '4px';
           reportButton.style.cursor = 'pointer';
-    
-          // 신고하기 버튼 클릭 이벤트 리스너
-          reportButton.addEventListener('click', async () => {
-              const confirmReport = confirm(
-                  `${participant.user_nickname}님을 신고하시겠습니까?`
-              );
-              if (!confirmReport) return;
-    
-              try {
-                  const reportResponse = await fetch('/api/chat/report-user', {
-                      method: 'POST',
-                      headers: { 'Content-Type': 'application/json' },
-                      body: JSON.stringify({
-                          roomId: roomId,
-                          reportedUserId: participant.user_id,
-                      }),
-                  });
-    
-                  if (reportResponse.ok) {
-                      alert(`${participant.user_nickname}님을 신고했습니다.`);
-                  } else {
-                      console.error('Failed to report user');
-                      alert('신고 처리 중 오류가 발생했습니다.');
-                  }
-              } catch (error) {
-                  console.error('Error reporting user: ', error);
-                  alert('신고 처리 중 서버 오류가 발생했습니다.');
-              }
-            });
-    
-            listItem.appendChild(reportButton);
-            memberList.appendChild(listItem); // 사용자 목록에 항목 추가
-        });
+          reportButton.classList.add('report-btn');
+          reportButton.dataset.userId = participant.user_id; // 유저 ID 추가
+
+          listItem.appendChild(reportButton);
+        }
 
         // 강제 퇴장 버튼 추가 (방장만 보이도록)
         if (userId === hostId) {
@@ -724,6 +742,73 @@ memberButton.addEventListener('click', async () => {
   } catch (error) {
     console.error('Error fetching participants: ', error);
   }
+});
+
+// 신고 버튼 이벤트 위임
+memberList.addEventListener('click', (event) => {
+  const modal = document.querySelector('#reportModal');
+  const closeModal = document.querySelector('#closeModal');
+  const submitReport = document.querySelector('#submitReport');
+  const additionalReasonInput = document.querySelector('#additionalReason');
+  const reportForm = document.querySelector('#reportForm');
+
+  if (event.target.classList.contains('report-btn')) {
+    const button = event.target;
+    const reportedUserId = button.dataset.userId; // 신고 대상 ID
+    modal.dataset.reportedUserId = reportedUserId; // 모달에 대상 ID 저장
+    modal.classList.remove('hidden'); // 모달 표시
+    modal.style.display = 'flex';
+  }
+
+  closeModal.addEventListener('click', () => {
+    modal.classList.remove('hidden');
+    modal.style.display = 'none';
+  });
+
+  // "기타" 선택 시 텍스트 박스 표시
+  reportForm.addEventListener('change', (event) => {
+    if (event.target.name === 'reason' && event.target.value === '기타') {
+      additionalReasonInput.classList.remove('hidden');
+    } else {
+      additionalReasonInput.classList.add('hidden');
+    }
+  });
+
+  // 신고 제출
+  submitReport.addEventListener('click', async () => {
+    const reportedUserId = modal.dataset.reportedUserId; // 신고 대상 ID
+    const selectedReason = reportForm.reason.value; // 선택된 신고 사유
+    const additionalReason = additionalReasonInput.value.trim(); // 추가 사유
+
+    const reason = selectedReason === '기타' ? additionalReason : selectedReason;
+
+    if (!reason) {
+      alert('신고 사유를 입력하거나 선택하세요.');
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/chat/report-user', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          roomId,
+          reportedUserId,
+          reportReason: reason,
+        }),
+      });
+
+      if (response.ok) {
+        alert('신고가 접수되었습니다.');
+        modal.classList.add('hidden'); // 모달 닫기
+      } else {
+        alert('신고 처리 중 오류가 발생했습니다.');
+      }
+    } catch (error) {
+      console.error('Error reporting user:', error);
+      alert('신고 처리 중 서버 오류가 발생했습니다.');
+    }
+  });
 });
 
 // 클릭 시 닫기
