@@ -227,3 +227,9 @@ iframe {
 .indicator-dot.active {
     background-color: #333; /* 활성화된 점 색상 */
 }
+
+@media (max-width: 768px) {
+    .banner-item img {
+        object-fit: contain; /* 작은 화면에서는 이미지를 잘리지 않게 표시 */
+    }
+}
