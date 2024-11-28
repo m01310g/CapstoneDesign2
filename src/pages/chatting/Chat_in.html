@@ -1,72 +1,72 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>채팅방</title>
-    <link rel="stylesheet" href="../../css/chat_in.css">
-</head>
-<body>
-    <div class="chat-container">
-        <!-- 채팅방 헤더 -->
-        <header class="chat-header">
-            <button class="back-button" onclick="window.history.back();">
-                <img src="/img/back-icon.png" alt="뒤로가기">
-            </button>
-            <h2 class="chat-title" id="chatTitle">채팅방</h2>
-            <div class="user-info">
-                <button class="member-button">
-                    <img src="https://cdn-icons-png.flaticon.com/512/5264/5264565.png" alt="User Icon" class="user-icon">
-                    <span class="user-count" id="userCount"></span>
+    <!DOCTYPE html>
+    <html lang="ko">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>채팅방</title>
+        <link rel="stylesheet" href="../../css/chat_in.css">
+    </head>
+    <body>
+        <div class="chat-container">
+            <!-- 채팅방 헤더 -->
+            <header class="chat-header">
+                <button class="back-button" onclick="window.history.back();">
+                    <img src="/img/back-icon.png" alt="뒤로가기">
                 </button>
-                <div id="memberListContainer" class="member-list-container hidden">
-                    <ul id="memberList"></ul>
+                <h2 class="chat-title" id="chatTitle">채팅방</h2>
+                <div class="user-info">
+                    <button class="member-button">
+                        <img src="https://cdn-icons-png.flaticon.com/512/5264/5264565.png" alt="User Icon" class="user-icon">
+                        <span class="user-count" id="userCount"></span>
+                    </button>
+                    <div id="memberListContainer" class="member-list-container hidden">
+                        <ul id="memberList"></ul>
+                    </div>
+                    <button class="leave-room-btn">나가기</button>
                 </div>
-                <button class="leave-room-btn">나가기</button>
+            </header>
+
+            <!-- 채팅 메시지 영역 -->
+            <div class="chat-area" id="chatArea"></div>
+
+            <!-- 채팅 입력 영역 -->
+            <div class="chat-input-area">
+                <button class="menu-button" id="menuButton">
+                    <img id="menuIcon" src="https://cdn-icons-png.flaticon.com/512/5135/5135168.png" alt="메뉴 아이콘" class="menu-icon">
+                </button>
+                <textarea type="text" class="chat-input" id="chatInput" placeholder="메시지를 입력하세요"></textarea>
+                <button class="send-button">
+                    <img src="https://cdn-icons-png.flaticon.com/512/11013/11013530.png" alt="전송 아이콘" class="send-icon">
+                </button>
             </div>
-        </header>
 
-        <!-- 채팅 메시지 영역 -->
-        <div class="chat-area" id="chatArea"></div>
-
-        <!-- 채팅 입력 영역 -->
-        <div class="chat-input-area">
-            <button class="menu-button" id="menuButton">
-                <img id="menuIcon" src="https://cdn-icons-png.flaticon.com/512/5135/5135168.png" alt="메뉴 아이콘" class="menu-icon">
-            </button>
-            <textarea type="text" class="chat-input" id="chatInput" placeholder="메시지를 입력하세요"></textarea>
-            <button class="send-button">
-                <img src="https://cdn-icons-png.flaticon.com/512/11013/11013530.png" alt="전송 아이콘" class="send-icon">
-            </button>
+            <div class="bottom-menu hidden" id="bottomMenu">
+                <button class="trade-button">거래</button>
+                <button class="confirm-button hidden">확인</button>
+                <button class="additional-price-btn hidden">추가 금액 설정</button>
+            </div>
         </div>
 
-        <div class="bottom-menu hidden" id="bottomMenu">
-            <button class="trade-button">거래</button>
-            <button class="confirm-button hidden">확인</button>
-            <button class="additional-price-btn hidden">추가 금액 설정</button>
+        <div id="reportModal" class="modal hidden" style="display: none;">
+            <div class="modal-content">
+                <h3>신고 사유 선택</h3>
+                <form id="reportForm">
+                <label>
+                    <input type="radio" name="reason" value="부적절한 언어 사용"> 부적절한 언어 사용
+                </label><br>
+                <label>
+                    <input type="radio" name="reason" value="스팸 메시지"> 스팸 메시지
+                </label><br>
+                <label>
+                    <input type="radio" name="reason" value="기타"> 기타
+                </label><br>
+                <textarea id="additionalReason" class="hidden" placeholder="신고 사유를 입력하세요..."></textarea><br>
+                <button type="button" id="submitReport">신고하기</button>
+                <button type="button" id="closeModal">닫기</button>
+                </form>
+            </div>
         </div>
-    </div>
-
-    <div id="reportModal" class="modal hidden">
-        <div class="modal-content">
-            <h3>신고 사유 선택</h3>
-            <form id="reportForm">
-            <label>
-                <input type="radio" name="reason" value="부적절한 언어 사용"> 부적절한 언어 사용
-            </label><br>
-            <label>
-                <input type="radio" name="reason" value="스팸 메시지"> 스팸 메시지
-            </label><br>
-            <label>
-                <input type="radio" name="reason" value="기타"> 기타
-            </label><br>
-            <textarea id="additionalReason" class="hidden" placeholder="신고 사유를 입력하세요..."></textarea><br>
-            <button type="button" id="submitReport">신고하기</button>
-            <button type="button" id="closeModal">닫기</button>
-            </form>
-        </div>
-    </div>
-    <script src="https://cdn.socket.io/4.7.1/socket.io.min.js"></script>
-    <script src="/Chat_in.js"></script>
-</body>
-</html>
+        <script src="https://cdn.socket.io/4.7.1/socket.io.min.js"></script>
+        <script src="/Chat_in.js"></script>
+    </body>
+    </html>
