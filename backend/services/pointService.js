@@ -14,9 +14,9 @@ exports.pay =  async (req, res) => {
             quantity: quantity,
             total_amount: total_amount,
             tax_free_amount: 0,
-            approval_url: `http://localhost:3000/pay/success?userId=${userId}&total_amount=${total_amount}`, // userId와 total_amount를 쿼리 파라미터로 추가
-            cancel_url: 'http://localhost:3000/pay/cancel', // 결제 취소 시 리다이렉트
-            fail_url: 'http://localhost:3000/pay/fail' // 결제 실패 시 리다이렉트
+            approval_url: `https://busy-fascinated-daemonosaurus.glitch.me/pay/success?userId=${userId}&total_amount=${total_amount}`, // userId와 total_amount를 쿼리 파라미터로 추가
+            cancel_url: 'https://busy-fascinated-daemonosaurus.glitch.me/pay/cancel', // 결제 취소 시 리다이렉트
+            fail_url: 'https://busy-fascinated-daemonosaurus.glitch.me/pay/fail' // 결제 실패 시 리다이렉트
         }, {
             headers: {
                 Authorization: `KakaoAK ${process.env.KAKAO_ADMIN_KEY}`,

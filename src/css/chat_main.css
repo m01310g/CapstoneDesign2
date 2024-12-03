@@ -10,11 +10,9 @@
 }
 
 .notification-button img {
-    width: 28px;
-    height: 28px;
+    width: 1.5rem;
+    height: 1.5rem;
 }
-
-
 
 body, html {
     font-family: Arial, sans-serif;
@@ -37,14 +35,16 @@ body, html {
 .chat-header {
     display: flex;
     justify-content: space-between;
+    /* align-items: center; */
+    padding: 1rem;
     align-items: center;
-    padding: 10px;
-    background-color: #fff;
-    border-bottom: 1px solid #ddd;
-}
+    background-color: white;
+    border-bottom: 1px solid #ddd;}
 
 .chat-header h2 {
     margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
 }
 
 .back-button, .notification-button {
@@ -82,7 +82,7 @@ body, html {
 }
 
 .chat-name {
-    font-weight: bold;
+    font-weight: 600;
 }
 
 .chat-time {
@@ -97,65 +97,8 @@ body, html {
     color: #333;
 }
 
-.chat-icon {
-    width: 36px;
-    height: 36px;
-    margin-left: 12px;
-}
-
-.chat-input {
-    display: flex;
-    padding: 10px;
-    background-color: #fff;
-    border-top: 1px solid #ddd;
-}
-
-.chat-input input {
-    flex: 1;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 20px;
-    outline: none;
-    font-size: 14px;
-}
-
-.send-button {
-    background: none;
-    border: none;
-    margin-left: 10px;
-    cursor: pointer;
-}
-
-.send-button img {
-    width: 24px;
-    height: 24px;
-}
-
 .chat-item:hover, .chat-item:active {
     background-color: #f0f0f0;
-}
-
-.create-room-btn {
-    position: fixed;
-    bottom: 20px; /* 버튼을 화면 하단에 위치 */
-    left: 50%;
-    transform: translateX(-50%); /* 중앙 정렬 */
-    z-index: 1000; /* 버튼이 다른 요소 위에 보이도록 */
-}
-
-.create-room-btn button {
-    padding: 12px 20px;
-    background-color: rgb(209, 206, 24);
-    color: white;
-    border: none;
-    border-radius: 25px;
-    font-size: 16px;
-    cursor: pointer;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.create-room-btn button:hover {
-    background-color: rgb(46, 130, 219);
 }
 
 a {
@@ -180,7 +123,8 @@ a:active {
 
 .chatroom-title h3 {
     margin: 0;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
+    font-weight: 600;
 }
 
 .chatroom-info {
@@ -205,4 +149,36 @@ a:active {
 .participants-count {
     text-align: right;
     white-space: nowrap;
+}
+
+.divider {
+    border: none;
+    border-top: 1px solid rgba(127, 127, 127, 0.52);
+}
+
+.chat-list * {
+    color: black;
+}
+
+.chat-list a {
+    color: black;
+    text-decoration: none;
+}
+
+.chat-list a:visited {
+    color: black;
+}
+
+.chat-list a:hover,
+.chat-list a:focus,
+.chat-list a:active {
+    color: black;
+}
+
+#no-chat {
+  margin-top: 1rem;
+}
+
+.notification-count {
+  color: #F5AF12;
 }

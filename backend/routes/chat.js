@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const chatService = require('../services/chatService');
-const { route } = require('./post');
 
 router.get('/api/chat/get-message', chatService.getMessages);
 router.post('/api/chat/send-message', chatService.sendMessage);
@@ -26,6 +25,7 @@ router.get('/api/chat/check-all-confirmed', chatService.checkAllConfirmed);
 router.get('/api/chat/get-participations', chatService.getParticipations);
 router.get('/api/chat/get-reservations', chatService.getReservations);
 router.post('/api/chat/kick-participant', chatService.kickParticiapnt);
-router.post('/api/chat/report-user', chatService.reportUser)
+router.post('/api/chat/report-user', chatService.reportUser);
+router.post('/api/user/submit-inquiry', chatService.inquiryUser);
 
 module.exports = router;

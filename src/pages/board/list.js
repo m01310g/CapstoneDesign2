@@ -1,4 +1,5 @@
 const params = new URLSearchParams(window.location.search);
+const index = params.get('index');
 const selectedCategory = params.get("category");
 const selectedSubCategory = params.get("subCategory") || "전체";
 const searchKeyword = params.get("search");
@@ -40,7 +41,7 @@ const formatDate = (dateStr) => {
 const fetchData = async () => {
     try {
         const response = await fetch(
-            `/api/post?category=${utf8ToBase64(category)}&subCategory=${utf8ToBase64(selectedSubCategory)}&limit=10`
+            `/api/post?category=${utf8ToBase64(category)}&subCategory=${utf8ToBase64(selectedSubCategory)}`
         );
         if (!response.ok) throw new Error("Network response was not ok");
 
@@ -110,7 +111,7 @@ const template = (objValue) => {
                 / ${objValue.max_capacity}
             </div>
         </a>
-        <hr>        
+        <hr class='divider'>        
         `;
     } else {
         return `
@@ -125,7 +126,7 @@ const template = (objValue) => {
                 / ${objValue.max_capacity}
             </div>
         </a>
-        <hr>        
+        <hr class='divider'>        
         `;
     }
 };

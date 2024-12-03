@@ -1,4 +1,3 @@
-
 class WriteBtn extends HTMLElement {
     constructor() {
         super();
@@ -47,6 +46,12 @@ class WriteBtn extends HTMLElement {
             #write-btn {
                 width: 4.5rem;
                 height: auto;
+            }
+            
+            @media (max-width: 430px) {
+                .img-container {
+                    position: fixed;
+                }
             }
         `;
 

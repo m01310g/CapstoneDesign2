@@ -25,7 +25,8 @@ body, html {
 }
 
 /* 채팅방 헤더 */
-.chat-header {
+.chat-header {    
+    padding: 1.3rem 1rem 1rem 1rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -66,6 +67,7 @@ body, html {
 .user-count {
     margin-left: 0.3rem;
     font-size: 1rem;
+    color: #000000;
 }
 
 /* 채팅 메시지 영역 */
@@ -184,9 +186,8 @@ body, html {
     bottom: 0;
     left: 0;
     right: 0;
-    /* display: flex; */
-    justify-content: space-around;
-    border-top: 1px solid #ddd;
+    display: flex;
+    /* justify-content: space-around; */
     transition: transform 0.3s ease-out;
     transform: translateY(100%);
     max-width: 37rem;
@@ -194,6 +195,23 @@ body, html {
     margin:0 auto;
     box-sizing: border-box;
     height: 20rem;
+    gap: 10px; /* 버튼 간격 */
+}
+
+.bottom-menu > button {
+    border-radius: 50%;
+    padding: 1rem;
+    width: 5rem;
+    height: 5rem;
+    font-size: 1rem;
+    border: none;
+    font-weight: 600;
+    text-align: center; /* 텍스트 가운데 정렬 */
+}
+
+.bottom-menu > button:disabled {
+    background-color: #ffbb0085 !important;
+    color: white;
 }
 
 .menu-item {
@@ -336,9 +354,9 @@ body, html {
 
 /* 모달 내용 스타일 */
 .modal-content {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 10px;
+    background-color: #ffffff;
+    padding: 1.625rem;
+    border-radius: 1rem;
     /* 모달 크기를 적절하게 조절 */
     width: 80%;
     max-width: 400px;
@@ -348,4 +366,40 @@ body, html {
 /* 모달을 보이게 할 때 */
 .modal.show {
     display: flex;
+}
+
+.modal-content h3 {
+  font-size: 1.24rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.reason-option {
+  margin-bottom: 0.5rem;
+}
+
+#additionalReason {
+  padding: 1rem;
+/*   display: block; */
+  width: 100%;
+  height: 8rem;
+  resize: none;
+  border: 1px solid rgba(127, 127, 127, 0.52);
+  border-radius: 1rem;
+}
+
+.button-container {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.button-container button {
+  padding: 1rem 1rem;
+  border: none;
+  border-radius: 1rem;
+  cursor: pointer;
+  background-color: transparent;
+  font-size: 1rem;
 }

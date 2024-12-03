@@ -1,8 +1,13 @@
+const socket = io();
+socket.on('connect', () => {
+    console.log('Socket connected:', socket.id);
+});
+
 const base64ToUtf8 = (str) => {
     return decodeURIComponent(Array.prototype.map.call(atob(str), (c) => {
         return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
     }).join(''));
-}
+};
 
 // 쿼리스트링의 객체 불러오기
 const params = new URLSearchParams(window.location.search);
@@ -272,9 +277,7 @@ const checkPointStatus = async () => {
         // 조건 확인: 포인트 부족 시 입장 불가능
         if (userPoint < requiredPoint) {
             alert(
-                `포인트가 부족합니다! 
-                필요한 포인트: ${formattedIntPart}.${decPart}, 
-                현재 보유 포인트: ${userPoint.toLocaleString()}`
+                `참여 시 예상 총액의 절반 이상의 포인트를 보유하고 있어야 합니다.\n필요한 포인트: ${formattedIntPart}.${decPart}\n현재 보유 포인트: ${userPoint.toLocaleString()}`
             );
             return false; // 입장 불가능
         } else {
@@ -296,9 +299,12 @@ const handleParticipation = async (event) => {
     // 이미 참여 상태인 경우, 더 진행하지 않음
     if (data.participated) {
         window.location.href = `/chat?index=${index + 1}`;
-        return;
+        return; 
     };
-
+  
+    const userInfo = await fetchUserInfo(); // 사용자 정보 가져오기 (userNickname)
+    const userNickname = userInfo.userNickname;
+  
     // 포인트 상태 확인
     const pointStatus = await checkPointStatus();
     if (!pointStatus) {
@@ -340,6 +346,7 @@ const handleParticipation = async (event) => {
 
             // 상태 업데이트
             checkCapacityStatus();
+            socket.emit('joinRoom', { roomId: parseInt(index) + 1 });
 
             window.location.href = `/chat?index=${index + 1}`;
         } catch (error) {
@@ -347,12 +354,3 @@ const handleParticipation = async (event) => {
         }
     }
 };
-
-// const socket = io();
-// socket.on("tradeStarted", ({ roomId }) => {
-//     if (participationBtn) {
-//         participationBtn.innerHTML = `<div id="participate">모집 완료</div>`;
-//         participationBtn.style.backgroundColor = 'grey';
-//         participationBtn.style.pointerEvents = 'none';
-//     }
-// });

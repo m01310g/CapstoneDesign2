@@ -35,6 +35,7 @@
   cursor: pointer;
   transition: color 0.3s ease, boder-bottom 0.3s ease;
   border-bottom: 2px solid transparent; /* 기본 밑줄 투명 */
+  color: #000000;
 }
 
 .menu-bar button:hover {

@@ -58,7 +58,7 @@ exports.writePost = async (req, res) => {
 exports.returnPost = async (req, res) => {
   const category = decodeFromBase64(req.query.category);
   const subCategory = decodeFromBase64(req.query.subCategory);
-  const limit = parseInt(req.query.limit);
+  // const limit = parseInt(req.query.limit);
 
   let query = `
     SELECT 
@@ -81,10 +81,10 @@ exports.returnPost = async (req, res) => {
   }
 
   // limit이 유효한 경우 LIMIT 조건 추가
-  if (!isNaN(limit) && limit > 0) {
-    query += ' LIMIT ?';
-    params.push(limit); // LIMIT 값 추가
-  }
+  // if (!isNaN(limit) && limit > 0) {
+  //   query += ' LIMIT ?';
+  //   params.push(limit); // LIMIT 값 추가
+  // }
 
   try {
     const [result] = await db.query(query, params);
@@ -217,6 +217,8 @@ exports.deletePost = async (req, res) => {
   
     try {
       const [result] = await db.execute(query, [postId]);
+      
+      await db.query('DELETE FROM notification WHERE chat_room_id = ?', [postId]);
   
       if (result.affectedRows === 0) {
         return res.status(404).json({ message: "게시글이 존재하지 않습니다." });

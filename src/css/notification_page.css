@@ -44,6 +44,10 @@ body, html {
     height: 100vh;
 }
 
+.notification-date {
+  margin-left: 1rem;
+}
+
 #remove_udnerline {
     border-bottom: none;
 }
@@ -65,9 +69,70 @@ body, html {
 
 .notification-item {
     display: flex;
+    justify-content: space-between;
+    flex-direction: row;
     align-items: center;
     padding: 10px 0;
-    border-bottom: 1px solid #ddd;;
+    border-bottom: 1px solid #ddd;
     cursor: pointer;
     margin-bottom: 10px;
+}
+
+/*  */
+.delete-notification {
+    background: none; /* 배경색 제거 */
+    border: none; /* 테두리 제거 */
+    font-size: 1rem; /* 버튼 글자 크기 */
+    color: black; /* 버튼 텍스트 색상 (눈에 띄는 빨간색) */
+    cursor: pointer; /* 클릭 가능 커서 */
+    margin-left: auto; /* 버튼을 오른쪽 정렬 */
+    padding: 0; /* 기본 패딩 제거 */
+    line-height: 1; /* 텍스트 중앙 정렬 */
+    display: flex; /* 중앙 정렬 */
+    align-items: center; /* 수직 중앙 정렬 */
+    justify-content: center; /* 수평 중앙 정렬 */
+}
+
+.notification-count {
+    background-color: #F5AF12;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 50%;
+    margin-left: 5px;
+    font-size: 18px;
+    line-height: 1;
+}
+
+a {
+    text-decoration-line: none;
+}
+
+a:visited,
+a:hover,
+a:focus,
+a:active {
+    color: #000;
+}
+
+.chatroom-item {
+  color: black;
+}
+
+.notification-list a {
+    color: black;
+    text-decoration: none;
+}
+
+.notification-list a:visited {
+    color: black;
+}
+
+.notification-list a:hover,
+.notification-list a:focus,
+.notification-list a:active {
+    color: black;
+}
+
+.empty {
+  margin-top: 1rem;
 }

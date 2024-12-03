@@ -2,6 +2,11 @@
     width: 6rem;
     height: auto;
 }
+
+.home-header {
+    display: flex;
+    padding: 1rem;
+}
   
 .term-of-use { 
     width: 2rem;
@@ -19,7 +24,7 @@
 }
   
 .box-body > div:nth-child(2) {
-    margin: 1rem;
+    margin: 0 1rem;
     display: flex;
     position: relative;
 }

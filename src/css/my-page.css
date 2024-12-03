@@ -179,7 +179,7 @@ a:active {
   justify-content: center;
 }
 
-#my-post-info-container {
+#my-post-info-container, #my-inquiry-container {
   display: flex;
   justify-content: space-between;
   font-weight: 600 ;
@@ -197,3 +197,25 @@ a:active {
 #my-post-anchor {
   cursor: pointer;
 }
+
+
+/* 
+<main class="page-main">
+        <div id="my-post-info-container">
+          <span>작성 게시글</span>
+          <div id="my-post">
+            <a href="/my-post">
+              <img class="next-icon" src="/img/back-icon.png">
+            </a>
+          </div>
+        </div>
+      </main>
+
+<div id="my-inquiry-container">
+          <span>문의하기</span>
+          <div id="my-inquiry">
+            <a href="/my-post">
+              <img class="next-icon" src="/img/back-icon.png">
+            </a>
+          </div>
+      </div> */
