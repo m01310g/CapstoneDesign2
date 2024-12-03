@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,7 +10,9 @@
 <body>
     <div class="body-container">
         <div class="box-body">
-            <h1>카테고리</h1>
+            <header class="page-header">
+                <span id="category">카테고리</span>
+            </header>
             <div id="point-info">
                 <div id="available-point">
                     <h3>보유 포인트</h3>
@@ -20,8 +22,9 @@
                     <a href="/point-charge">충전 |</a><a href="/point-exchange">&nbsp;환전</a>
                 </div>
             </div>
+            <hr class="divider">
             <div id="service-container">
-                <h2>이용하실 서비스를 선택해주세요.</h2>
+                <h3>이용하실 서비스를 선택해주세요.</h3>
                 <menu id="service-menu">
                     <a href="/category/taxi">🚕 택시</a>
                     <a href="/category/package">📦 택배</a>
@@ -32,7 +35,7 @@
             <bottom-nav data-page="category"></bottom-nav>
         </div>
     </div>
-    <script src="../../component/BottomNav.js"></script>
-    <script src="/category.js"></script>
+    <script src="/component/BottomNav.js"></script>
+    <script src="/pages/category/category.js"></script>
 </body>
 </html>

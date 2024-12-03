@@ -61,8 +61,11 @@ a:active {
   right: 0;
   height: 2.5rem;
   width: 13%;
-  background-color: #fff;
-  border: 1px solid rgb(62, 62, 62);
+  background-color: #F5AF12;
+  color: #FFFFFF;
+  font-weight: 600;
+/*   border: 1px solid rgb(62, 62, 62); */
+  border: none;
   border-radius: 5px;
 }
 
@@ -90,4 +93,10 @@ input {
   #nickname-availability-check {
     font-size: 0.6rem;
   }
+}
+
+.change {
+  background-color: #F5AF12;
+  color: #FFFFFF;
+  border: none;
 }

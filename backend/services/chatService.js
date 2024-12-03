@@ -1,5 +1,5 @@
 const db = require('../config/db');
-
+const { userSocketMap } = require('../socket');
 
 exports.createChatRoom = async (req, res) => {
     const { postId, userId } = req.body;
@@ -20,15 +20,34 @@ exports.getChatRooms = async (req, res) => {
         SELECT
             cr.post_index AS room_id,
             p.title AS title,
-            (SELECT message FROM chat_messages cm WHERE cm.chat_room_id = cr.post_index ORDER BY cm.created_at DESC LIMIT 1) AS recent_message,
-            (SELECT COUNT(*) FROM participations cp WHERE cp.post_id = cr.post_index) AS participants_count
+            (CASE 
+                WHEN 
+                    (SELECT MAX(cm.created_at) 
+                    FROM chat_messages cm 
+                    WHERE cm.chat_room_id = cr.post_index) >= 
+                    (SELECT participated_at 
+                    FROM participations cp 
+                    WHERE cp.post_id = cr.post_index AND cp.user_id = ? LIMIT 1)
+                THEN 
+                    (SELECT message 
+                    FROM chat_messages cm 
+                    WHERE cm.chat_room_id = cr.post_index 
+                    ORDER BY cm.created_at DESC LIMIT 1)
+                ELSE "메시지가 없습니다."
+            END) AS recent_message,
+            (SELECT COUNT(*) 
+            FROM participations cp 
+            WHERE cp.post_id = cr.post_index) AS participants_count
         FROM chat_rooms cr
         JOIN post_list p ON cr.post_index = p.post_index
         WHERE cr.post_index IN (
-            SELECT post_id FROM participations WHERE user_id = ?
+            SELECT post_id 
+            FROM participations 
+            WHERE user_id = ?
         )
+        ORDER BY cr.created_at DESC
         `;
-        const [result] = await db.query(query, [userId]);
+        const [result] = await db.query(query, [userId, userId]);
         res.json(result);
     } catch (error) {
         console.error('Error fetching chat rooms: ', error);
@@ -76,15 +95,22 @@ exports.sendMessage = async (req, res) => {
 };
 
 exports.getMessages = async (req, res) => {
-    const { roomId } = req.query;
+    const { roomId, userId } = req.query;
     try {
+        // SELECT sender_id, message, sender_nickname, message_type, created_at
+        // FROM chat_messages
+        // WHERE chat_room_id = ?
+        // ORDER BY created_at ASC
         const query = `
-        SELECT sender_id, message, sender_nickname, message_type, created_at
-        FROM chat_messages
-        WHERE chat_room_id = ?
-        ORDER BY created_at ASC
+        SELECT cm.sender_id, cm.message, cm.sender_nickname, cm.message_type, cm.created_at
+        FROM chat_messages cm
+        JOIN participations p ON cm.chat_room_id = p.post_id
+        WHERE cm.chat_room_id = ?
+        AND p.user_id = ? -- 현재 사용자의 참여 기록을 필터링
+        AND cm.created_at >= p.participated_at -- 참여 이후 메시지만 필터링
+        ORDER BY cm.created_at ASC;
         `;
-        const [messages] = await db.query(query, [roomId]);
+        const [messages] = await db.query(query, [roomId, userId]);
         res.json(messages);
     } catch (error) {
         console.error('Error fetching messages: ', error);
@@ -120,7 +146,14 @@ exports.updateParticipateStatus = async (req, res) => {
     const insertSystemMessageQuery = `
         INSERT INTO chat_messages (chat_room_id, sender_id, sender_nickname, message, message_type) VALUES (?, ?, ?, ?, ?)
     `;
-
+  //
+    const getParticipantsQuery = `
+        SELECT u.user_id 
+        FROM participations p
+        JOIN user_info u ON p.user_id = u.user_id
+        WHERE p.post_id = ?
+    `;
+  
     try {
         const [existingParticipation] = await db.query(checkQuery, [postId, userId]);
         if (existingParticipation.length > 0) {
@@ -132,13 +165,34 @@ exports.updateParticipateStatus = async (req, res) => {
             return res.status(404).json({ error: "User not found" });
         }
         const userNickname = userResult[0].user_nickname;
+      
+        const [participants] = await db.query(getParticipantsQuery, [postId]);
 
         const [participationResult] = await db.query(insertParticipationQuery, [userId, postId]);
         if (participationResult.affectedRows > 0) {
             const systemMessage = `${userNickname} 님이 입장했습니다.`;
             await db.query(insertSystemMessageQuery, [postId, "system", "system", systemMessage, "system"]);
-            // 시스템 메시지를 소켓 이벤트로 모든 클라이언트에게 전송
+
+            participants.forEach(async (participant) => {
+              const receivedId = participant.user_id; // 각 참여자의 user_id
+
+              // 알림 데이터 삽입
+              await db.query(
+                `INSERT INTO notification (user_id, chat_room_id, type, message, sender_id) 
+                 VALUES (?, ?, ?, ?, ?)`,
+                  [
+                    receivedId,          // user_id (알림을 받을 사용자)
+                    postId,              // chat_room_id
+                    'entry',             // type (입장)
+                    `${userNickname} 님이 채팅방에 입장했습니다.`, // message
+                     userId               // sender_id (알림을 보낸 사용자)
+                  ]
+                );
+              });
+
+           // 시스템 메시지를 소켓 이벤트로 모든 클라이언트에게 전송
             io.to(postId).emit('systemMessage', { systemMessage });
+            
             res.status(201).json({ message: "Participation added and system message created" });
         } else {
             res.status(400).send("Failed to add participation");
@@ -155,8 +209,7 @@ exports.leaveChatRoom = async (req, res) => {
 
     try {
         await db.query('DELETE FROM participations WHERE post_id = ? AND user_id = ?', [roomId, userId]);
-
-
+        await db.query('DELETE FROM notification WHERE chat_room_id = ? AND user_id = ?', [roomId, userId]);
         const updateResult = await db.query(
             'UPDATE post_list SET current_capacity = current_capacity - 1 WHERE post_index = ? AND current_capacity > 0',
             [roomId]
@@ -173,13 +226,37 @@ exports.leaveChatRoom = async (req, res) => {
 
         await db.query(
             'INSERT INTO chat_messages (chat_room_id, sender_id, sender_nickname, message, message_type) VALUES (?, ?, ?, ?, ?)',
-            [roomId, "system", "system", `${userNickname} 님이 채팅방을 나갔습니다.`, "system"]
+            [roomId, "system", "system", systemMessage, "system"]
         );
+      
+        const getParticipantsQuery = `
+            SELECT u.user_id 
+            FROM participations p
+            JOIN user_info u ON p.user_id = u.user_id
+            WHERE p.post_id = ?
+        `;
+
+        const [participants] = await db.query(getParticipantsQuery, [roomId]);
+
+        participants.forEach(async (participant) => {
+            const receivedId = participant.user_id; // 각 참여자의 user_id
+
+            // 알림 데이터 삽입
+            await db.query(
+            `INSERT INTO notification (user_id, chat_room_id, type, message, sender_id) 
+                VALUES (?, ?, ?, ?, ?)`,
+                [
+                    receivedId,          // user_id (알림을 받을 사용자)
+                    roomId,              // chat_room_id
+                    'leave',             // type (입장)
+                    systemMessage, // message
+                    userId               // sender_id (알림을 보낸 사용자)
+                ]
+            );
+        });
 
         // 시스템 메시지를 소켓 이벤트로 모든 클라이언트에게 전송
         io.to(roomId).emit('systemMessage', { systemMessage });
-
-        await exports.updateReservationAmounts({ body: { roomId } }, res);
 
         return res.json({ success: true });
     } catch (error) {
@@ -188,18 +265,44 @@ exports.leaveChatRoom = async (req, res) => {
     }
 };
 
+// exports.reserveTrade = async (req, res) => {
+//     const { roomId, userId } = req.body;
+
+//     try {
+//         const [roomInfo] = await db.query('SELECT price, current_capacity FROM post_list WHERE post_index = ?', [roomId]);
+//         const [userInfo] = await db.query('SELECT user_point FROM user_info WHERE user_id = ?', [userId]);
+
+//         const price = parseInt(roomInfo[0].price) / parseInt(roomInfo[0].current_capacity);
+//         const currentPoints = userInfo[0].user_point;
+
+//         if (currentPoints < price) {
+//             return res.status(400).json({ success: false, message: '포인트가 부족합니다. 포인트를 충전하고 다시 시도해주세요.' });
+//         }
+
+//         await db.query('UPDATE user_info SET user_point = user_point - ? WHERE user_id = ?', [price, userId]);
+//         await db.query(
+//             'INSERT INTO trade_reservations (room_id, user_id, amount, additional_amount) VALUES (?, ?, ?, 0)',
+//             [roomId, userId, price]
+//         );
+//         return res.json({ success: true, remainingPoints : currentPoints - price });
+//     } catch (error) {
+//         console.error('Error reserving trade: ', error);
+//         res.status(500).json({ success: false, message: '서버 오류' });
+//     }
+// };
+
 exports.reserveTrade = async (req, res) => {
     const { roomId, userId } = req.body;
 
     try {
-        const [roomInfo] = await db.query('SELECT price, current_capacity FROM post_list WHERE post_index = ?', [roomId]);
+        const [roomInfo] = await db.query('SELECT price, current_capacity, max_capacity FROM post_list WHERE post_index = ?', [roomId]);
         const [userInfo] = await db.query('SELECT user_point FROM user_info WHERE user_id = ?', [userId]);
 
         const price = parseInt(roomInfo[0].price) / parseInt(roomInfo[0].current_capacity);
         const currentPoints = userInfo[0].user_point;
 
-        if (currentPoints < price) {
-            return res.status(400).json({ success: false });
+        if (currentPoints < (parseInt(roomInfo[0].price) / parseInt(roomInfo[0].current_capacity))) {
+            return res.json({ success: false, message: `포인트가 부족합니다. 포인트를 충전하고 다시 시도해주세요.\n차감 예정 포인트: ${parseInt(roomInfo[0].price) / parseInt(roomInfo[0].current_capacity)} (현재 인원 기준)\n보유 포인트: ${currentPoints}` });
         }
 
         await db.query('UPDATE user_info SET user_point = user_point - ? WHERE user_id = ?', [price, userId]);
@@ -225,24 +328,61 @@ exports.startTrade = async (req, res) => {
         );
         const currentCapacity = roomInfo[0].current_capacity;
         const totalPrice = roomInfo[0].price;
+        const maxCapacity = roomInfo[0].max_capacity;
 
         const adjustedAmount = Math.floor(totalPrice / currentCapacity);
+      
+        if (currentCapacity < maxCapacity) {
+          const [currentResult] = await db.query('SELECT amount, user_id FROM trade_reservations WHERE room_id = ?', [roomId]);
+          
+          for (const reservation of currentResult) {
+              await db.query('UPDATE user_info SET user_point = user_point + ? WHERE user_id = ?', [reservation.amount, reservation.user_id]);
+              await db.query('UPDATE user_info SET user_point = user_point - ? WHERE user_id = ?', [adjustedAmount, reservation.user_id]);
+          }
+          
+          // 1인당 금액 재조정
+          await db.query(
+              'UPDATE trade_reservations SET amount = ? WHERE room_id = ?',
+              [adjustedAmount, roomId]
+          );
 
-        // 1인당 금액 재조정
-        await db.query(
-            'UPDATE trade_reservations SET amount = ? WHERE room_id = ?',
-            [adjustedAmount, roomId]
-        );
+          // 거래 활성화 상태 업데이트
+          await db.query('UPDATE chat_rooms SET is_trade_active = 1 WHERE post_index = ?', [roomId]);
+          const systemMessage = `인당 ${adjustedAmount}원으로 거래가 시작됩니다.`;
+          await db.query(
+              'INSERT INTO chat_messages (chat_room_id, sender_id, sender_nickname, message, message_type) VALUES (?, ?, ?, ?, ?)',
+              [roomId, 'system', 'system', systemMessage, 'system']
+          );
 
-        // 거래 활성화 상태 업데이트
-        await db.query('UPDATE chat_rooms SET is_trade_active = 1 WHERE post_index = ?', [roomId]);
-        const systemMessage = `인당 ${adjustedAmount}원으로 거래가 시작됩니다.`;
-        await db.query(
-            'INSERT INTO chat_messages (chat_room_id, sender_id, sender_nickname, message, message_type) VALUES (?, ?, ?, ?, ?)',
-            [roomId, 'system', 'system', systemMessage, 'system']
-        );
-        // 시스템 메시지를 소켓 이벤트로 모든 클라이언트에게 전송
-        io.to(roomId).emit('systemMessage', { systemMessage });
+          const getParticipantsQuery = `
+              SELECT u.user_id 
+              FROM participations p
+              JOIN user_info u ON p.user_id = u.user_id
+              WHERE p.post_id = ?
+          `;
+
+          const [participants] = await db.query(getParticipantsQuery, [roomId]);
+
+          participants.forEach(async (participant) => {
+              const receivedId = participant.user_id; // 각 참여자의 user_id
+
+              // 알림 데이터 삽입
+              await db.query(
+              `INSERT INTO notification (user_id, chat_room_id, type, message, sender_id) 
+                  VALUES (?, ?, ?, ?, ?)`,
+                  [
+                      receivedId,          // user_id (알림을 받을 사용자)
+                      roomId,              // chat_room_id
+                      'system',            // type (입장)
+                      systemMessage,       // message
+                      'system'               // sender_id (알림을 보낸 사용자)
+                  ]
+              );
+          });
+
+          // 시스템 메시지를 소켓 이벤트로 모든 클라이언트에게 전송
+          io.to(roomId).emit('systemMessage', { systemMessage });
+        }
         
         return res.json({ success: true });
     } catch (error) {
@@ -355,6 +495,7 @@ const isAllConfirmed = async (roomId) => {
             'SELECT COUNT(*) AS total, SUM(confirmed) AS confirmed FROM participations WHERE post_id = ?',
             [roomId]
         );
+        
         console.log(result[0])
         return result[0].total - 1 === parseInt(result[0].confirmed);
     } catch (error) {
@@ -430,6 +571,7 @@ exports.userConfirmed = async (req, res) => {
 };
 
 exports.updateReservationAmounts = async (req, res) => {
+    const io = req.app.get('socketio');
     const { roomId, additionalPrice } = req.body;
 
     try {
@@ -487,7 +629,7 @@ exports.checkAnyConfirmed = async (req, res) => {
 
         const hasConfirmed = result[0].confirmedCount > 0;
         res.json({ hasConfirmed });
-    } catch (eror) {
+    } catch (error) {
         console.error('Error checking confirmed status: ', error);
         res.status(500).json({ success: false, message: '서버 오류' });
     }
@@ -536,7 +678,7 @@ exports.toggleConfirmedStatus = async (req, res) => {
             // 확인 취소 시 포인트 반환
             await db.query(
                 'UPDATE user_info set user_point = user_point + ? WHERE user_id = ?',
-                [userId]
+                [amountToDeduct, userId]
             );
         }
 
@@ -549,12 +691,43 @@ exports.toggleConfirmedStatus = async (req, res) => {
         const allConfirmed = await isAllConfirmed(roomId);
         if (allConfirmed) {
             // 모든 참여자가 확인했으면 시스템 메시지 저장
-            const systemMessage = '모든 참여자가 결제 내역을 확인했습니다.';
+            const systemMessage = '모든 참여자가 결제 내역을 확인했습니다. 거래가 완료됩니다.';
             await db.query(
                 'INSERT INTO chat_messages (chat_room_id, sender_id, sender_nickname, message, message_type) VALUES (?, ?, ?, ?, ?)',
                 [roomId, 'system', 'system', systemMessage, 'system']
             );
+          
+            // await db.query(
+            //     `INSERT INTO notification (user_id, chat_room_id, type, message, sender_id) 
+            //     VALUES (?, ?, ?, ?, ?)`,
+            //     ['system', roomId, 'leave', systemMessage, 'system']
+            // );
+            const getParticipantsQuery = `
+                SELECT u.user_id 
+                FROM participations p
+                JOIN user_info u ON p.user_id = u.user_id
+                WHERE p.post_id = ?
+            `;
 
+            const [participants] = await db.query(getParticipantsQuery, [roomId]);
+            participants.forEach(async (participant) => {
+                const receivedId = participant.user_id; // 각 참여자의 user_id
+
+                // 알림 데이터 삽입
+                await db.query(
+                `INSERT INTO notification (user_id, chat_room_id, type, message, sender_id) 
+                    VALUES (?, ?, ?, ?, ?)`,
+                    [
+                        receivedId,          // user_id (알림을 받을 사용자)
+                        roomId,              // chat_room_id
+                        'leave',             // type (입장)
+                        systemMessage, // message
+                        'system'               // sender_id (알림을 보낸 사용자)
+                    ]
+                );
+            });
+
+            const socketId = userSocketMap[userId];
             // 시스템 메시지를 소켓 이벤트로 모든 클라이언트에게 전송
             io.to(roomId).emit('systemMessage', { systemMessage });
 
@@ -659,6 +832,11 @@ exports.kickParticiapnt = async (req, res) => {
             'UPDATE post_list SET current_capacity = current_capacity - 1 WHERE post_index = ?',
             [roomId]
         );
+      
+        await db.query(
+            'DELETE FROM notification WHERE user_id = ? AND chat_room_id = ?',
+            [userId, roomId]
+        );
 
         if (deleteResult.affectedRows === 0) {
             return res.status(404).json({ success: false, message: 'User not found in the room' });
@@ -672,13 +850,36 @@ exports.kickParticiapnt = async (req, res) => {
             'INSERT INTO chat_messages (chat_room_id, sender_id, sender_nickname, message, message_type) VALUES (?, ?, ?, ?, ?)',
             [roomId, 'system', 'system', systemMessage, 'system']
         );
+      
+        const getParticipantsQuery = `
+            SELECT u.user_id 
+            FROM participations p
+            JOIN user_info u ON p.user_id = u.user_id
+            WHERE p.post_id = ?
+        `;
 
-        // 실시간 알림
-        io.to(roomId).emit('systemMessage', { message: systemMessage });
-        io.to(roomId).emit('participantKicked', { userId });
+        const [participants] = await db.query(getParticipantsQuery, [roomId]);
 
-        // 강제 퇴장된 유저에게 알림
-        io.to(userId).emit('kickedFromRoom', { message: '방에서 강제 퇴장당하셨습니다.' });
+        participants.forEach(async (participant) => {
+            const receivedId = participant.user_id; // 각 참여자의 user_id
+
+            // 알림 데이터 삽입
+            await db.query(
+            `INSERT INTO notification (user_id, chat_room_id, type, message, sender_id) 
+                VALUES (?, ?, ?, ?, ?)`,
+                [
+                    receivedId,          // user_id (알림을 받을 사용자)
+                    roomId,              // chat_room_id
+                    'kick',             // type (입장)
+                    systemMessage,       // message
+                    userId               // sender_id (알림을 보낸 사용자)
+                ]
+            );
+        });
+
+        const socketId = userSocketMap[userId];
+        // 시스템 메시지를 소켓 이벤트로 모든 클라이언트에게 전송
+        io.to(roomId).emit('systemMessage', { systemMessage });
 
         return res.json({ success: true, message: 'User has been removed from the room' });
     } catch (error) {
@@ -707,4 +908,30 @@ exports.reportUser = async (req, res) => {
         console.error('Error reporting user: ', error);
         res.status(500).json({ success: false, message: 'Server error' });
     }
+};
+
+exports.inquiryUser = async (req, res) => {
+  try {
+    const userId = req.session.userId;
+    const content = req.body.content;
+    
+    if (!userId) {
+      return res.status(400).json({ error: '사용자가 로그인되어 있지 않습니다.' });
+    }
+
+    const query = 'INSERT INTO inquiry (userId, content) VALUES (?, ?)';
+    const values = [userId, content];
+
+    await db.query(query, values);
+
+    // 리다이렉트 URL을 포함한 성공 응답
+    return res.status(200).json({
+      success: true,
+      message: '문의가 성공적으로 제출되었습니다.',
+      redirectUrl: '/my-page' // 리다이렉트 URL 추가
+    });
+  } catch (error) {
+    console.error('문의 저장 중 오류:', error);
+    res.status(500).json({ error: '서버 오류가 발생했습니다.' });
+  }
 };

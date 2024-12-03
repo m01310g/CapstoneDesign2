@@ -12,6 +12,11 @@
     margin: 1rem;
 }
 
+h3 {
+    font-size: 1.3rem;
+    font-weight: 600;
+}
+
 a > img {
     width: 1.5rem;
     height: 1.5rem;
@@ -36,6 +41,7 @@ div > div > div {
     background-size: 1.125rem 1.125rem;
     font-size: 1.125rem;
     font-weight: bold;
+    color: #000000;
 }
 
 .btn-select:focus {
@@ -61,6 +67,7 @@ div > div > div {
     box-shadow: 2px 2px 8px rgba(190, 190, 190, 0.692);
     border-radius: 15px;
     font-size: 15px;
+    z-index: 1000;
 }
 
 .list-member li {
@@ -165,6 +172,7 @@ div > #confirm-btn {
 #departure,
 #destination {
     cursor: pointer;
+    color: #000000;
 }
 
 .img-container img {
@@ -244,4 +252,11 @@ iframe {
     font-size: 1rem;
     border: none;
     cursor: pointer;
+}
+
+@media (max-width: 528px) {
+  .announcement > p {
+    margin-top: 0.5rem;
+    padding: 0 1rem 0 0;
+  }
 }

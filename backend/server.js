@@ -60,20 +60,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // 정적 파일 경로 설정
 app.use(express.static(path.join(__dirname, "..", "src")));
-app.use(express.static(path.join(__dirname, "..", "src", "pages"))); // html파일에 연결된 js로드 안되는 문제 해결
-app.use(express.static(path.join(__dirname, "..", "src", "pages", "login"))); // login 페이지의 js로드 안되는 문제 해결
-app.use(express.static(path.join(__dirname, "..", "src", "pages", "forgot"))); // forgot 페이지 js로드 안되는 문제 해결
-app.use(express.static(path.join(__dirname, "..", "src", "pages", "board"))); // 게시물 관련 페이지의 js로드 안되는 문제 해결
-app.use(express.static(path.join(__dirname, "..", "src", "pages", "post"))); // 게시물 관련 페이지의 js로드 안되는 문제 해결
-app.use(express.static(path.join(__dirname, "..", "src", "pages", "notification"))); // 알림 페이지의 js로드 안되는 문제 해결
-app.use(express.static(path.join(__dirname, "..", "src", "pages", "chatting"))); // 채팅 페이지의 js로드 안되는 문제 해결
-app.use(express.static(path.join(__dirname, "..", "src", "pages", "category"))); // 카테고리 페이지의 js로드 안되는 문제 해결
-app.use(express.static(path.join(__dirname, "..", "src", "pages", "my-page"))); // 마이 페이지의 js로드 안되는 문제 해결
-app.use(express.static(path.join(__dirname, "..", "src", "pages", "point-charge")));
-app.use(express.static(path.join(__dirname, "..", "src", "pages", "point-exchange"))); 
-app.use(express.static(path.join(__dirname, "..", "src", "pages", "sign-up"))); // 회원가입 페이지의 js로드 안되는 문제 해결
-app.use(express.static(path.join(__dirname, "..", "src", "pages", "my-info-change"))); // 회원 정보 및 비밀번호 변경 페이지의 js로드 안되는 문제 해결
-app.use(express.static(path.join(__dirname, "..", "src", "pages", "home")));
+app.use(express.static(path.join(__dirname, "..", "backend")));
 
 // 라우터 설정
 const authRouter = require('./routes/auth');

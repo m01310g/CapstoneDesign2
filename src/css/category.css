@@ -7,10 +7,30 @@
     padding-bottom: 10px;
 }   
 
+.page-header {
+    position: relative;
+    /* padding-top: 0.3rem; */
+    /* margin-bottom: 3.5rem; */
+    padding: 1.3rem 1rem 1rem 1rem;
+    margin: 0 !important;
+    background-color: rgba(239, 239, 239, 0.7);
+}
+
+.divider {
+    border: none;
+    border-top: 1px solid rgba(127, 127, 127, 0.52);
+}
+
+#category {
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
 a {
     text-decoration: none;
     color: #000;
     font-weight: 600;
+    font-size: 1rem;
 }
 
 a:visited,
@@ -24,7 +44,7 @@ a:active {
     display: flex;
     justify-content: space-between;
     padding: 1rem;
-    background-color: lightgray;
+    background-color: rgba(239, 239, 239, 0.7);;
     height: 4.5rem;
 }
 
@@ -35,9 +55,10 @@ a:active {
 }
 
 #available-point > :nth-child(1) {
-    font-weight: 650;
+    font-weight: 600;
+    font-size: 1.23rem;
     margin-bottom: 0.2rem;
-  }
+}
 
 #exchange-point-anchor {
     display: flex;
@@ -47,7 +68,7 @@ a:active {
 }
 
 #service-container > :nth-child(1) {
-    margin: 2rem 0 0.8rem 1rem;
+    margin: 1.25rem 0 0.8rem 1rem;
 }
 
 #service-menu > a {
@@ -58,4 +79,8 @@ a:active {
 
 #service-menu > a {
     font-size: 1.3rem;
+}
+
+h3 {
+    font-weight: 600;
 }

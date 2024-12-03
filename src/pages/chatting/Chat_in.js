@@ -13,6 +13,13 @@ const memberButton = document.querySelector('.member-button');
 const memberListContainer = document.querySelector('#memberListContainer');
 const memberList = document.querySelector('#memberList');
 
+const socket = io(); // 소켓 초기화 (서버 연결)
+
+// API 응답 캐싱
+let cachedUserId = null;
+let cachedUserInfo = null;
+let cachedPostInfo = null;
+
 const fetchUserCount = async () => {
   try {
     const response = await fetch(`/api/chat/get-user-count?postId=${roomId}`);
@@ -28,6 +35,7 @@ const fetchUserCount = async () => {
 };
 
 const fetchUserId = async () => {
+  if (cachedUserId) return cachedUserId;
   try {
       const response = await fetch('/api/session/user-id');
       if (!response.ok) {
@@ -46,6 +54,7 @@ const fetchUserId = async () => {
 };
 
 const fetchUserInfo = async () => {
+  if (cachedUserInfo) return cachedUserInfo;
   try {
       const response = await fetch('/api/session/user-info');
       if (!response.ok) {
@@ -65,7 +74,8 @@ const fetchUserInfo = async () => {
 
 const fetchMessages = async () => {
   try {
-    const response = await fetch(`/api/chat/get-message?roomId=${roomId}`);
+    const userId = (await fetchUserId()).userId;
+    const response = await fetch(`/api/chat/get-message?roomId=${roomId}&userId=${userId}`);
     if (!response.ok) {
       console.error('Failed to fetch messages: ', response.statusText);
       return [];
@@ -80,6 +90,7 @@ const fetchMessages = async () => {
 };
 
 const fetchPostById = async () => {
+  if (cachedPostInfo) return cachedPostInfo;
   try {
     const response = await fetch(`/api/post/view/${roomId - 1}`);
     if (!response.ok) {
@@ -103,11 +114,11 @@ const startTrade = async () => {
     });
 
     if (response.ok) {
-      const systemMessage = document.createElement('div');
-      systemMessage.classList.add('message', 'system-message');
-      systemMessage.innerText = '거래가 시작됩니다.';
-      chatBox.appendChild(systemMessage);
-      chatBox.scrollTop = chatBox.scrollHeight;
+      // const systemMessage = document.createElement('div');
+      // systemMessage.classList.add('message', 'system-message');
+      // systemMessage.innerText = '거래가 시작됩니다.';
+      // chatBox.appendChild(systemMessage);
+      // chatBox.scrollTop = chatBox.scrollHeight;
 
       const tradeBtn = document.querySelector('.trade-button');
       tradeBtn.disabled = true;
@@ -123,11 +134,13 @@ const startTrade = async () => {
 };
 
 const showAdditionalPriceButton = async () => {
-  const getPostInfo = await fetchPostById();
-  const writerId = getPostInfo.user_id;
-  const category = getPostInfo.category;
-  const getUserId = await fetchUserId();
+  const [getUserId, postInfo] = await Promise.all([
+    fetchUserId(),
+    fetchPostById(),
+  ]);
   const userId = getUserId.userId;
+  const writerId = postInfo.user_id;
+  const category = postInfo.category;
   
   const hasConfirmed = await checkAnyConfirmed();
   const additionalPriceBtn = document.querySelector('.additional-price-btn');
@@ -152,18 +165,26 @@ const showAdditionalPriceButton = async () => {
 };
 
 const checkReservationStatus = async () => {
-  const getUserId = await fetchUserId();
+  // const getUserId = await fetchUserId();
+  // const userId = getUserId.userId;
+  const [getUserId] = await Promise.all([
+    fetchUserId(),
+  ]);
   const userId = getUserId.userId;
+
   const response = await fetch(`/api/chat/check-reservation?roomId=${roomId}&userId=${userId}`);
   const result = await response.json();
   return result;
 };
 
 const updateReservationButton = async () => {
-  const getUserId = await fetchUserId();
+  const [getUserId, postInfo] = await Promise.all([
+    fetchUserId(),
+    fetchPostById(),
+  ]);
   const userId = getUserId.userId;
-  const getPostInfo = await fetchPostById();
-  const writerId = getPostInfo.user_id;
+  const writerId = postInfo.user_id;
+
   const HIDDEN_CLASS_NAME = 'hidden';
 
   const tradeBtn = document.querySelector('.trade-button');
@@ -176,11 +197,11 @@ const updateReservationButton = async () => {
 
   if (writerId === userId) {
     const reservationCount = await getReservationCount();
-    const currentCapacity = getPostInfo.current_capacity;
+    const currentCapacity = postInfo.current_capacity;
 
     if ((reservationCount + 1 === currentCapacity) && currentCapacity !== 1) {
       tradeBtn.classList.remove(HIDDEN_CLASS_NAME);
-      tradeBtn.innerText = '거래 진행';
+      tradeBtn.innerText = '거래\n진행';
       tradeBtn.onclick = async () => {
         await startTrade();
       };
@@ -191,11 +212,12 @@ const updateReservationButton = async () => {
     leaveBtn.classList.add(HIDDEN_CLASS_NAME);
   } else {
     const isReserved = await checkReservationStatus();
-    console.log(isReserved.reserved);
     
     if (isReserved.reserved) {
-      tradeBtn.innerText = '예약 취소';
+      tradeBtn.innerText = '예약\n취소';
       leaveBtn.classList.add(HIDDEN_CLASS_NAME);
+      tradeBtn.style.backgroundColor = '#f7b500';
+      tradeBtn.style.color = 'white';
       tradeBtn.onclick = async () => {
         const response = await fetch('/api/chat/cancel-reservation', {
           method: 'POST',
@@ -208,7 +230,9 @@ const updateReservationButton = async () => {
         }
       };
     } else {
-      tradeBtn.innerText = '거래 예약';
+      tradeBtn.innerText = '거래\n예약';
+      tradeBtn.style.backgroundColor = 'rgba(239, 239, 239, 0.7)';
+      tradeBtn.style.color = 'black';
       tradeBtn.disabled = false;
       leaveBtn.classList.remove(HIDDEN_CLASS_NAME);
       tradeBtn.onclick = async () => {
@@ -227,10 +251,12 @@ const updateReservationButton = async () => {
 };
 
 const syncTradeStatus = async () => {
-  const getPostInfo = await fetchPostById();
-  const writerId = getPostInfo.user_id;
-  const getUserId = await fetchUserId();
+  const [getUserId, postInfo] = await Promise.all([
+    fetchUserId(),
+    fetchPostById()
+  ]);
   const userId = getUserId.userId;
+  const writerId = postInfo.user_id;
 
   try {
     const response = await fetch(`/api/chat/check-trade-status?roomId=${roomId}`);
@@ -242,7 +268,10 @@ const syncTradeStatus = async () => {
     const tradeBtn = document.querySelector('.trade-button');
     if (isTradeStarted.isTradeStarted) {
       // 거래 진행 상태일 경우 버튼 비활성화
-      if (tradeBtn) tradeBtn.disabled = true;
+      if (tradeBtn){ 
+        tradeBtn.disabled = true;
+        tradeBtn.style.backgroundColor = '#ffbb0085';
+      }
       if (writerId !== userId) confirmButton.classList.remove('hidden');
       leaveBtn.classList.add("hidden"); // 나가기 버튼 숨기기
       await showAdditionalPriceButton();
@@ -250,7 +279,7 @@ const syncTradeStatus = async () => {
       // 거래 미진행 상태일 경우 버튼 활성화
       if (tradeBtn) tradeBtn.disabled = false;
       confirmButton.classList.add('hidden');
-      leaveBtn.classList.remove("hidden"); // 나가기 버튼 보이기
+      if (writerId !== userId) leaveBtn.classList.remove("hidden"); // 나가기 버튼 보이기
     }
   } catch (error) {
     console.error('Error fetching trade status: ', error);
@@ -282,7 +311,7 @@ const toggleConfirmedStatus = async () => {
   
     if (success) {
       if (confirmed) {
-        confirmButton.innerText = '확인 취소';
+        confirmButton.innerText = '확인\n취소';
         alert('결제를 확인했습니다.');
       } else {
         confirmButton.innerText = '확인';
@@ -292,7 +321,6 @@ const toggleConfirmedStatus = async () => {
 
     confirmButton.disabled = allConfirmed;
 
-    // confirmButton.disabled = false;
   } catch (error) {
     console.error('Error toggling confirmed status: ', error);
   }
@@ -344,10 +372,19 @@ const checkAnyConfirmed = async () => {
 document.addEventListener("DOMContentLoaded", async () => {
   const getUserCount = await fetchUserCount();
   userCount.innerText = getUserCount;
-  const getUserId = await fetchUserId();
+  const [getUserId, postInfo, getUserInfo] = await Promise.all([
+    fetchUserId(),
+    fetchPostById(),
+    fetchUserInfo()
+  ]);
+  
+  const writerId = postInfo.user_id;
   const userId = getUserId.userId;
-  const getPostInfo = await fetchPostById();
-  const writerId = getPostInfo.user_id;
+  const userNickname = getUserInfo.userNickname;
+  
+  if (writerId === userId) leaveBtn.classList.add('hidden');
+  
+  socket.emit('joinRoom', { roomId, userNickname }); // 해당 채팅방 입장
 
   chatTitle.innerText = (await fetchPostById()).title;
 
@@ -382,7 +419,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       messageElement.innerText = message.message;
       nicknameElement.classList.add('nickname');
       nicknameElement.innerText = message.sender_nickname;
-      if (message.sender_id = writerId) {
+      if (message.sender_id === writerId) {
         nicknameElement.style.color = '#F5AF12';
         nicknameElement.style.fontWeight = 'bold';
       }
@@ -400,17 +437,15 @@ document.addEventListener("DOMContentLoaded", async () => {
   await updateReservationButton();
 });
 
-const socket = io(); // 소켓 초기화 (서버 연결)
-
-socket.emit('joinRoom', roomId); // 해당 채팅방 입장
-
 sendMessageBtn.addEventListener('click', async () => {
   const message = messageInput.value.trim();
-  const getUserId = await fetchUserId();
+  const [getUserId, userInfo] = await Promise.all([
+    fetchUserId(),
+    fetchUserInfo()
+  ]);
   const userId = getUserId.userId;
-  const getUserInfo = await fetchUserInfo();
-  const userNickname = getUserInfo.userNickname;
 
+  const userNickname = userInfo.userNickname;
 
   if (message) {
     const messageData = {
@@ -450,10 +485,13 @@ sendMessageBtn.addEventListener('click', async () => {
   } 
 });
 
-menuButton.addEventListener('click', () => {
+menuButton.addEventListener('click', async () => {
   const HIDDEN_CLASS_NAME = "hidden";
   const MENU_OPEN_CLASS_NAME = "menu-open";
   const isMenuOpen = bottomMenu.classList.contains(HIDDEN_CLASS_NAME);
+  
+  await syncTradeStatus();
+  await updateReservationButton();
 
   if (isMenuOpen) {
     bottomMenu.classList.remove(HIDDEN_CLASS_NAME);
@@ -471,7 +509,7 @@ menuButton.addEventListener('click', () => {
     bottomMenu.style.transform = 'translateY(100%)';
     chatInputArea.style.transform = 'translateY(0)'; // 원래 위치로 복구
   }
-})
+});
 
 // Enter 키로 메시지 전송
 messageInput.addEventListener('keypress', (event) => {
@@ -486,10 +524,13 @@ leaveBtn.addEventListener('click', async () => {
   if (!confirmLeave) return;
 
   try {
-    const getUserId = await fetchUserId();
-    const userId = getUserId.userId;
-    const getUserInfo = await fetchUserInfo();
-    const userNickname = getUserInfo.userNickname;
+    const [getUserId, userInfo] = await Promise.all([
+      fetchUserId(),
+      fetchUserInfo()
+    ]);
+    const userId = getUserId.userId
+  
+    const userNickname = userInfo.userNickname;
 
     socket.emit('leaveRoom', { roomId, userNickname });
 
@@ -520,13 +561,24 @@ socket.on("connect", () => {
 });
 
 socket.on('message', (messageData) => {
-  fetchUserId().then(({ userId }) => {
-  // 본인이 보낸 메시지 무시
+
+  Promise.all([fetchUserId(), fetchPostById()])
+  .then(([{ userId }, { user_id }]) => {
+    // 본인이 보낸 메시지 무시
     if (messageData.userId === userId) return;
+    console.log(messageData);
 
     const messageElement = document.createElement('div');
+    const nicknameElement = document.createElement('div');
     messageElement.classList.add('message', 'message-received');
     messageElement.innerText = messageData.message;
+    nicknameElement.classList.add('nickname');
+    nicknameElement.innerText = messageData.userNickname;
+    if (messageData.userId === user_id) {
+      nicknameElement.style.color = '#F5AF12';
+      nicknameElement.style.fontWeight = 'bold';
+    }
+    chatBox.appendChild(nicknameElement);
     chatBox.appendChild(messageElement);
     chatBox.scrollTop = chatBox.scrollHeight;
   }).catch(error => {
@@ -535,20 +587,12 @@ socket.on('message', (messageData) => {
 });
 
 // 소켓으로 시스템 메시지를 수신
-socket.on('systemMessage', ({ message }) => {
+socket.on('systemMessage', ({ systemMessage }) => {
   const systemMessageElement = document.createElement('div');
   systemMessageElement.classList.add('message', 'system-message');
-  systemMessageElement.innerText = message;
+  systemMessageElement.innerText = systemMessage;
   chatBox.appendChild(systemMessageElement);
   chatBox.scrollTop = chatBox.scrollHeight; // 최신 메시지로 스크롤
-});
-
-socket.on('userLeft', ({ message }) => {
-  const messageElement = document.createElement('div');
-  messageElement.classList.add('message', 'system-message');
-  messageElement.innerText = message;
-  chatBox.appendChild(messageElement);
-  chatBox.scrollTop = chatBox.scrollHeight;
 });
 
 socket.on('tradeStarted', ({ roomId }) => {
@@ -722,6 +766,11 @@ memberButton.addEventListener('click', async () => {
                   alert(`${participant.user_nickname}님을 퇴장시켰습니다.`);
                   // UI 업데이트
                   listItem.remove();
+                  socket.emit('kickParticipant', { roomId, userId: participant.user_id });
+                  // socket.emit('sendSystemMessage', { roomId, systemMessage: `${participant.user_nickname} 님이 강제 퇴장되었습니다.` }, () => {
+                  //   console.log(`${participant.user_nickname} 님이 강제 퇴장되었습니다.`);
+                  // });
+
                 } else {
                   alert('퇴장 요청에 실패했습니다.');
                 }
@@ -747,10 +796,6 @@ memberButton.addEventListener('click', async () => {
 // 신고 버튼 이벤트 위임
 memberList.addEventListener('click', (event) => {
   const modal = document.querySelector('#reportModal');
-  const closeModal = document.querySelector('#closeModal');
-  const submitReport = document.querySelector('#submitReport');
-  const additionalReasonInput = document.querySelector('#additionalReason');
-  const reportForm = document.querySelector('#reportForm');
 
   if (event.target.classList.contains('report-btn')) {
     const button = event.target;
@@ -759,56 +804,62 @@ memberList.addEventListener('click', (event) => {
     modal.classList.remove('hidden'); // 모달 표시
     modal.style.display = 'flex';
   }
+});
 
-  closeModal.addEventListener('click', () => {
-    modal.classList.remove('hidden');
-    modal.style.display = 'none';
-  });
+const modal = document.querySelector('#reportModal');
+const closeModal = document.querySelector('#closeModal');
+const submitReport = document.querySelector('#submitReport');
+const additionalReasonInput = document.querySelector('#additionalReason');
+const reportForm = document.querySelector('#reportForm');
 
-  // "기타" 선택 시 텍스트 박스 표시
-  reportForm.addEventListener('change', (event) => {
-    if (event.target.name === 'reason' && event.target.value === '기타') {
-      additionalReasonInput.classList.remove('hidden');
+closeModal.addEventListener('click', () => {
+  modal.classList.remove('hidden');
+  modal.style.display = 'none';
+});
+
+// "기타" 선택 시 텍스트 박스 표시
+reportForm.addEventListener('change', (event) => {
+  if (event.target.name === 'reason' && event.target.value === '기타') {
+    additionalReasonInput.classList.remove('hidden');
+  } else {
+    additionalReasonInput.classList.add('hidden');
+  }
+});
+
+// 신고 제출
+submitReport.addEventListener('click', async () => {
+  const reportedUserId = modal.dataset.reportedUserId; // 신고 대상 ID
+  const selectedReason = reportForm.reason.value; // 선택된 신고 사유
+  const additionalReason = additionalReasonInput.value.trim(); // 추가 사유
+
+  const reason = selectedReason === '기타' ? additionalReason : selectedReason;
+
+  if (!reason) {
+    alert('신고 사유를 입력하거나 선택하세요.');
+    return;
+  }
+
+  try {
+    const response = await fetch('/api/chat/report-user', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        roomId,
+        reportedUserId,
+        reportReason: reason,
+      }),
+    });
+
+    if (response.ok) {
+      alert('신고가 접수되었습니다.');
+      modal.classList.add('hidden'); // 모달 닫기
     } else {
-      additionalReasonInput.classList.add('hidden');
+      alert('신고 처리 중 오류가 발생했습니다.');
     }
-  });
-
-  // 신고 제출
-  submitReport.addEventListener('click', async () => {
-    const reportedUserId = modal.dataset.reportedUserId; // 신고 대상 ID
-    const selectedReason = reportForm.reason.value; // 선택된 신고 사유
-    const additionalReason = additionalReasonInput.value.trim(); // 추가 사유
-
-    const reason = selectedReason === '기타' ? additionalReason : selectedReason;
-
-    if (!reason) {
-      alert('신고 사유를 입력하거나 선택하세요.');
-      return;
-    }
-
-    try {
-      const response = await fetch('/api/chat/report-user', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          roomId,
-          reportedUserId,
-          reportReason: reason,
-        }),
-      });
-
-      if (response.ok) {
-        alert('신고가 접수되었습니다.');
-        modal.classList.add('hidden'); // 모달 닫기
-      } else {
-        alert('신고 처리 중 오류가 발생했습니다.');
-      }
-    } catch (error) {
-      console.error('Error reporting user:', error);
-      alert('신고 처리 중 서버 오류가 발생했습니다.');
-    }
-  });
+  } catch (error) {
+    console.error('Error reporting user:', error);
+    alert('신고 처리 중 서버 오류가 발생했습니다.');
+  }
 });
 
 // 클릭 시 닫기

@@ -2,6 +2,12 @@
     padding-bottom: 5rem;
 }
 
+.divider {
+    margin-top: 1.1rem;
+    border: none;
+    border-top: 1px solid rgba(127, 127, 127, 0.52);
+}
+
 a > img {
     width: 1.5rem;
     height: 1.5rem;
@@ -50,7 +56,7 @@ a > img {
     width: 100%;
     font-size: 1.3rem;
     margin-bottom: 1rem;
-    margin-top: 1rem;
+    margin-top: 1.2rem;
     text-overflow: ellipsis;
     text-align: left;
     overflow: hidden;

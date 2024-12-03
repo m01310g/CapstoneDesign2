@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CO/N</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="../../css/my-inquiry.css">
+</head>
+<body>
+  <div class="body-container">
+    <div class="box-body">
+      <header class="page-header">
+        <a href="/my-page">
+          <img src="/img/back-icon.png">
+        </a>
+      </header>
+      <div id="page-title">
+        <span id="sign-up-title">문의하기</span>
+      </div>
+      <main class="page-main">
+        <form id="inquiry-form">
+          <textarea id="inquiry-text" class="form-textarea" placeholder="문의 내용을 작성해주세요." required></textarea>
+          <button type="submit" class="btn-submit">보내기</button>
+        </form>
+      </main>
+      <bottom-nav data-page="myPage"></bottom-nav>
+    </div>
+  </div>
+  <script src="/pages/my-page/my-inquiry.js"></script>
+  <script src="../../component/BottomNav.js"></script>
+</body>
+</html>

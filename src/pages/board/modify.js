@@ -5,9 +5,7 @@ const deptInput = document.querySelector("#departure");
 const destInput = document.querySelector("#destination");
 const subjectInput = document.querySelector("input[name='subject']");
 const contentTextarea = document.querySelector("textarea[name='content']");
-const locationInput = document.querySelector("#location");
 const priceInput = document.querySelector("#price");
-const locationContainer = document.querySelector("#location-map");
 const taxiMapContainer = document.querySelector("#map");
 
 const subDropDown = document.querySelector(".sub-dropdown");
@@ -73,10 +71,12 @@ categoryItems.forEach(item => {
         if (selectedCategory === '택시') {
             taxiSearch.classList.remove(HIDDEN_CLASS_NAME);
             subDropDown.classList.add(HIDDEN_CLASS_NAME); // 소분류 숨기기
+            document.querySelector('#package-location').classList.add(HIDDEN_CLASS_NAME);
         } else {
             taxiSearch.classList.add(HIDDEN_CLASS_NAME); // 택시 검색 필드 숨기기
             updateSubCategories(selectedCategory);
             subDropDown.classList.remove(HIDDEN_CLASS_NAME); // 소분류 드롭다운 보이기
+            document.querySelector('#package-location').classList.remove(HIDDEN_CLASS_NAME);
         }
 
         // 모든 카테고리 항목의 'on' 클래스 제거
@@ -120,19 +120,18 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (selectedCategory === "택시") {
             deptInput.classList.remove(HIDDEN_CLASS_NAME);
             destInput.classList.remove(HIDDEN_CLASS_NAME);
-            locationInput.classList.add(HIDDEN_CLASS_NAME);
             deptInput.value = data.departure.replace(/"/g,"");
             destInput.value = data.destination.replace(/"/g,"");
             subDropDown.classList.add(HIDDEN_CLASS_NAME);
             document.querySelector(".taxi-search").classList.remove(HIDDEN_CLASS_NAME);
-        } else if (selectedCategory === "배달" || data.category === "택배") {
-            updateSubCategories(data.category);
+        } else  {
+            updateSubCategories(selectedCategory);
             subDropDown.classList.remove(HIDDEN_CLASS_NAME);
-            subBtn.innerText = data.sub_category || "소분류 선택";
+            subBtn.innerText = selectedSubCategory || "소분류 선택";
             deptInput.classList.add(HIDDEN_CLASS_NAME);
             destInput.classList.add(HIDDEN_CLASS_NAME);
-            locationInput.classList.remove(HIDDEN_CLASS_NAME);
-            locationInput.value = data.location.replace(/"/g,"");
+            document.querySelector('#package-location').classList.remove(HIDDEN_CLASS_NAME);
+            document.querySelector('#package-location').value = data.location;
         }
 
         $('#date-picker').on('apply.daterangepicker', function(ev, picker) {
@@ -335,6 +334,8 @@ const handleModify = async (event) => {
         max_capacity: maxCapacity,
         user_id: loggedInUserId
     };
+  
+    console.log(postData);
 
     try {
         const response = await fetch(`/api/post/modify/${index}`,{

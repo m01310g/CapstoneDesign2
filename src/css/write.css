@@ -6,6 +6,11 @@
     display: none;
 }
 
+h3 {
+    font-size: 1.3rem;
+    font-weight: 600;
+}
+
 #write {
     border: none;
     width: 4.8rem;
