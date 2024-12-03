@@ -19,33 +19,40 @@
                     <img src="https://cdn-icons-png.flaticon.com/512/5264/5264565.png" alt="User Icon" class="user-icon">
                     <span class="user-count" id="userCount"></span>
                 </button>
-                <div id="memberListContainer" class="member-list-container hidden">
-                    <ul id="memberList"></ul>
+                <h2 class="chat-title" id="chatTitle">채팅방</h2>
+                <div class="user-info">
+                    <button class="member-button">
+                        <img src="https://cdn-icons-png.flaticon.com/512/5264/5264565.png" alt="User Icon" class="user-icon">
+                        <span class="user-count" id="userCount"></span>
+                    </button>
+                    <div id="memberListContainer" class="member-list-container hidden">
+                        <ul id="memberList"></ul>
+                    </div>
+                    <button class="leave-room-btn">나가기</button>
                 </div>
                 <button class="leave-room-btn hidden">나가기</button>
             </div>
         </header>
 
-        <!-- 채팅 메시지 영역 -->
-        <div class="chat-area" id="chatArea"></div>
+            <!-- 채팅 메시지 영역 -->
+            <div class="chat-area" id="chatArea"></div>
 
-        <!-- 채팅 입력 영역 -->
-        <div class="chat-input-area">
-            <button class="menu-button" id="menuButton">
-                <img id="menuIcon" src="https://cdn-icons-png.flaticon.com/512/5135/5135168.png" alt="메뉴 아이콘" class="menu-icon">
-            </button>
-            <textarea type="text" class="chat-input" id="chatInput" placeholder="메시지를 입력하세요"></textarea>
-            <button class="send-button">
-                <img src="https://cdn-icons-png.flaticon.com/512/11013/11013530.png" alt="전송 아이콘" class="send-icon">
-            </button>
-        </div>
+            <!-- 채팅 입력 영역 -->
+            <div class="chat-input-area">
+                <button class="menu-button" id="menuButton">
+                    <img id="menuIcon" src="https://cdn-icons-png.flaticon.com/512/5135/5135168.png" alt="메뉴 아이콘" class="menu-icon">
+                </button>
+                <textarea type="text" class="chat-input" id="chatInput" placeholder="메시지를 입력하세요"></textarea>
+                <button class="send-button">
+                    <img src="https://cdn-icons-png.flaticon.com/512/11013/11013530.png" alt="전송 아이콘" class="send-icon">
+                </button>
+            </div>
 
         <div class="bottom-menu hidden" id="bottomMenu">
             <button class="trade-button">거래</button>
             <button class="confirm-button hidden">확인</button>
             <button class="additional-price-btn hidden">추가<br>요금</button>
         </div>
-    </div>
 
     <div id="reportModal" class="modal hidden" style="display: none;">
         <div class="modal-content">
